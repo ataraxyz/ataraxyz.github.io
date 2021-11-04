@@ -13,20 +13,26 @@
                     <source src="../atara_bg.mp4" type="video/mp4">
                 </video>
                 <div class="content">
-                    <h1>FULLSCREEN VIDEO BANNER</h1>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae eos sunt vero, non aut quidem impedit suscipit id illum consequuntur, obcaecati illo nobis, quos omnis modi a? Labore, repellat quo.</p>
+                    <h1>ATARA<br>GENETICCHAIN<br>SERENE ANIMO</h1>
+                    <p><i>Seren Animo</i> is a series of collections that ATARA is creating for tehj GENETICCHAIN.io project. Here is a description and roadmap for the next year of collaboration and creation</p>
                 </div>
             </div>
         </section>
         <section>
             <div class="content">
-                <h2>Heading for content 1</h2>
+                <h2>SERENE ANIMO - Trip in space filling curves</h2>
                 <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio delectus obcaecati sunt voluptates sit eos, nemo quasi repudiandae ducimus exercitationem tempora consequuntur deserunt tenetur maxime corporis voluptatem distinctio quo recusandae. Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi sit sed magni minima explicabo, minus maxime magnam, error officiis architecto odio inventore dolorem? At error facilis molestias quis, voluptas cupiditate? Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, maxime? Soluta vitae itaque, iure omnis asperiores voluptatibus veritatis facilis doloribus architecto? Commodi, beatae odit eligendi quam quaerat at vitae reprehenderit? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aspernatur aut qui sapiente placeat rerum voluptate repellat accusamus quia quod unde praesentium consequuntur non nostrum ipsum id, laboriosam quam consectetur tenetur? Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cum repudiandae, fugit voluptate, eaque culpa iusto deleniti voluptates nobis accusantium aliquid ad illum, cupiditate consequatur commodi iure non harum placeat! Sint! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quas illum praesentium natus, reprehenderit omnis sed fuga sint nisi incidunt ex iusto, itaque assumenda? Nam, nobis! A error alias natus ab?</p>
             </div>
         </section>
         <section>
             <div class="content">
-                <h3>Heading for content 2</h3>
+                <h3>SERENE ANIMO - Healing sacred geometry</h3>
+                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio delectus obcaecati sunt voluptates sit eos, nemo quasi repudiandae ducimus exercitationem tempora consequuntur deserunt tenetur maxime corporis voluptatem distinctio quo recusandae. Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi sit sed magni minima explicabo, minus maxime magnam, error officiis architecto odio inventore dolorem? At error facilis molestias quis, voluptas cupiditate? Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, maxime? Soluta vitae itaque, iure omnis asperiores voluptatibus veritatis facilis doloribus architecto? Commodi, beatae odit eligendi quam quaerat at vitae reprehenderit? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aspernatur aut qui sapiente placeat rerum voluptate repellat accusamus quia quod unde praesentium consequuntur non nostrum ipsum id, laboriosam quam consectetur tenetur? Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cum repudiandae, fugit voluptate, eaque culpa iusto deleniti voluptates nobis accusantium aliquid ad illum, cupiditate consequatur commodi iure non harum placeat! Sint! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quas illum praesentium natus, reprehenderit omnis sed fuga sint nisi incidunt ex iusto, itaque assumenda? Nam, nobis! A error alias natus ab?</p>
+            </div>
+        </section>
+        <section>
+            <div class="content">
+                <h4>Heading for content 2</h4>
                 <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio delectus obcaecati sunt voluptates sit eos, nemo quasi repudiandae ducimus exercitationem tempora consequuntur deserunt tenetur maxime corporis voluptatem distinctio quo recusandae. Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi sit sed magni minima explicabo, minus maxime magnam, error officiis architecto odio inventore dolorem? At error facilis molestias quis, voluptas cupiditate? Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, maxime? Soluta vitae itaque, iure omnis asperiores voluptatibus veritatis facilis doloribus architecto? Commodi, beatae odit eligendi quam quaerat at vitae reprehenderit? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aspernatur aut qui sapiente placeat rerum voluptate repellat accusamus quia quod unde praesentium consequuntur non nostrum ipsum id, laboriosam quam consectetur tenetur? Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cum repudiandae, fugit voluptate, eaque culpa iusto deleniti voluptates nobis accusantium aliquid ad illum, cupiditate consequatur commodi iure non harum placeat! Sint! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quas illum praesentium natus, reprehenderit omnis sed fuga sint nisi incidunt ex iusto, itaque assumenda? Nam, nobis! A error alias natus ab?</p>
             </div>
         </section>
@@ -37,19 +43,37 @@
 
             let h2 = document.querySelector( 'h2' );
             let h2p = document.querySelector( 'body > section:nth-child(2) > div > p');
-            
-            window.addEventListener( 'scroll', function(){
-                let value = 1 +  window.scrollY / -800;
-                video.style.opacity = value;
-                h1.style.opacity = value;
-                h1p.style.opacity = value;
-            })
 
+
+            function offset(el) {
+                var rect = el.getBoundingClientRect(),
+                scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+                scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
+            }
+            // fade out video
+            // window.addEventListener( 'scroll', function(){
+            //     let value = 1 +  window.scrollY / -800;
+            //     video.style.opacity = value;
+            //     h1.style.opacity = value;
+            //     h1p.style.opacity = value;
+            // })
+
+            // fade out  firist text
             window.addEventListener( 'scroll', function(){
-                let value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - 1000 ) / 800 ) );
-                h2.style.opacity = value;
-                h2p.style.opacity = value;
-                console.log( value);
+                videoOffet = offset(video);
+                h2Offset = offset( h2 );
+
+                let videoValue =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - videoOffet.top ) / video.offsetHeight ) );
+                console.log(video.offsetHeight)
+                video.style.opacity = videoValue;
+                h1.style.opacity = videoValue;
+                h1p.style.opacity = videoValue;
+
+                let h2Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h2Offset.top ) / h2p.offsetHeight ) );
+                h2.style.opacity = h2Value;
+                h2p.style.opacity = h2Value;
+                
             })
         </script>
     </body>
