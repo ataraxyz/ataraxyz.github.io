@@ -6,12 +6,18 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Roboto Mono', monospace;
+    text-decoration: none;
 }
 body
 {
     background: #000;
     height: 1000px;
 }
+mark 
+{
+    background-color: white;
+    color: black;
+  }
 section
 {
     position: relative;
@@ -59,8 +65,10 @@ section h4
     color: #fff;
     font-size: 3em;
 }
+
 section p
 {
+    text-align: justify;
     position: relative;
     color: #fff;
     font-size: 1.2em;
@@ -99,7 +107,6 @@ section p
     margin : 0;
     padding: 0;
     font-size: 4.5em;
-    text-transform: uppercase;
     color : #fff;
     text-shadow: 5px 5px #000;
 
