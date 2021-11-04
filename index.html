@@ -45,6 +45,13 @@
             let h2 = document.querySelector( 'h2' );
             let h2p = document.querySelector( 'body > section:nth-child(2) > div > p');
 
+            let h3 = document.querySelector( 'h3' );
+            let h3p = document.querySelector( 'body > section:nth-child(3) > div > p');
+
+            let h4 = document.querySelector( 'h4' );
+            let h4p = document.querySelector( 'body > section:nth-child(4) > div > p');
+
+            let textFadeOutSpeed = 1.5;
 
             function offset(el) {
                 var rect = el.getBoundingClientRect(),
@@ -52,30 +59,39 @@
                 scrollTop = window.pageYOffset || document.documentElement.scrollTop;
                 return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
             }
-            // fade out video
-            // window.addEventListener( 'scroll', function(){
-            //     let value = 1 +  window.scrollY / -800;
-            //     video.style.opacity = value;
-            //     h1.style.opacity = value;
-            //     h1p.style.opacity = value;
-            // })
-
-            // fade out  firist text
             window.addEventListener( 'scroll', function(){
                 videoOffet = offset(video);
                 h2Offset = offset( h2 );
+                h3Offset = offset( h3 );
+                h4Offset = offset( h4 );
 
                 let videoValue =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - videoOffet.top ) / video.offsetHeight ) );
-                console.log(video.offsetHeight)
                 video.style.opacity = videoValue;
                 h1.style.opacity = videoValue;
                 h1p.style.opacity = videoValue;
 
-                let h2Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h2Offset.top ) / h2p.offsetHeight ) );
+                let h2Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h2Offset.top ) / h2p.offsetHeight * textFadeOutSpeed ) );
                 h2.style.opacity = h2Value;
                 h2p.style.opacity = h2Value;
-                
-            })
+
+                let h3Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h3Offset.top ) / h3p.offsetHeight * textFadeOutSpeed ) );
+                if ( h2Value > 0.1 ){
+                    h3Value = 1.0 - h2Value;
+                }
+                h3.style.opacity = h3Value;
+                h3p.style.opacity = h3Value;
+
+                let h4Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h4Offset.top ) / h4p.offsetHeight * textFadeOutSpeed ) );
+                if ( h3Value > 0.1 ){
+                    h4Value = 1.0 - h3Value;
+                }
+                h4.style.opacity = h4Value;
+                h4p.style.opacity = h4Value;
+            });
+            
+            window.onbeforeunload = function () {
+                window.scrollTop(0);
+            };
         </script>
     </body>
 </html>
