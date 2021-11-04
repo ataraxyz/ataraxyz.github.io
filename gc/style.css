@@ -83,6 +83,7 @@ section p
     max-width: 1000px;
     margin: 0 auto;
     text-align: center;
+    text-shadow: 2px 2px #000;
 }
 
 .banner .content h1
@@ -92,6 +93,8 @@ section p
     font-size: 4.5em;
     text-transform: uppercase;
     color : #fff;
+    text-shadow: 5px 5px #000;
+
 
 }
 
