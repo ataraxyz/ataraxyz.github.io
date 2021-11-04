@@ -21,19 +21,20 @@
         </section>
         <section>
             <div class="content">
-                <h2>SERENE ANIMO - Trip in space filling curves</h2>
+                <h2>SERENE ANIMO I - Trip in space filling curves</h2>
                 <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio delectus obcaecati sunt voluptates sit eos, nemo quasi repudiandae ducimus exercitationem tempora consequuntur deserunt tenetur maxime corporis voluptatem distinctio quo recusandae. Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi sit sed magni minima explicabo, minus maxime magnam, error officiis architecto odio inventore dolorem? At error facilis molestias quis, voluptas cupiditate? Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, maxime? Soluta vitae itaque, iure omnis asperiores voluptatibus veritatis facilis doloribus architecto? Commodi, beatae odit eligendi quam quaerat at vitae reprehenderit? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aspernatur aut qui sapiente placeat rerum voluptate repellat accusamus quia quod unde praesentium consequuntur non nostrum ipsum id, laboriosam quam consectetur tenetur? Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cum repudiandae, fugit voluptate, eaque culpa iusto deleniti voluptates nobis accusantium aliquid ad illum, cupiditate consequatur commodi iure non harum placeat! Sint! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quas illum praesentium natus, reprehenderit omnis sed fuga sint nisi incidunt ex iusto, itaque assumenda? Nam, nobis! A error alias natus ab?</p>
             </div>
         </section>
         <section>
             <div class="content">
-                <h3>SERENE ANIMO - Healing sacred geometry</h3>
+                <h3>SERENE ANIMO II - Healing sacred geometry</h3>
                 <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio delectus obcaecati sunt voluptates sit eos, nemo quasi repudiandae ducimus exercitationem tempora consequuntur deserunt tenetur maxime corporis voluptatem distinctio quo recusandae. Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi sit sed magni minima explicabo, minus maxime magnam, error officiis architecto odio inventore dolorem? At error facilis molestias quis, voluptas cupiditate? Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, maxime? Soluta vitae itaque, iure omnis asperiores voluptatibus veritatis facilis doloribus architecto? Commodi, beatae odit eligendi quam quaerat at vitae reprehenderit? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aspernatur aut qui sapiente placeat rerum voluptate repellat accusamus quia quod unde praesentium consequuntur non nostrum ipsum id, laboriosam quam consectetur tenetur? Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cum repudiandae, fugit voluptate, eaque culpa iusto deleniti voluptates nobis accusantium aliquid ad illum, cupiditate consequatur commodi iure non harum placeat! Sint! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quas illum praesentium natus, reprehenderit omnis sed fuga sint nisi incidunt ex iusto, itaque assumenda? Nam, nobis! A error alias natus ab?</p>
+                <img src="SACRED.png" />
             </div>
         </section>
         <section>
             <div class="content">
-                <h4>Heading for content 2</h4>
+                <h4>SERENE ANIMO - project III, IV and V</h4>
                 <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Odio delectus obcaecati sunt voluptates sit eos, nemo quasi repudiandae ducimus exercitationem tempora consequuntur deserunt tenetur maxime corporis voluptatem distinctio quo recusandae. Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi sit sed magni minima explicabo, minus maxime magnam, error officiis architecto odio inventore dolorem? At error facilis molestias quis, voluptas cupiditate? Lorem ipsum dolor sit amet consectetur adipisicing elit. Excepturi, maxime? Soluta vitae itaque, iure omnis asperiores voluptatibus veritatis facilis doloribus architecto? Commodi, beatae odit eligendi quam quaerat at vitae reprehenderit? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Aspernatur aut qui sapiente placeat rerum voluptate repellat accusamus quia quod unde praesentium consequuntur non nostrum ipsum id, laboriosam quam consectetur tenetur? Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cum repudiandae, fugit voluptate, eaque culpa iusto deleniti voluptates nobis accusantium aliquid ad illum, cupiditate consequatur commodi iure non harum placeat! Sint! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quas illum praesentium natus, reprehenderit omnis sed fuga sint nisi incidunt ex iusto, itaque assumenda? Nam, nobis! A error alias natus ab?</p>
             </div>
         </section>
@@ -47,11 +48,12 @@
 
             let h3 = document.querySelector( 'h3' );
             let h3p = document.querySelector( 'body > section:nth-child(3) > div > p');
+            let h3img = document.querySelector( 'body > section:nth-child(3) > div > img' );
 
             let h4 = document.querySelector( 'h4' );
             let h4p = document.querySelector( 'body > section:nth-child(4) > div > p');
-
             let textFadeOutSpeed = 1.;
+            
 
             function offset(el) {
                 var rect = el.getBoundingClientRect(),
@@ -65,7 +67,7 @@
                 h3Offset = offset( h3 );
                 h4Offset = offset( h4 );
 
-                let videoValue =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - videoOffet.top ) / video.offsetHeight ) );
+                let videoValue =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - videoOffet.top ) / ( video.offsetHeight  / 1.5 ) ) );
                 video.style.opacity = videoValue;
                 h1.style.opacity = videoValue;
                 h1p.style.opacity = videoValue;
@@ -74,12 +76,13 @@
                 h2.style.opacity = h2Value;
                 h2p.style.opacity = h2Value;
 
-                let h3Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h3Offset.top ) / h3p.offsetHeight * textFadeOutSpeed ) );
+                let h3Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h3Offset.top ) / (h3p.offsetHeight + h3img.offsetHeight )* textFadeOutSpeed ) );
                 if ( h2Value > 0.1 ){
                     h3Value = 1.0 - h2Value;
                 }
                 h3.style.opacity = h3Value;
                 h3p.style.opacity = h3Value;
+                h3img.style.opacity = h3Value;
 
                 let h4Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h4Offset.top ) / h4p.offsetHeight * textFadeOutSpeed ) );
                 if ( h3Value > 0.1 ){
