@@ -45,6 +45,14 @@ section h3
     color: #fff;
     font-size: 3em;
 }
+section img
+{
+    position: relative;
+    width: 100%;
+    min-height: 20vh;
+    justify-content: center;
+    align-items: center;
+}
 section h4
 {
     position: relative;
