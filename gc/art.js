@@ -187,8 +187,13 @@ const hashToTraits = hash => {
   {
     maxPointsPerLayer = 5;
   }
+  var maxLayer = 5;
+  if ( isMobile )
+  {
+    maxLayer = 2;
+  }
 
-  const layers = R.ri( 2, 4 );
+  const layers = Math.min(maxLayer,R.ri( 2, 4 ));
   const post  = 10;
   const seed = R.ri(0, 10000 );
   const seedC = R.ri(0, 10000 );
