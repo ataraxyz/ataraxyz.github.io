@@ -8,6 +8,7 @@
 // functions
 //-----------------------------------------------------------------------------
 
+
 const u64  = n => BigInt.asUintN(64, n);
 const rotl = (x, k) => u64((x << k) | (x >> (64n - k)));
 
@@ -181,10 +182,12 @@ const hashToTraits = hash => {
 
   // TODO make the float number actual floats to avoid type conversions in shader later
   const layers = R.ri( 2, 4 );
+  const layersMobile = 2;
   const post  = 10;
   const seed = R.ri(0, 10000 );
   const seedC = R.ri(0, 10000 );
   const pointsl = R.ri(0, (5-layers) * 40 );
+  const pointslMobile = 5;
   const shape = R.ri(-1,3 );
   const speed = R.ri( 50, 200 );
   const size = R.ri( 50, 200 );
@@ -194,18 +197,37 @@ const hashToTraits = hash => {
   // const level = selectRandomDist(levelDist, R.r);
   const cmode = R.ri( 0, 14 );
 
-  return {
-    layers,
-    post,
-    seed,
-    seedC,
-    pointsl,
-    shape,
-    speed,
-    size,
-    level,
-    cmode
-  };
+  if ( navigator.userAgentData.mobile )
+  {
+    return {
+      layersMobile,
+      post,
+      seed,
+      seedC,
+      pointslMobile,
+      shape,
+      speed,
+      size,
+      level,
+      cmode
+    };
+  }
+  else
+  {
+    return {
+      layers,
+      post,
+      seed,
+      seedC,
+      pointsl,
+      shape,
+      speed,
+      size,
+      level,
+      cmode
+    };
+  
+  }
 
 };
 
@@ -229,8 +251,8 @@ const rehashCollection = (tokenData) => {
   
    
   const scale  = window.devicePixelRatio;
-  const width  = window.innerWidth / 8;
-  const height = window.innerHeight/ 8;
+  const width  = window.innerWidth;
+  const height = window.innerHeight;
   //const body   = document.querySelector('body');
   const body   = document.querySelector('body > section:nth-child(3) > div > div');
   
@@ -786,8 +808,8 @@ const fragmentShader = `
   `;
 
   const scale  = window.devicePixelRatio;
-  const width  = window.innerWidth * scale / 8;
-  const height = window.innerHeight * scale / 8;
+  const width  = window.innerWidth * scale;
+  const height = window.innerHeight * scale;
   
   var iChannel0Target = new THREE.WebGLRenderTarget(  width, height, {  wrapS: THREE.RepeatWrapping, 
                                                                                                 wrapT: THREE.RepeatWrapping, 
