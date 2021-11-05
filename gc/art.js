@@ -179,8 +179,7 @@ const hashToTraits = hash => {
   // setup random fns
   const R = mkRandom(hash);
 
-  const isMobile = true//navigator.userAgentData.mobile;
-  // TODO make the float number actual floats to avoid type conversions in shader later
+  const isMobile = window.matchMedia("only screen and (max-width: 760px)").matches;
   
 
   var maxPointsPerLayer = 200;
@@ -235,8 +234,8 @@ const hashToTraits = hash => {
   
    
   const scale  = window.devicePixelRatio;
-  const width  = window.innerWidth / 4;
-  const height = window.innerHeight / 4;
+  const width  = window.innerWidth;
+  const height = window.innerHeight;
   //const body   = document.querySelector('body');
   const body   = document.querySelector('body > section:nth-child(3) > div > div');
   
@@ -792,8 +791,8 @@ const fragmentShader = `
   `;
 
   const scale  = window.devicePixelRatio;
-  const width  = window.innerWidth * scale / 4;
-  const height = window.innerHeight * scale / 4;
+  const width  = window.innerWidth * scale;
+  const height = window.innerHeight * scale;
   
   var iChannel0Target = new THREE.WebGLRenderTarget(  width, height, {  wrapS: THREE.RepeatWrapping, 
                                                                                                 wrapT: THREE.RepeatWrapping, 
