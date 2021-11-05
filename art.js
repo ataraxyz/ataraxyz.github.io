@@ -229,8 +229,8 @@ const rehashCollection = (tokenData) => {
   
    
   const scale  = window.devicePixelRatio;
-  const width  = window.innerWidth / 3;
-  const height = window.innerHeight/ 3;
+  const width  = window.innerWidth / 8;
+  const height = window.innerHeight/ 8;
   //const body   = document.querySelector('body');
   const body   = document.querySelector('body > section:nth-child(3) > div > div');
   
