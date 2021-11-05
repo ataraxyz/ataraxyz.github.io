@@ -179,11 +179,13 @@ const hashToTraits = hash => {
 
 
   // TODO make the float number actual floats to avoid type conversions in shader later
-  const layers = R.ri( 2, 4 );
+  //const layers = R.ri( 2, 4 );
+  const layers = 2;
   const post  = 10;
   const seed = R.ri(0, 10000 );
   const seedC = R.ri(0, 10000 );
-  const pointsl = R.ri(0, (5-layers) * 20 );
+  // const pointsl = R.ri(0, (5-layers) * 20 );
+  const pointsl = 20;
   const shape = R.ri(-1,3 );
   const speed = R.ri( 50, 200 );
   const size = R.ri( 50, 200 );
