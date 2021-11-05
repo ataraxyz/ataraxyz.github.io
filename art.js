@@ -235,8 +235,8 @@ const hashToTraits = hash => {
   
    
   const scale  = window.devicePixelRatio;
-  const width  = window.innerWidth;
-  const height = window.innerHeight;
+  const width  = window.innerWidth / 4;
+  const height = window.innerHeight / 4;
   //const body   = document.querySelector('body');
   const body   = document.querySelector('body > section:nth-child(3) > div > div');
   
@@ -792,8 +792,8 @@ const fragmentShader = `
   `;
 
   const scale  = window.devicePixelRatio;
-  const width  = window.innerWidth * scale;
-  const height = window.innerHeight * scale;
+  const width  = window.innerWidth * scale / 4;
+  const height = window.innerHeight * scale / 4;
   
   var iChannel0Target = new THREE.WebGLRenderTarget(  width, height, {  wrapS: THREE.RepeatWrapping, 
                                                                                                 wrapT: THREE.RepeatWrapping, 
