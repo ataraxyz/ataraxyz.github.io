@@ -241,8 +241,9 @@ const hashToTraits = hash => {
   const scale  = window.devicePixelRatio;
   const width  = window.innerWidth;
   const height = window.innerHeight;
-  //const body   = document.querySelector('body');
-  const body   = document.querySelector('body > section:nth-child(3) > div > div');
+  // const body   = document.querySelector('body');
+  //const body   = document.querySelector('body > section:nth-child(3) > div > div');
+  const body = document.querySelector('body > section:nth-child(1)');
   
   // setup render to match window size
   const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true  });
