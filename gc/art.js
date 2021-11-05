@@ -197,43 +197,21 @@ const hashToTraits = hash => {
   // const level = selectRandomDist(levelDist, R.r);
   const cmode = R.ri( 0, 14 );
 
-  if ( navigator.userAgentData.mobile )
-  {
-    return {
-      layersMobile,
-      post,
-      seed,
-      seedC,
-      pointslMobile,
-      shape,
-      speed,
-      size,
-      level,
-      cmode
-    };
-  }
-  else
-  {
-    return {
-      layers,
-      post,
-      seed,
-      seedC,
-      pointsl,
-      shape,
-      speed,
-      size,
-      level,
-      cmode
-    };
-  
-  }
+  return {
+    layersMobile,
+    post,
+    seed,
+    seedC,
+    pointslMobile,
+    shape,
+    speed,
+    size,
+    level,
+    cmode
+  };
 
 };
 
-const rehashCollection = (tokenData) => {
-  
-}
 
 // vim: ts=2:sw=2
 //-----------------------------------------------------------------------------
