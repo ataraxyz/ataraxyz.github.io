@@ -179,7 +179,7 @@ const hashToTraits = hash => {
   // setup random fns
   const R = mkRandom(hash);
 
-  const isMobile = navigator.userAgentData.mobile;
+  const isMobile = true//navigator.userAgentData.mobile;
   // TODO make the float number actual floats to avoid type conversions in shader later
   
 
