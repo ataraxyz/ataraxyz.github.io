@@ -11,7 +11,7 @@
 body
 {
     background: #000;
-    height: 500px;
+    height: 256px;
 }
 mark 
 {
@@ -48,6 +48,14 @@ section h2
 section h3
 {
     position: relative;
+    top: 0;
+    right: 100;
+    color: #fff;
+    font-size: 3em;
+}
+section h4
+{
+    position: relative;
     color: #fff;
     font-size: 3em;
 }
@@ -58,7 +66,13 @@ section img
     margin-right: auto;
     width: 50%;
 }
-section h4
+section h5
+{
+    position: relative;
+    color: #fff;
+    font-size: 3em;
+}
+section h5
 {
     position: relative;
     color: #fff;
