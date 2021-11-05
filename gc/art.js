@@ -180,6 +180,7 @@ const hashToTraits = hash => {
   const R = mkRandom(hash);
 
   const isMobile = window.matchMedia("only screen and (max-width: 760px)").matches;
+  // const isMobile = true
   
 
   var maxPointsPerLayer = 200;
@@ -190,7 +191,7 @@ const hashToTraits = hash => {
   var maxLayer = 5;
   if ( isMobile )
   {
-    maxLayer = 2;
+    maxLayer = 1;
   }
 
   const layers = Math.min(maxLayer,R.ri( 2, 4 ));
@@ -243,6 +244,7 @@ const hashToTraits = hash => {
   const height = window.innerHeight;
   // const body   = document.querySelector('body');
   const body   = document.querySelector('body > section:nth-child(3) > div > div');
+
   // const body = document.querySelector('body > section:nth-child(1)');
   
   // setup render to match window size
