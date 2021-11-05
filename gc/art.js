@@ -179,15 +179,21 @@ const hashToTraits = hash => {
   // setup random fns
   const R = mkRandom(hash);
 
-
+  const isMobile = navigator.userAgentData.mobile;
   // TODO make the float number actual floats to avoid type conversions in shader later
+  
+
+  var maxPointsPerLayer = 200;
+  if ( isMobile )
+  {
+    maxPointsPerLayer = 5;
+  }
+
   const layers = R.ri( 2, 4 );
-  const layersMobile = 2;
   const post  = 10;
   const seed = R.ri(0, 10000 );
   const seedC = R.ri(0, 10000 );
-  const pointsl = R.ri(0, (5-layers) * 40 );
-  const pointslMobile = 5;
+  const pointsl = Math.min( maxPointsPerLayer, R.ri(0, (5-layers) * 40 ));
   const shape = R.ri(-1,3 );
   const speed = R.ri( 50, 200 );
   const size = R.ri( 50, 200 );
@@ -198,11 +204,11 @@ const hashToTraits = hash => {
   const cmode = R.ri( 0, 14 );
 
   return {
-    layersMobile,
+    layers,
     post,
     seed,
     seedC,
-    pointslMobile,
+    pointsl,
     shape,
     speed,
     size,
