@@ -20,11 +20,13 @@
     <body>
         <section>
             <div class="banner">
-                <video playsinline autoplay loop muted loop>
+                <video playsinline autoplay muted loop id="bannerVideo">
                     <source src="atara_gc_bg_fast.webm" type="video/webm">
                     <source src="atara_gc_bg_fast.mp4" type="video/mp4">
-
                 </video>
+                <script>
+                    document.getElementById('bannerVideo').play();
+                </script>
                 <div class="content">
                     <h1>SERENE ANIMO<br>a <a href="https://geneticchain.io/"><mark>GENETICCHAIN</mark></a> project<br>by ATARA</h1>
                     <p><i>Seren Animo</i> is a series of collections that ATARA is creating on the GENETICCHAIN.io platform. Here is a description and roadmap for the upcoming NFT drops.</p>
@@ -122,13 +124,13 @@
                 tokenState.fadeout = (1.0-h3Value) * 100;
                 
 
-                // let h4Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h4Offset.top ) / ( h4.offsetHeight + h4p.offsetHeight + h4img.offsetHeight )* textFadeOutSpeed ) );
-                // if ( h3Value > 0.1 ){
-                //     h4Value = 1.0 - h3Value;
-                // }
-                // h4.style.opacity = h4Value;
-                // h4p.style.opacity = h4Value;
-                // h4img.style.opacity = h4Value;
+                let h4Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h4Offset.top ) / ( h4.offsetHeight + h4p.offsetHeight + h4img.offsetHeight )* textFadeOutSpeed ) );
+                if ( h3Value > 0.1 ){
+                    h4Value = 1.0 - h3Value;
+                }
+                h4.style.opacity = h4Value;
+                h4p.style.opacity = h4Value;
+                h4img.style.opacity = h4Value;
 
                 // let h5Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h5Offset.top ) / (h5.offsetHeight + h5p.offsetHeight) * textFadeOutSpeed ) );
                 // if ( h4Value > 0.1 ){
