@@ -25,17 +25,20 @@ const tokenData = {
 };
 
 //-----------------------------------------------------------------------------
-
 const tokenState = {
-  layers: 2,
-  post: 0,
-  seed: 666,
-  seedC: 10666,
-  pointsl: 20,
   sdfblend: 50,
-  shape:0,
-  speed:100,
-  size:100,
-  level:5,
-  cmode:0,
+  fadeout: 0
 };
+//const tokenState = {
+//  layers: 2,
+//  post: 0,
+//  seed: 666,
+//  seedC: 10666,
+//  pointsl: 20,
+//  sdfblend: 50,
+//  shape:0,
+//  speed:100,
+//  size:100,
+//  level:5,
+//  cmode:0,
+//};

@@ -3,6 +3,7 @@
 // traits.js - convert hash to set of traits
 //-----------------------------------------------------------------------------
 
+
 //-----------------------------------------------------------------------------
 // functions
 //-----------------------------------------------------------------------------
@@ -208,20 +209,10 @@ const hashToTraits = hash => {
 
 };
 
+const rehashCollection = (tokenData) => {
+  
+}
 
-
-
-// <input id="layers" type="range" min="1" max="6" value="2" step="1"></input>
-// <input id="post" type="range" min="0" max="10" value="0" step="1"></input>
-// <input id="seed" type="range" min="1" max="10000" value="666" step="1"></input>
-// <input id="seedC" type="range" min="10000" max="20000" value="10666" step="1"></input>
-// <input id="pointsl" type="range" min="10" max="200" value="20" step="1"></input>
-// <input id="sdfblend" type="range" min="0" max="100" value="50" step="1"></input>
-// <input id="shape" type="range" min="-1" max="3" value="0" step="1"></input>
-// <input id="speed" type="range" min="50" max="200" value="100" step="1"></input>
-// <input id="size" type="range" min="50" max="200" value="100" step="1"></input>
-// <input id="level" type="range" min="2" max="6" value="5" step="1"></input>
-// <input id="cmode" type="range" min="0" max="14" value="0" step="1"></input>
 // vim: ts=2:sw=2
 //-----------------------------------------------------------------------------
 // art.js - art generation
@@ -312,6 +303,7 @@ const iChannel0FragmentShader = `
   uniform int iInt8;  // global size
   uniform int iInt9;  // hilbert level
   uniform int iInt10; // color mode
+  uniform int iInt11; // fadeout
 
 
   //const int level = iInt9; // numpoints == (2^level)^2
@@ -713,6 +705,7 @@ const iChannel0FragmentShader = `
   uniform int iInt8;
   uniform int iInt9;
   uniform int iInt10;
+  uniform int iInt11; // fadeout 
 
   float hash12(vec2 p)
   {
@@ -745,6 +738,9 @@ const iChannel0FragmentShader = `
     vec4 chroma = vec4( tx.r, ttx.g, tx.b, tx.a) * vignette;
     
     fragColor = mix(origCol, chroma, float(iInt1) / 10. );
+
+    float globalfade = float(iInt11) / 100.0;
+    fragColor.rgb = mix(fragColor.rgb, vec3(0.), globalfade );
   }
   
   void main() {
@@ -831,7 +827,8 @@ const fragmentShader = `
     iInt7: { value : speed },
     iInt8: { value : size },
     iInt9: { value : level },
-    iInt10: { value : cmode }
+    iInt10: { value : cmode },
+    iInt11: { value: state.fadeout }
   };
 
   const uniformsBlit = {
@@ -909,6 +906,8 @@ const fragmentShader = `
 
     };
 
+    
+
     // const listener = new THREE.AudioListener();
     // camera.add( listener );
 
@@ -930,6 +929,8 @@ const fragmentShader = `
     // oscillator1.connect( sound.context.destination );
     // oscillator2.connect( sound.context.destination );
     // oscillator3.connect( sound.context.destination );
+
+    refresh();
   };
 
   // render scene
@@ -965,7 +966,7 @@ const fragmentShader = `
 
     var currentdate = new Date();
 
-  
+
     // console.log( "Width: " + canvas.width + " Height " + canvas.height );
     uniformsBlit.iResolution.value.set(canvas.width, canvas.height, 1);
     uniforms.iResolution.value.set(canvas.width, canvas.height, 1);
@@ -973,17 +974,18 @@ const fragmentShader = `
     var secs = currentdate.getHours() * 3600.0 + currentdate.getMinutes() * 60.0 + ( currentdate.getMilliseconds() / 1000.0 );
     uniforms.iDate.value.set( currentdate.getYear(), currentdate.getMonth(), currentdate.getDay(), secs );
 
-    // uniforms.iInt0.value = state.layers;
-    // uniforms.iInt1.value = state.post;
-    // uniforms.iInt2.value = state.seed;
-    // uniforms.iInt3.value = state.pointsl;
+    uniforms.iInt0.value = state.three.uniforms.layers;
+    uniforms.iInt1.value = state.three.uniforms.post;
+    uniforms.iInt2.value = state.three.uniforms.seed;
+    uniforms.iInt3.value = state.three.uniforms.pointsl;
     uniforms.iInt4.value = state.sdfblend;
-    // uniforms.iInt5.value = state.shape;
-    // uniforms.iInt6.value = state.seedC;
-    // uniforms.iInt7.value = state.speed;
-    // uniforms.iInt8.value = state.size;
-    // uniforms.iInt9.value = state.level;
-    // uniforms.iInt10.value = state.cmode;
+    uniforms.iInt5.value = state.three.uniforms.shape;
+    uniforms.iInt6.value = state.three.uniforms.seedC;
+    uniforms.iInt7.value = state.three.uniforms.speed;
+    uniforms.iInt8.value = state.three.uniforms.size;
+    uniforms.iInt9.value = state.three.uniforms.level;
+    uniforms.iInt10.value = state.three.uniforms.cmode;
+    uniforms.iInt11.value = state.fadeout;
   };
 
   // render/update loop
@@ -1017,7 +1019,32 @@ const fragmentShader = `
 };
 
 //-----------------------------------------------------------------------------
-
+const refresh = () => {
+  // update hash/state from token and rerun
+  tokenData.hash    = randomHash(64);
+  const {
+    layers,
+    post,
+    seed,
+    seedC,
+    pointsl,
+    shape,
+    speed,
+    size,
+    level,
+    cmode
+  } = hashToTraits(tokenData.hash);
+  tokenState.three.uniforms.layers = layers;
+  tokenState.three.uniforms.post = post;
+  tokenState.three.uniforms.seed = seed;
+  tokenState.three.uniforms.seedC = seedC;
+  tokenState.three.uniforms.pointsl = pointsl;
+  tokenState.three.uniforms.shape = shape;
+  tokenState.three.uniforms.speed = speed;
+  tokenState.three.uniforms.size = size;
+  tokenState.three.uniforms.level = level;
+  tokenState.three.uniforms.cmode = cmode;
+}
 /**
  * Main entry function.
  */

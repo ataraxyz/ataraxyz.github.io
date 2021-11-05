@@ -38,8 +38,10 @@
         </section>
         <section>
             <div class="content">
-                <h3>REAL TIME COLLECTION PREVIEW:</h3>
-                <div class="collection"></div>
+                <h3>live PREVIEW</h3>
+                <div class="collection">
+                    <input type = "button" onclick = "refresh()" value = "RANDOMIZE">   
+                </div>
             </div>
         </section>
         <section>
@@ -75,6 +77,7 @@
 
             let h3 = document.querySelector( 'h3' );
             let h3c = document.querySelector( 'body > section:nth-child(2) > div > p');
+            let h3b = document.querySelector( 'body > section:nth-child(3) > div > div > input[type=button]');
 
             let h4 = document.querySelector( 'h4' );
             let h4p = document.querySelector( 'body > section:nth-child(4) > div > p');
@@ -107,9 +110,14 @@
                 h2.style.opacity = h2Value;
                 h2p.style.opacity = h2Value;
 
-                let h3Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h3Offset.top ) / h3p.offsetHeight * textFadeOutSpeed ) );
+                let h3Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h3Offset.top ) / h3c.offsetHeight / 2.0 ) );
+                if ( h2Value > 0.1 ){
+                    h3Value = 1.0 - h2Value;
+                }
                 h3.style.opacity = h3Value;
-                h3c.style.opacity = h2Value;
+                h3b.style.opacity = h3Value;
+                tokenState.fadeout = (1.0-h3Value) * 100;
+                
 
                 let h4Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h4Offset.top ) / (h4p.offsetHeight + h4img.offsetHeight )* textFadeOutSpeed ) );
                 if ( h3Value > 0.1 ){
