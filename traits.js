@@ -190,7 +190,8 @@ const hashToTraits = hash => {
   const speed = R.ri( 50, 200 );
   const size = R.ri( 50, 200 );
 
-  const level = R.ri( 2, 5 );
+  //const level = R.ri( 2, 5 );
+  const level = 4;
   // hack so layers are bisased to higher orders
   // const level = selectRandomDist(levelDist, R.r);
   const cmode = R.ri( 0, 14 );
