@@ -787,7 +787,9 @@ const fragmentShader = `
   void mainImage( out vec4 fragColor, in vec2 fragCoord )
   {
     vec2 uv = fragCoord / iResolution.xy;
-    fragColor = texture(overlayTx, uv);
+    float ar = iResolution.y / iResolution.x;
+    vec4 overlay = texture( overlayTx, uv * vec2( 1., ar )  );
+    fragColor.rgb = ( overlay.rgb * overlay.a ) + ( texture(iChannel1, uv).rgb * (1. - overlay.a) );
   }
 
 
@@ -826,6 +828,7 @@ const fragmentShader = `
                                                                                                 stencilBuffer: false });
 
   const overlayTexture = new THREE.TextureLoader().load( 'overlayText.png' );
+
 
   const uniforms = {
     iTime: { value: 0 },
