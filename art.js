@@ -770,6 +770,7 @@ const fragmentShader = `
   uniform vec4 iDate;
   uniform sampler2D iChannel0;
   uniform sampler2D iChannel1;
+  uniform sampler2D overlayTx;
 
   uniform int iInt0;
   uniform int iInt1;
@@ -786,7 +787,7 @@ const fragmentShader = `
   void mainImage( out vec4 fragColor, in vec2 fragCoord )
   {
     vec2 uv = fragCoord / iResolution.xy;
-    fragColor = texture(iChannel1, uv);
+    fragColor = texture(overlayTx, uv);
   }
 
 
@@ -824,6 +825,8 @@ const fragmentShader = `
                                                                                                 type: THREE.FloatType,
                                                                                                 stencilBuffer: false });
 
+  const overlayTexture = new THREE.TextureLoader().load( 'overlayText.png' );
+
   const uniforms = {
     iTime: { value: 0 },
     iDate: { value: new THREE.Vector4() },
@@ -841,7 +844,8 @@ const fragmentShader = `
     iInt8: { value : size },
     iInt9: { value : level },
     iInt10: { value : cmode },
-    iInt11: { value: state.fadeout }
+    iInt11: { value: state.fadeout },
+    overlayTx: { type: 't', value: 0, texture: overlayTexture }
   };
 
   const uniformsBlit = {
@@ -999,6 +1003,7 @@ const fragmentShader = `
     uniforms.iInt9.value = state.three.uniforms.level;
     uniforms.iInt10.value = state.three.uniforms.cmode;
     uniforms.iInt11.value = state.fadeout;
+    uniforms.overlayTx.value = overlayTexture;
   };
 
   // render/update loop
