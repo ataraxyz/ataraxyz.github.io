@@ -243,7 +243,8 @@ const hashToTraits = hash => {
   const width  = window.innerWidth;
   const height = window.innerHeight;
   // const body   = document.querySelector('body');
-  const body   = document.querySelector('body > section:nth-child(3) > div > div');
+  //const body   = document.querySelector('body > section:nth-child(3) > div > div');
+  const body = document.querySelector('body > section:nth-child(1) > div > p');
 
   // const body = document.querySelector('body > section:nth-child(1)');
   
