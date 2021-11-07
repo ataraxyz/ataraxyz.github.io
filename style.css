@@ -67,9 +67,7 @@ section
 } */
 section div p.buttondesc
 {
-    position: relative;
-    top: 20px;
-    left: 50px;
+    padding: 30px;
 }
 @media screen and (max-width:320px) 
 {
@@ -77,8 +75,6 @@ section div p.buttondesc
     {
         background-color: #ffffff; 
         position: relative;
-        top: 20px;
-        left: 50px
         border: 1px outset black;
         color: rgb(0, 0, 0);
         padding: 10px;
@@ -139,8 +135,6 @@ section div p.buttondesc
     {
         background-color: #ffffff; 
         position: relative;
-        top: 20px;
-        left: 50px
         border: 1px outset black;
         color: rgb(0, 0, 0);
         padding: 10px;
@@ -200,8 +194,6 @@ section div p.buttondesc
     {
         background-color: #ffffff; 
         position: relative;
-        top: 20px;
-        left: 50px;
         border: 1px outset black;
         color: rgb(0, 0, 0);
         padding: 10px;
