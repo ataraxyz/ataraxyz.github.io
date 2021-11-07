@@ -8,7 +8,6 @@
 // functions
 //-----------------------------------------------------------------------------
 
-
 const u64  = n => BigInt.asUintN(64, n);
 const rotl = (x, k) => u64((x << k) | (x >> (64n - k)));
 
@@ -173,9 +172,7 @@ const randomColorHex = r => {
 //-----------------------------------------------------------------------------
 // main
 //-----------------------------------------------------------------------------
-
 const hashToTraits = hash => {
-
   // setup random fns
   const R = mkRandom(hash);
 
@@ -188,17 +185,17 @@ const hashToTraits = hash => {
   {
     maxPointsPerLayer = 5;
   }
-  var maxLayer = 5;
+  var maxLayer = 4;
   if ( isMobile )
   {
     maxLayer = 1;
   }
 
-  const layers = Math.min(maxLayer,R.ri( 2, 4 ));
+  const layers = Math.min(maxLayer,R.ri( 2, 3 ));
   const post  = 10;
   const seed = R.ri(0, 10000 );
   const seedC = R.ri(0, 10000 );
-  const pointsl = Math.min( maxPointsPerLayer, R.ri(0, (5-layers) * 40 ));
+  const pointsl = Math.min( maxPointsPerLayer, R.ri(0, (5-layers) * 20 ));
   const shape = R.ri(-1,3 );
   const speed = R.ri( 50, 200 );
   const size = R.ri( 50, 200 );
