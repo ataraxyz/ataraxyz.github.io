@@ -18,7 +18,7 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
-        <section>
+        <section class="section0">
             <!-- <div class="banner">
                 <div class="content">
                     <h1>SERENE ANIMO<br>a <a href="https://geneticchain.io/"><mark>GENETICCHAIN</mark></a> project<br>by ATARA</h1>
@@ -29,35 +29,28 @@
                 <p>
 
                 </p>
-                <input type = "button" onclick = "refresh()" value = "REGENERATE">   
+                <input type = "button" onclick = "refresh()" value = "RANDOMIZE">   
                 <p class="buttondesc">
-                    a new random artpiece. Performance throttled for maximum compatibility.
+                    <mark>CLICK</mark> for a new random example artpiece from the collection.
                 </p>
             </div>
         </section>
-        <section class="SE_I">
+        <section class="section1">
             <div class="content">
                 
                 <h2>SERENE ANIMO I - Trip in space-filling curves.</h2>
                 <p>The first collection in the series dives deep into the ideas of space and its ambivalence for human existence. Atara and Geneticchain are bringing a unique collection to life that will feature bold shapes and color and subtle differences between art pieces, inspiring collectors to ponder the deeper meanings of being human. Creating a trance-like state by looking and getting lost in the art allows enthusiasts and casual cosmonauts of more profound levels of the human experience to assemble. It is forming a community and getting to the childlike state of wonder needed to grasp the concepts of the human condition in the multiverse.<br>The basis for the collection is the work of German mathematician David Hilbert. His discovery of his type of space-filling curves in 1891 inspired Atara to explore its unique, fractal properties. With a Hausdorf dimension of precisely two, this piecewise linear curve fills all of the space in any dimension if subdivided long enough. Curves like this reflect the eternal search for truth in the universe. Every spectrum, the one-dimensional range of sound, the two-dimensional canvas of a picture, and the three-dimensional extents of a sculpture are all taken by the one formula, the one curve, to fill them all with life.<br>Anchored on the Hilbert curve as a concept, Atara defines different distance fields to represent the curves best in this medium of procedural art. From there, a hallucinatory play on colors connects the human psyche and the mathematical concepts, creating a trip solely induced by the idea of space itself.</p>
             </div>
         </section>
-        <section class="preview">
-            <!-- <div class="content">
-                <h3>live PREVIEW</h3>
-                <div class="collection">
-                    <input type = "button" onclick = "refresh()" value = "RANDOMIZE">   
-                </div>
-            </div> -->
-        </section>
-        <section>
+        
+        <section class="section2">
             <div class="content">
                 <h4>SERENE ANIMO II - Healing sacred geometry.</h4>
                 <p>The follow-up project will use similar ideas and techniques to elaborate on the concepts of sacred geometry. From a single curve, Atara expands to more complex shapes slowly. Exploring the connection that people had over centuries with those shapes and their meaning, spiritually and mentally, will be the heart of the second collection. Multiple layers of complexity are generated for the collectors to enjoy and ponder over. They are maybe adding even new shapes to the ever-growing atlas of sacred geometry.<br>Watch out for a preview soon!</p>
                 <img src="SACRED_low.png" />
             </div>
         </section>
-        <section>
+        <section class="section3">
             <div class="content">
                 <h5>SERENE ANIMO - project III, IV, and V.</h5>
                 <p>Walking the path of ever more complex shapes and dimensions, Atara will create three more collections for Geneticchain.io. The following collections will feature three-dimensional signed distance fields, crystal growth, and fractal geometry. They are building a community of lovers of procedural art, science, psychedelic trips, and the constant search for meaning in the multiverse.<br>Special drops for collectors of all previous collections as well as more interactive intelligent contracts are in development. More details are coming soon!<br><br><br><br></p>
@@ -74,41 +67,33 @@
             </div>
         </section>
         <script type="text/javascript">
-            // let video = document.querySelector( 'video' );
-            // let h1 = document.querySelector( 'h1' );
-            // let h1p = document.querySelector("body > section:nth-child(1) > div > div > p");
-
-            // let h2 = document.querySelector( 'h2' );
-            // let h2p = document.querySelector( 'body > section:nth-child(2) > div > p');
-
-            // let h3 = document.querySelector( 'h3' );
-            // let h3c = document.querySelector( 'body > section:nth-child(2) > div > p');
+            let s0 = document.querySelector( 'body > section.section0');
+            let s0Botton = document.querySelector( 'body > section.section0 > div > input[type=button]');
+            let s0Desc = document.querySelector( 'body > section.section0 > div > p.buttondesc');
             
-            // let h3b = document.querySelector( 'body > section:nth-child(3) > div > div > input[type=button]');
-
-            // let h4 = document.querySelector( 'h4' );
-            // let h4p = document.querySelector( 'body > section:nth-child(4) > div > p');
-            // let h4img = document.querySelector( 'body > section:nth-child(4) > div > img' );
-
-            // let h5 = document.querySelector( 'h5' );
-            // let h5p = document.querySelector( 'body > section:nth-child(5) > div > p:nth-child(2)');
+            let s1 = document.querySelector( 'body > section.section1');
+            let s2 = document.querySelector( 'body > section.section2');
+            let s3 = document.querySelector( 'body > section.section3');
             
             // let textFadeOutSpeed = 1.;
 
-            // function offset(el) {
-            //     var rect = el.getBoundingClientRect(),
-            //     scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
-            //     scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            //     return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
-            // }
-            // window.addEventListener( 'scroll', function(){
-            //     videoOffet = offset(video);
+            function offset(el) {
+                var rect = el.getBoundingClientRect(),
+                scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+                scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
+            }
+            window.addEventListener( 'scroll', function(){
+                s0Offet = offset(s0);
             //     h2Offset = offset( h2 );
             //     h3Offset = offset( h3 );
             //     h4Offset = offset( h4 );
             //     h5Offset = offset( h5 );
 
-            //     let videoValue =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - videoOffet.top ) / ( video.offsetHeight  / 1.5 ) ) );
+                let s1Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s0Offet.top ) / ( s0.offsetHeight  / 1.0 ) ) );
+                tokenState.fadeout = (1.0-s1Value) * 100;
+                s0Botton.style.opacity = s1Value;
+                s0Desc.style.opacity = s1Value;
             //     video.style.opacity = videoValue;
             //     h1.style.opacity = videoValue;
             //     h1p.style.opacity = videoValue;
@@ -140,11 +125,11 @@
                 // }
                 // h5.style.opacity = h5Value;
                 // h5p.style.opacity = h5Value;
-            // });
+            });
             
-            // window.onbeforeunload = function () {
-            //     window.scrollTop(0);
-            // };
+            window.onbeforeunload = function () {
+                window.scrollTop(0);
+            };
         </script>
     </body>
 </html>
