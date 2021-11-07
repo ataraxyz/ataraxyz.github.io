@@ -195,7 +195,7 @@ const hashToTraits = hash => {
   const post  = 10;
   const seed = R.ri(0, 10000 );
   const seedC = R.ri(0, 10000 );
-  const pointsl = Math.min( maxPointsPerLayer, R.ri(0, (5-layers) * 20 ));
+  const pointsl = Math.min( maxPointsPerLayer, R.ri(0, (4-layers) * 10 ));
   const shape = R.ri(-1,3 );
   const speed = R.ri( 50, 200 );
   const size = R.ri( 50, 200 );
