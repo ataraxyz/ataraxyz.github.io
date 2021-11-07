@@ -125,7 +125,7 @@ section div p.buttondesc
         text-align: justify;
         position: relative;
         color: #fff;
-        font-size: 4vw;
+        font-size: 2vw;
     }
 
 }
@@ -185,7 +185,7 @@ section div p.buttondesc
         text-align: justify;
         position: relative;
         color: #fff;
-        font-size: 4vw;
+        font-size: 2vw;
     }
 }
 @media screen and (min-width: 481px) 
@@ -245,7 +245,7 @@ section div p.buttondesc
         text-align: justify;
         position: relative;
         color: #fff;
-        font-size: 1.2em;
+        font-size: 1.0em;
     }
 
 }
