@@ -43,18 +43,17 @@ section video
     pointer-events: none;
 }
 
-
-
-.button 
+input[type="button"]
 {
     background-color: #ffffff; 
+    position: relative;
     border: none;
-    color: rgb(0, 255, 0);
-    padding: 0px;
+    color: rgb(0, 0, 0);
+    padding: 10px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 4vw;
+    font-size: 1vw;
 }
 .banner
 {
