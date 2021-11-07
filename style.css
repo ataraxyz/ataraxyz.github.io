@@ -43,18 +43,7 @@ section video
     pointer-events: none;
 }
 
-input[type="button"]
-{
-    background-color: #ffffff; 
-    position: relative;
-    border: none;
-    color: rgb(0, 0, 0);
-    padding: 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 1vw;
-}
+
 .banner
 {
     width: 100%;
@@ -77,6 +66,18 @@ input[type="button"]
 
 @media screen and (max-width:320px) 
 {
+    input[type="button"]
+    {
+        background-color: #ffffff; 
+        position: relative;
+        border: none;
+        color: rgb(0, 0, 0);
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 4.5em;
+    }
     section h2
     {
         position: relative;
@@ -150,6 +151,18 @@ input[type="button"]
 }
 @media screen and (min-width: 321px) and (max-width: 480px) 
 {
+    input[type="button"]
+    {
+        background-color: #ffffff; 
+        position: relative;
+        border: none;
+        color: rgb(0, 0, 0);
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 4.5em;
+    }
     section h2
     {
         position: relative;
@@ -224,6 +237,18 @@ input[type="button"]
 }
 @media screen and (min-width: 481px) 
 {
+    input[type="button"]
+    {
+        background-color: #ffffff; 
+        position: relative;
+        border: none;
+        color: rgb(0, 0, 0);
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1.5em;
+    }
     section h2
     {
         position: relative;
