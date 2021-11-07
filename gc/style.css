@@ -15,6 +15,7 @@ body
 {
     background: #000;
     height: 256px;
+    
 }
 mark 
 {
@@ -30,9 +31,10 @@ section
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    padding: 50px;
+    padding: 30px;
 }
-section video
+
+/* section video
 {
     position: absolute;
     top: 0;
@@ -41,10 +43,10 @@ section video
     height: 100%;
     object-fit: cover;
     pointer-events: none;
-}
+} */
 
 
-.banner
+/* .banner
 {
     width: 100%;
     height: 100vh;
@@ -62,15 +64,22 @@ section video
     width: 100%;
     height: 100%;
     pointer-events: none;
+} */
+section div p.buttondesc
+{
+    position: relative;
+    top: 20px;
+    left: 50px;
 }
-
 @media screen and (max-width:320px) 
 {
     input[type="button"]
     {
         background-color: #ffffff; 
         position: relative;
-        border: none;
+        top: 20px;
+        left: 50px
+        border: 1px outset black;
         color: rgb(0, 0, 0);
         padding: 10px;
         text-align: center;
@@ -122,32 +131,7 @@ section video
         color: #fff;
         font-size: 4vw;
     }
-    .banner .content
-    {
-        position: relative;
-        z-index: 1;
-        max-width: 1080px;
-        margin: 0 auto;
-        text-align: center;
-        text-shadow: 2px 2px #000;
-    }
 
-    .banner .content h1
-    {
-        margin : 0;
-        padding: 0;
-        font-size: 10.0vw;
-        color : #fff;
-        text-shadow: 0.5vw 0.5vw #000;
-
-
-    }
-
-    .banner .content p
-    {
-        font-size: 3.5vw;
-        color : #fff;
-    } 
 }
 @media screen and (min-width: 321px) and (max-width: 480px) 
 {
@@ -155,7 +139,9 @@ section video
     {
         background-color: #ffffff; 
         position: relative;
-        border: none;
+        top: 20px;
+        left: 50px
+        border: 1px outset black;
         color: rgb(0, 0, 0);
         padding: 10px;
         text-align: center;
@@ -206,33 +192,6 @@ section video
         position: relative;
         color: #fff;
         font-size: 4vw;
-    }
-    .banner .content
-    {
-        position: relative;
-        z-index: 1;
-        max-width: 1080px;
-        margin: 0 auto;
-        text-align: center;
-        text-shadow: 2px 2px #000;
-    }
-
-    .banner .content h1
-    {
-        margin : 0;
-        padding: 0;
-        font-size: 10.0vw;
-        color : #fff;
-        text-shadow: 0.5vw 0.5vw #000;
-
-
-    }
-
-    .banner .content p
-    {
-        font-size: 3.5vw;
-        color : #fff;
-        
     }
 }
 @media screen and (min-width: 481px) 
@@ -241,7 +200,9 @@ section video
     {
         background-color: #ffffff; 
         position: relative;
-        border: none;
+        top: 20px;
+        left: 50px;
+        border: 1px outset black;
         color: rgb(0, 0, 0);
         padding: 10px;
         text-align: center;
@@ -249,6 +210,7 @@ section video
         display: inline-block;
         font-size: 1.5em;
     }
+    
     section h2
     {
         position: relative;
@@ -293,31 +255,5 @@ section video
         color: #fff;
         font-size: 1.2em;
     }
-    .banner .content
-    {
-        position: relative;
-        z-index: 1;
-        max-width: 1080px;
-        margin: 0 auto;
-        text-align: center;
-        text-shadow: 2px 2px #000;
-    }
 
-    .banner .content h1
-    {
-        margin : 0;
-        padding: 0;
-        font-size: 4.5em;
-        color : #fff;
-        text-shadow: 0.25vw 0.25vw #000;
-
-
-    }
-
-    .banner .content p
-    {
-        font-size: 1.5em;
-        color : #fff;
-        
-    }
 }
