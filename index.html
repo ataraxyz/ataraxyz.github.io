@@ -68,9 +68,6 @@
         </section>
         <script type="text/javascript">
             let s0 = document.querySelector( 'body > section.section0');
-            let s0Botton = document.querySelector( 'body > section.section0 > div > input[type=button]');
-            let s0Desc = document.querySelector( 'body > section.section0 > div > p.buttondesc');
-            
             let s1 = document.querySelector( 'body > section.section1');
             let s2 = document.querySelector( 'body > section.section2');
             let s3 = document.querySelector( 'body > section.section3');
@@ -85,46 +82,31 @@
             }
             window.addEventListener( 'scroll', function(){
                 s0Offet = offset(s0);
-            //     h2Offset = offset( h2 );
-            //     h3Offset = offset( h3 );
-            //     h4Offset = offset( h4 );
-            //     h5Offset = offset( h5 );
+                s1Offet = offset(s1);
+                s2Offet = offset(s2);
+                s3Offet = offset(s3);
 
-                let s1Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s0Offet.top ) / ( s0.offsetHeight  / 1.0 ) ) );
-                tokenState.fadeout = (1.0-s1Value) * 100;
-                s0Botton.style.opacity = s1Value;
-                s0Desc.style.opacity = s1Value;
-            //     video.style.opacity = videoValue;
-            //     h1.style.opacity = videoValue;
-            //     h1p.style.opacity = videoValue;
+                let s0Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s0Offet.top ) / ( s0.offsetHeight  / 1.0 ) ) );
+                tokenState.fadeout = (1.0-s0Value) * 100;
+                s0.style.opacity = s0Value;
 
-            //     let h2Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h2Offset.top ) / h2p.offsetHeight * textFadeOutSpeed ) );
-            //     h2.style.opacity = h2Value;
-            //     h2p.style.opacity = h2Value;
+                let s1Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s1Offet.top ) / ( s1.offsetHeight  / 1.0 ) ) );
+                if ( s0Value > 0.1 ){
+                    s1Value = 1.0 - s0Value;
+                }
+                s1.style.opacity = s1Value;
 
-            //     let h3Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h3Offset.top ) / h3c.offsetHeight / 2.0 ) );
-            //     if ( h2Value > 0.1 ){
-            //         h3Value = 1.0 - h2Value;
-            //     }
-            //     h3.style.opacity = h3Value;
-            //     h3b.style.opacity = h3Value;
-            //     tokenState.fadeout = (1.0-h3Value) * 100;
-                
+                let s2Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s2Offet.top ) / ( s2.offsetHeight  / 1.0 ) ) );
+                if ( s1Value > 0.1 ){
+                    s2Value = 1.0 - s1Value;
+                }
+                s2.style.opacity = s2Value;
 
-            //     let h4Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h4Offset.top ) / ( h4.offsetHeight + h4p.offsetHeight + h4img.offsetHeight )* textFadeOutSpeed ) );
-            //     if ( h3Value > 0.1 ){
-            //         h4Value = 1.0 - h3Value;
-            //     }
-            //     h4.style.opacity = h4Value;
-            //     h4p.style.opacity = h4Value;
-            //     h4img.style.opacity = h4Value;
-
-                // let h5Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - h5Offset.top ) / (h5.offsetHeight + h5p.offsetHeight) * textFadeOutSpeed ) );
-                // if ( h4Value > 0.1 ){
-                //     h5Value = 1.0 - h4Value;
-                // }
-                // h5.style.opacity = h5Value;
-                // h5p.style.opacity = h5Value;
+                let s3Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s3Offet.top ) / ( s3.offsetHeight  / 1.0 ) ) );
+                if ( s2Value > 0.1 ){
+                    s3Value = 1.0 - s2Value;
+                }
+                s3.style.opacity = s3Value;
             });
             
             window.onbeforeunload = function () {
