@@ -180,7 +180,7 @@ const hashToTraits = hash => {
   // const isMobile = true
   
 
-  var maxPointsPerLayer = 200;
+  var maxPointsPerLayer = 10;
   if ( isMobile )
   {
     maxPointsPerLayer = 5;
