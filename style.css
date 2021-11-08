@@ -34,6 +34,18 @@ section
     padding: 30px;
 }
 
+canvas 
+{
+    /* display: block; */
+    /* position: absolute; */
+    /* top: 0; */
+    /* left: 0; */
+    /* right: 0; */
+    /* bottom: 0; */
+    /* width: 100%; */
+    /* height: 100%; */
+}
+
 section div p.buttondesc
 {
     padding: 30px;
