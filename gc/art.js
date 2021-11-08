@@ -237,10 +237,10 @@ const hashToTraits = hash => {
  */
  const setupCanvasThreeJs = () => {
   
-   
+  // rendering half res
   const scale  = window.devicePixelRatio;
-  const width  = window.innerWidth;
-  const height = window.innerHeight;
+  const width  = window.innerWidth / 2;
+  const height = window.innerHeight / 2;
   // const body   = document.querySelector('body');
   //const body   = document.querySelector('body > section:nth-child(3) > div > div');
   const body = document.querySelector('body > section:nth-child(1) > div > p');
@@ -249,8 +249,13 @@ const hashToTraits = hash => {
   
   // setup render to match window size
   const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true  });
-  renderer.setPixelRatio(scale);
-  renderer.setSize(width, height);
+  renderer.setPixelRatio(2); // compensating for scale
+  renderer.setSize(width, height, false);
+  // renderer.domElement.style.width = width*2;
+  // renderer.domElement.style.height = height*2;
+  // renderer.domElement.width = width*2;
+  // renderer.domElement.height = height*2;
+
   body.appendChild(renderer.domElement);
 
   return renderer;
@@ -891,14 +896,13 @@ const fragmentShader = `
           a = 1.;
       col = (col*a) + ( baseLayer * (1.-a));
       fragColor = vec4(col, 1.0);
+      
   }
 
   // void mainImage( out vec4 fragColor, in vec2 fragCoord )
   // {
   //   vec2 uv = fragCoord / iResolution.xy;
-  //   float ar = iResolution.y / iResolution.x;
-  //   vec4 overlay = texture( overlayTx, uv * vec2( 1., ar )  );
-  //   fragColor.rgb = ( overlay.rgb * overlay.a ) + ( texture(iChannel1, uv).rgb * (1. - overlay.a) );
+  //   fragColor = vec4( uv.r, uv.r, uv.r, 1.);
   // }
   
  
@@ -979,7 +983,7 @@ const fragmentShader = `
        1, // right
        1, // top
       -1, // bottom
-      -1, // near,
+      0, // near,
        1, // far
     );
     
@@ -1092,11 +1096,13 @@ const fragmentShader = `
     // state.iTime.value += 0.001;
 
     var currentdate = new Date();
-
-
+    const scale  = window.devicePixelRatio;
+    const width  = window.innerWidth * scale;
+    const height  = window.innerHeight * scale;
+    // console.log( scale );
     // console.log( "Width: " + canvas.width + " Height " + canvas.height );
-    uniformsBlit.iResolution.value.set(canvas.width, canvas.height, 1);
-    uniforms.iResolution.value.set(canvas.width, canvas.height, 1);
+    uniformsBlit.iResolution.value.set(width, height, 1);
+    uniforms.iResolution.value.set(width, height, 1);
     uniforms.iTime.value += clock.getDelta();
     var secs = currentdate.getHours() * 3600.0 + currentdate.getMinutes() * 60.0 + ( currentdate.getMilliseconds() / 1000.0 );
     uniforms.iDate.value.set( currentdate.getYear(), currentdate.getMonth(), currentdate.getDay(), secs );
