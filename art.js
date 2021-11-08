@@ -237,10 +237,11 @@ const hashToTraits = hash => {
  */
  const setupCanvasThreeJs = () => {
   
+
   // rendering half res
   const scale  = window.devicePixelRatio;
-  const width  = window.innerWidth / 2;
-  const height = window.innerHeight / 2;
+  const width  = window.innerWidth / 4;
+  const height = window.innerHeight / 4;
   // const body   = document.querySelector('body');
   //const body   = document.querySelector('body > section:nth-child(3) > div > div');
   const body = document.querySelector('body > section:nth-child(1) > div > p');
@@ -249,7 +250,7 @@ const hashToTraits = hash => {
   
   // setup render to match window size
   const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true  });
-  renderer.setPixelRatio(2); // compensating for scale
+  renderer.setPixelRatio(4); // compensating for scale
   renderer.setSize(width, height, false);
   // renderer.domElement.style.width = width*2;
   // renderer.domElement.style.height = height*2;
@@ -861,7 +862,7 @@ const fragmentShader = `
       vec2 uvbase = fragCoord / iResolution.xy;
       vec3 baseLayer = texture( iChannel1, uvbase ).rgb;
       
-      vec2 margin = vec2(10), Sres = iResolution.xy*0.5 -2.*margin, Tres = iChannelResolution, ratio = Sres/Tres;
+      vec2 margin = vec2(10), Sres = iResolution.xy*0.25 -2.*margin, Tres = iChannelResolution, ratio = Sres/Tres;
       vec2 uv = fragCoord - margin;
       uv -= .5*Tres*max(vec2(ratio.x-ratio.y,ratio.y-ratio.x),0.);
       uv /= Tres*min(ratio.x,ratio.y);
@@ -900,16 +901,17 @@ const fragmentShader = `
       
   }
 
-  // void mainImage( out vec4 fragColor, in vec2 fragCoord )
-  // {
-  //   vec2 uv = fragCoord / iResolution.xy;
-  //   fragColor = vec4( uv.r, uv.r, uv.r, 1.);
-  // }
+  void mainImageDebug( out vec4 fragColor, in vec2 fragCoord )
+  {
+    vec2 uv = fragCoord / iResolution.xy;
+    fragColor = vec4( uv.r, uv.r, uv.r, 1.);
+  }
   
  
   void main() 
   {
     mainImage(gl_FragColor, gl_FragCoord.xy);
+    //mainImageDebug(gl_FragColor, gl_FragCoord.xy);
   }
   `;
 
@@ -1098,8 +1100,8 @@ const fragmentShader = `
 
     var currentdate = new Date();
     const scale  = window.devicePixelRatio;
-    const width  = window.innerWidth * scale;
-    const height  = window.innerHeight * scale;
+    const width  = window.innerWidth;
+    const height  = window.innerHeight;
     // console.log( scale );
     // console.log( "Width: " + canvas.width + " Height " + canvas.height );
     uniformsBlit.iResolution.value.set(width, height, 1);
