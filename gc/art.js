@@ -865,7 +865,7 @@ const fragmentShader = `
       vec2 uv = fragCoord - margin;
       uv -= .5*Tres*max(vec2(ratio.x-ratio.y,ratio.y-ratio.x),0.);
       uv /= Tres*min(ratio.x,ratio.y);
-      uv *= 0.5;
+      uv *= 2.0;
       
       
       
