@@ -240,8 +240,8 @@ const hashToTraits = hash => {
 
   // rendering half res
   const scale  = window.devicePixelRatio;
-  const width  = window.innerWidth / 4;
-  const height = window.innerHeight / 4;
+  const width  = window.innerWidth / 8;
+  const height = window.innerHeight / 8;
   // const body   = document.querySelector('body');
   //const body   = document.querySelector('body > section:nth-child(3) > div > div');
   const body = document.querySelector('body > section:nth-child(1) > div > p');
@@ -250,7 +250,7 @@ const hashToTraits = hash => {
   
   // setup render to match window size
   const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true  });
-  renderer.setPixelRatio(4); // compensating for scale
+  renderer.setPixelRatio(8); // compensating for scale
   renderer.setSize(width, height, false);
   // renderer.domElement.style.width = width*2;
   // renderer.domElement.style.height = height*2;
