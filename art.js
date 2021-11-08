@@ -239,7 +239,7 @@ const hashToTraits = hash => {
   
 
   // rendering half res
-  const scale  = window.devicePixelRatio;
+  //const scale  = window.devicePixelRatio;
   const width  = window.innerWidth / 8;
   const height = window.innerHeight / 8;
   // const body   = document.querySelector('body');
@@ -262,6 +262,8 @@ const hashToTraits = hash => {
   return renderer;
 
 };
+
+
 
 //-----------------------------------------------------------------------------
 
@@ -323,6 +325,7 @@ const iChannel0FragmentShader = `
   uniform int iInt9;  // hilbert level
   uniform int iInt10; // color mode
   uniform int iInt11; // fadeout
+  uniform int iInt12; // textfade
 
 
   //const int level = iInt9; // numpoints == (2^level)^2
@@ -725,6 +728,7 @@ const iChannel0FragmentShader = `
   uniform int iInt9;
   uniform int iInt10;
   uniform int iInt11; // fadeout 
+  uniform int iInt12; // textfade
 
   float hash12(vec2 p)
   {
@@ -789,6 +793,8 @@ const fragmentShader = `
   uniform int iInt8;
   uniform int iInt9;
   uniform int iInt10;
+  uniform int iInt11;
+  uniform int iInt12;
  
   
   #define SS(a, b, x) (smoothstep(a, b, x) * smoothstep(b, a, x))
@@ -896,6 +902,8 @@ const fragmentShader = `
       float a = 0.;
       if( col.r > 0.5 || col.g > 0.5 || col.b > 0.5 )
           a = 1.;
+      float textfade = float(iInt12) / 100.0;
+      a *= textfade;
       col = (col*a) + ( baseLayer * (1.-a));
       fragColor = vec4(col, 1.0);
       
@@ -962,6 +970,7 @@ const fragmentShader = `
     iInt9: { value : level },
     iInt10: { value : cmode },
     iInt11: { value: state.fadeout },
+    iInt12: { value: state.textfade },
     overlayTx: { type: 't', value: 0, texture: overlayTexture }
   };
 
@@ -971,6 +980,16 @@ const fragmentShader = `
   };
 
   const clock = new THREE.Clock();
+
+  // canvas.onresize = () => {
+  //   console.log( 'TEST');
+  //   const width = window.innerWidth / 8;
+  //   const height = window.innerHeight / 8;
+
+  //   renderer.setPixelRatio(8); 
+  //   renderer.setSize( width, height );
+
+  // }
 
   // initialize scene
   canvas.initialize = () => {
@@ -1088,6 +1107,7 @@ const fragmentShader = `
     renderer.render(scene, camera);
   };
 
+  
   // update
   canvas.update = () => {
     // const mesh = state.three.mesh;
@@ -1102,8 +1122,7 @@ const fragmentShader = `
     const scale  = window.devicePixelRatio;
     const width  = window.innerWidth;
     const height  = window.innerHeight;
-    // console.log( scale );
-    // console.log( "Width: " + canvas.width + " Height " + canvas.height );
+
     uniformsBlit.iResolution.value.set(width, height, 1);
     uniforms.iResolution.value.set(width, height, 1);
     uniforms.iTime.value += clock.getDelta();
@@ -1122,6 +1141,7 @@ const fragmentShader = `
     uniforms.iInt9.value = state.three.uniforms.level;
     uniforms.iInt10.value = state.three.uniforms.cmode;
     uniforms.iInt11.value = state.fadeout;
+    uniforms.iInt12.value = state.textfade;
     uniforms.overlayTx.value = overlayTexture;
   };
 
@@ -1190,6 +1210,22 @@ const run = (tokenData, tokenState) => {
   doArt(renderer, tokenData.hash, tokenState);
 };
 
+const sizeCanvas = () => {
+
+  // figure out canvas size
+  const width  = window.innerWidth;
+  const height = window.innerHeight;
+  const scale  = window.devicePixelRatio;
+
+  // setup canvas
+  const canvas        = document.querySelector('canvas');
+  canvas.width        = Math.floor(width * scale);
+  canvas.height       = Math.floor(height * scale);
+  canvas.style.width  = width + "px";
+  canvas.style.height = height + "px";
+
+};
+
 //-----------------------------------------------------------------------------
 // main
 //-----------------------------------------------------------------------------
@@ -1197,3 +1233,5 @@ const run = (tokenData, tokenState) => {
 window.onload = () => {
   run(tokenData, tokenState);
 };
+//window.onresize = function(){ location.reload(); }
+//window.onresize = sizeCanvas;
