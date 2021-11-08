@@ -862,7 +862,7 @@ const fragmentShader = `
       vec2 uvbase = fragCoord / iResolution.xy;
       vec3 baseLayer = texture( iChannel1, uvbase ).rgb;
       
-      vec2 margin = vec2(10), Sres = iResolution.xy*0.25 -2.*margin, Tres = iChannelResolution, ratio = Sres/Tres;
+      vec2 margin = vec2(10), Sres = iResolution.xy -2.*margin, Tres = iChannelResolution, ratio = Sres/Tres;
       vec2 uv = fragCoord - margin;
       uv -= .5*Tres*max(vec2(ratio.x-ratio.y,ratio.y-ratio.x),0.);
       uv /= Tres*min(ratio.x,ratio.y);
