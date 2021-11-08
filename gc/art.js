@@ -1119,9 +1119,9 @@ const fragmentShader = `
     // state.iTime.value += 0.001;
 
     var currentdate = new Date();
-    const scale  = window.devicePixelRatio;
-    const width  = window.innerWidth;
-    const height  = window.innerHeight;
+    //const scale  = window.devicePixelRatio;
+    const width  = canvas.width;
+    const height  = canvas.height;
 
     uniformsBlit.iResolution.value.set(width, height, 1);
     uniforms.iResolution.value.set(width, height, 1);
@@ -1211,21 +1211,52 @@ const run = (tokenData, tokenState) => {
 };
 
 const sizeCanvas = () => {
-
+  console.log('WORKS');
   // figure out canvas size
-  const width  = window.innerWidth;
-  const height = window.innerHeight;
+  const width  = window.innerHeight(true);
+  const height = window.innerHeight(true);
   const scale  = window.devicePixelRatio;
 
   // setup canvas
   const canvas        = document.querySelector('canvas');
+  
   canvas.width        = Math.floor(width * scale);
   canvas.height       = Math.floor(height * scale);
   canvas.style.width  = width + "px";
   canvas.style.height = height + "px";
+  //renderer.setPixelRatio(8); // compensating for scale
+  //renderer.setSize( width/8, height/8, false);
+  
 
 };
+/*
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto Mono', monospace;
+    text-decoration: none;
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 30px;
+    opacity: 0.914089;
 
+        margin: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto Mono', monospace;
+    text-decoration: none;
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 30px;
+*/
 //-----------------------------------------------------------------------------
 // main
 //-----------------------------------------------------------------------------
@@ -1234,4 +1265,4 @@ window.onload = () => {
   run(tokenData, tokenState);
 };
 //window.onresize = function(){ location.reload(); }
-//window.onresize = sizeCanvas;
+window.onresize = sizeCanvas;
