@@ -916,8 +916,8 @@ const fragmentShader = `
   `;
 
   const scale  = window.devicePixelRatio;
-  const width  = window.innerWidth * scale;
-  const height = window.innerHeight * scale;
+  const width  = window.innerWidth;
+  const height = window.innerHeight;
   
   var iChannel0Target = new THREE.WebGLRenderTarget(  width, height, {  wrapS: THREE.RepeatWrapping, 
                                                                                                 wrapT: THREE.RepeatWrapping, 
