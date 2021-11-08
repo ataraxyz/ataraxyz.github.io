@@ -865,6 +865,7 @@ const fragmentShader = `
       vec2 uv = fragCoord - margin;
       uv -= .5*Tres*max(vec2(ratio.x-ratio.y,ratio.y-ratio.x),0.);
       uv /= Tres*min(ratio.x,ratio.y);
+      uv *= 0.5;
       
       
       
@@ -872,7 +873,7 @@ const fragmentShader = `
       
       // smoothed interval for which the glitch gets triggered
       float glitchAmount = SS(7. * .001, 7. * 0.5, mod(t, 7.));  
-    float displayNoise = 0.;
+      float displayNoise = 0.;
       vec3 col = vec3(0.);
       vec2 eps = vec2(5. / iResolution.x, 0.);
       vec2 st = vec2(0.);
