@@ -10,6 +10,8 @@
 
 const u64  = n => BigInt.asUintN(64, n);
 const rotl = (x, k) => u64((x << k) | (x >> (64n - k)));
+// safari on osx fix
+// const rotl = (x, k) => u64((x << k) | (x >> (u64(64) - k))); 
 
 /**
  * xoshiro is a variation of the shift-register generator, using rotations in
@@ -246,7 +248,7 @@ const hashToTraits = hash => {
   // const body = document.querySelector('body > section:nth-child(1)');
   
   // setup render to match window size
-  const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true  });
+  const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true  });
   renderer.setPixelRatio(scale);
   renderer.setSize(width, height);
   body.appendChild(renderer.domElement);
