@@ -1211,19 +1211,18 @@ const run = (tokenData, tokenState) => {
 };
 
 const sizeCanvas = () => {
-  console.log('WORKS');
   // figure out canvas size
-  const width  = window.innerHeight(true);
-  const height = window.innerHeight(true);
-  const scale  = window.devicePixelRatio;
+  // const width  = window.innerHeight(true);
+  // const height = window.innerHeight(true);
+  // const scale  = window.devicePixelRatio;
 
-  // setup canvas
-  const canvas        = document.querySelector('canvas');
+  // // setup canvas
+  // const canvas        = document.querySelector('canvas');
   
-  canvas.width        = Math.floor(width * scale);
-  canvas.height       = Math.floor(height * scale);
-  canvas.style.width  = width + "px";
-  canvas.style.height = height + "px";
+  // canvas.width        = Math.floor(width * scale);
+  // canvas.height       = Math.floor(height * scale);
+  // canvas.style.width  = width + "px";
+  // canvas.style.height = height + "px";
   //renderer.setPixelRatio(8); // compensating for scale
   //renderer.setSize( width/8, height/8, false);
   
