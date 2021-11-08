@@ -114,9 +114,9 @@
             // window.onbeforeunload = function () {
             //     window.scrollTop(0);
             // };
-            if (window.DeviceOrientationEvent) {
-                window.addEventListener('orientationchange', function() { location.reload(); }, false);
-            }
+            window.onorientationchange = function() { 
+                window.location.reload(); 
+            };
         </script>
     </body>
 </html>
