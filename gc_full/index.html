@@ -26,95 +26,14 @@
                 </div>
             </div> -->
             <div class="collection">
+                <input type = "button" onclick = "refresh()" value = "RANDOMIZE ART">   
+                <!-- <p class="buttondesc">
+                    <mark>CLICK</mark> for a new random example artpiece from the collection.
+                </p> -->
                 <p>
 
                 </p>
-                <input type = "button" onclick = "refresh()" value = "RANDOMIZE">   
-                <p class="buttondesc">
-                    <mark>CLICK</mark> for a new random example artpiece from the collection.
-                </p>
             </div>
         </section>
-        <section class="section1">
-            <div class="content">
-                
-                <h2>SERENE ANIMO I - Trip in space-filling curves.</h2>
-                <p>The first collection in the series dives deep into the ideas of space and its ambivalence for human existence. Atara and Geneticchain are bringing a unique collection to life that will feature bold shapes and color and subtle differences between art pieces, inspiring collectors to ponder the deeper meanings of being human. Creating a trance-like state by looking and getting lost in the art allows enthusiasts and casual cosmonauts of more profound levels of the human experience to assemble. It is forming a community and getting to the childlike state of wonder needed to grasp the concepts of the human condition in the multiverse.<br>The basis for the collection is the work of German mathematician David Hilbert. His discovery of his type of space-filling curves in 1891 inspired Atara to explore its unique, fractal properties. With a Hausdorf dimension of precisely two, this piecewise linear curve fills all of the space in any dimension if subdivided long enough. Curves like this reflect the eternal search for truth in the universe. Every spectrum, the one-dimensional range of sound, the two-dimensional canvas of a picture, and the three-dimensional extents of a sculpture are all taken by the one formula, the one curve, to fill them all with life.<br>Anchored on the Hilbert curve as a concept, Atara defines different distance fields to represent the curves best in this medium of procedural art. From there, a hallucinatory play on colors connects the human psyche and the mathematical concepts, creating a trip solely induced by the idea of space itself.</p>
-            </div>
-        </section>
-        
-        <section class="section2">
-            <div class="content">
-                <h4>SERENE ANIMO II - Healing sacred geometry.</h4>
-                <p>The follow-up project will use similar ideas and techniques to elaborate on the concepts of sacred geometry. From a single curve, Atara expands to more complex shapes slowly. Exploring the connection that people had over centuries with those shapes and their meaning, spiritually and mentally, will be the heart of the second collection. Multiple layers of complexity are generated for the collectors to enjoy and ponder over. They are maybe adding even new shapes to the ever-growing atlas of sacred geometry.<br>Watch out for a preview soon!</p>
-                <img src="SACRED_low.png" />
-            </div>
-        </section>
-        <section class="section3">
-            <div class="content">
-                <h5>SERENE ANIMO - project III, IV, and V.</h5>
-                <p>Walking the path of ever more complex shapes and dimensions, Atara will create three more collections for Geneticchain.io. The following collections will feature three-dimensional signed distance fields, crystal growth, and fractal geometry. They are building a community of lovers of procedural art, science, psychedelic trips, and the constant search for meaning in the multiverse.<br>Special drops for collectors of all previous collections as well as more interactive intelligent contracts are in development. More details are coming soon!<br><br><br><br></p>
-
-                <p><a href="https://twitter.com/atara_xyz"><mark>TWITTER</mark></a></p>
-                <p><br></p>
-                <p><a href="https://www.instagram.com/johannessaam/"><mark>INSTAGRAM</mark></a></p>
-                <p><br></p>
-                <p><a href="https://foundation.app/@atara"><mark>FOUNDATION</mark></a></p>
-                <p><br></p>
-                <p><a href="https://docs.google.com/document/d/1zgMBNEetXOaoR1umeMu0g0GEghdgqdTp0pvs3mHaaXo/edit"><mark>RESUME</mark></a></p>
-                </div>
-        </section>
-        <script type="text/javascript">
-            let s0 = document.querySelector( 'body > section.section0');
-            let s1 = document.querySelector( 'body > section.section1');
-            let s2 = document.querySelector( 'body > section.section2');
-            let s3 = document.querySelector( 'body > section.section3');
-            
-            // let textFadeOutSpeed = 1.;
-
-            function offset(el) {
-                var rect = el.getBoundingClientRect(),
-                scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
-                scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
-            }
-            window.addEventListener( 'scroll', function(){
-                s0Offet = offset(s0);
-                s1Offet = offset(s1);
-                s2Offet = offset(s2);
-                s3Offet = offset(s3);
-
-                let s0Value         =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s0Offet.top ) / ( s0.offsetHeight  / 1.0 ) ) );
-                let s0ValueText     =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s0Offet.top ) / ( s0.offsetHeight  / 12.0 ) ) );
-                tokenState.fadeout  = (1.0-s0Value) * 100;
-                tokenState.textfade = s0ValueText * 100;
-                s0.style.opacity = s0Value;
-
-                let s1Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s1Offet.top ) / ( s1.offsetHeight  / 1.0 ) ) );
-                if ( s0Value > 0.1 ){
-                    s1Value = 1.0 - s0Value;
-                }
-                s1.style.opacity = s1Value;
-
-                let s2Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s2Offet.top ) / ( s2.offsetHeight  / 1.0 ) ) );
-                if ( s1Value > 0.1 ){
-                    s2Value = 1.0 - s1Value;
-                }
-                s2.style.opacity = s2Value;
-
-                let s3Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s3Offet.top ) / ( s3.offsetHeight  / 1.0 ) ) );
-                if ( s2Value > 0.1 ){
-                    s3Value = 1.0 - s2Value;
-                }
-                s3.style.opacity = s3Value;
-            });
-            
-            // window.onbeforeunload = function () {
-            //     window.scrollTop(0);
-            // };
-            window.onorientationchange = function() { 
-                window.location.reload(); 
-            };
-        </script>
     </body>
 </html>

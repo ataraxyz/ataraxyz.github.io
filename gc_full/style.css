@@ -31,13 +31,12 @@ section
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    padding: 30px;
+    padding: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
-section div p.buttondesc
-{
-    padding: 30px;
-}
+
 @media screen and (max-width:320px) 
 {
     input[type="button"]
@@ -47,6 +46,7 @@ section div p.buttondesc
         border: 1px outset black;
         color: rgb(0, 0, 0);
         padding: 10px;
+        
         text-align: center;
         text-decoration: none;
         display: inline-block;
@@ -162,14 +162,17 @@ section div p.buttondesc
     input[type="button"]
     {
         background-color: #ffffff; 
-        position: relative;
+        position:absolute;
+        left:10px;
+        top:10px;
+        z-index: 1;
         border: 1px outset black;
         color: rgb(0, 0, 0);
         padding: 10px;
         text-align: center;
         text-decoration: none;
         display: inline-block;
-        font-size: 1.5em;
+        font-size: 1.2em;
     }
     
     section h2
