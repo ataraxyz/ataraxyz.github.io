@@ -26,12 +26,12 @@
                 </div>
             </div> -->
             <div class="collection">
+                <input type = "button" onclick = "refresh()" value = "RANDOMIZE ART">   
+                <!-- <p class="buttondesc">
+                    <mark>CLICK</mark> for a new random example artpiece from the collection.
+                </p> -->
                 <p>
 
-                </p>
-                <input type = "button" onclick = "refresh()" value = "RANDOMIZE">   
-                <p class="buttondesc">
-                    <mark>CLICK</mark> for a new random example artpiece from the collection.
                 </p>
             </div>
         </section>
@@ -87,7 +87,7 @@
                 let s0Value         =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s0Offet.top ) / ( s0.offsetHeight  / 1.0 ) ) );
                 let s0ValueText     =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s0Offet.top ) / ( s0.offsetHeight  / 12.0 ) ) );
                 tokenState.fadeout  = (1.0-s0Value) * 100;
-                tokenState.textfade = s0ValueText * 100;
+                // tokenState.textfade = s0ValueText * 100;
                 s0.style.opacity = s0Value;
 
                 let s1Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s1Offet.top ) / ( s1.offsetHeight  / 1.0 ) ) );

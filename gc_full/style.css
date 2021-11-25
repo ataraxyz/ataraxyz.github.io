@@ -1,0 +1,220 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+@viewport {
+    width: device-width ;
+    zoom: 1.0 ;
+  }
+*
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto Mono', monospace;
+    text-decoration: none;
+}
+body
+{
+    background: #000;
+    height: 256px;
+    
+}
+mark 
+{
+    background-color: white;
+    color: black;
+}
+section
+{
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 30px;
+}
+
+section div p.buttondesc
+{
+    padding: 30px;
+}
+@media screen and (max-width:320px) 
+{
+    input[type="button"]
+    {
+        background-color: #ffffff; 
+        position: relative;
+        border: 1px outset black;
+        color: rgb(0, 0, 0);
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 2.0em;
+    }
+    section h2
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section h3
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section h4
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section img
+    {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+    }
+    section h5
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section h5
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section p
+    {
+        text-align: justify;
+        position: relative;
+        color: #fff;
+        font-size: 2vw;
+    }
+
+}
+@media screen and (min-width: 321px) and (max-width: 480px) 
+{
+    input[type="button"]
+    {
+        background-color: #ffffff; 
+        position: relative;
+        border: 1px outset black;
+        color: rgb(0, 0, 0);
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 2.0em;
+    }
+    section h2
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section h3
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section h4
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section img
+    {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+    }
+    section h5
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section h5
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section p
+    {
+        text-align: justify;
+        position: relative;
+        color: #fff;
+        font-size: 2vw;
+    }
+}
+@media screen and (min-width: 481px) 
+{
+    input[type="button"]
+    {
+        background-color: #ffffff; 
+        position: relative;
+        border: 1px outset black;
+        color: rgb(0, 0, 0);
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1.5em;
+    }
+    
+    section h2
+    {
+        position: relative;
+        color: #fff;
+        font-size: 3em;
+    }
+    section h3
+    {
+        position: relative;
+        color: #fff;
+        font-size: 3em;
+    }
+    section h4
+    {
+        position: relative;
+        color: #fff;
+        font-size: 3em;
+    }
+    section img
+    {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+    }
+    section h5
+    {
+        position: relative;
+        color: #fff;
+        font-size: 3em;
+    }
+    section h5
+    {
+        position: relative;
+        color: #fff;
+        font-size: 3em;
+    }
+    section p
+    {
+        text-align: justify;
+        position: relative;
+        color: #fff;
+        font-size: 1.0em;
+    }
+
+}
