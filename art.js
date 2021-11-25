@@ -867,6 +867,8 @@ const fragmentShader = `
       vec2 iChannelResolution = vec2(2048., 2048.);
       vec2 uvbase = fragCoord / iResolution.xy;
       vec3 baseLayer = texture( iChannel1, uvbase ).rgb;
+      fragColor = vec4(baseLayer, 1.0);
+      return;
       
       vec2 margin = vec2(10), Sres = iResolution.xy -2.*margin, Tres = iChannelResolution, ratio = Sres/Tres;
       vec2 uv = fragCoord - margin;
