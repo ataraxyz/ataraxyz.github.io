@@ -39,14 +39,32 @@ section
 
 @media screen and (max-width:320px) 
 {
-    input[type="button"]
+    input[type="button"].refreshBtn
     {
         background-color: #ffffff; 
-        position: relative;
+        position:absolute;
+        left:10px;
+        top:10px;
+        z-index: 1;
         border: 1px outset black;
         color: rgb(0, 0, 0);
         padding: 10px;
-        
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 2.0em;
+    }
+
+    input[type="button"].toggleBtn
+    {
+        background-color: #ffffff; 
+        position:absolute;
+        right:10px;
+        top:10px;
+        z-index: 1;
+        border: 1px outset black;
+        color: rgb(0, 0, 0);
+        padding: 10px;
         text-align: center;
         text-decoration: none;
         display: inline-block;
@@ -100,10 +118,29 @@ section
 }
 @media screen and (min-width: 321px) and (max-width: 480px) 
 {
-    input[type="button"]
+    input[type="button"].refreshBtn
     {
         background-color: #ffffff; 
-        position: relative;
+        position:absolute;
+        left:10px;
+        top:10px;
+        z-index: 1;
+        border: 1px outset black;
+        color: rgb(0, 0, 0);
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 2.0em;
+    }
+
+    input[type="button"].toggleBtn
+    {
+        background-color: #ffffff; 
+        position:absolute;
+        right:10px;
+        top:10px;
+        z-index: 1;
         border: 1px outset black;
         color: rgb(0, 0, 0);
         padding: 10px;
@@ -159,7 +196,7 @@ section
 }
 @media screen and (min-width: 481px) 
 {
-    input[type="button"]
+    input[type="button"].refreshBtn
     {
         background-color: #ffffff; 
         position:absolute;
@@ -174,7 +211,23 @@ section
         display: inline-block;
         font-size: 1.2em;
     }
-    
+
+    input[type="button"].toggleBtn
+    {
+        background-color: #ffffff; 
+        position:absolute;
+        right:10px;
+        top:10px;
+        z-index: 1;
+        border: 1px outset black;
+        color: rgb(0, 0, 0);
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1.2em;
+    }
+
     section h2
     {
         position: relative;
