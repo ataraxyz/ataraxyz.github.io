@@ -902,8 +902,8 @@ const fragmentShader = `
       float a = 0.;
       if( col.r > 0.5 || col.g > 0.5 || col.b > 0.5 )
           a = 1.;
-      //float textfade = float(iInt12) / 100.0;
-      float textfade = 1.;
+      float textfade = float(iInt12) / 100.0;
+      //float textfade = 1.;
       a *= textfade;
       col = (col*a) + ( baseLayer * (1.-a));
       fragColor = vec4(col, 1.0);
@@ -1177,6 +1177,17 @@ const fragmentShader = `
 };
 
 //-----------------------------------------------------------------------------
+const toggleOverlay = () => {
+  if ( tokenState.textfade == 100 )
+  {
+    tokenState.textfade = 0;
+  }
+  else
+  {
+    tokenState.textfade = 100;
+  }
+  ;
+}
 const refresh = () => {
   // update hash/state from token and rerun
   tokenData.hash    = randomHash(64);
