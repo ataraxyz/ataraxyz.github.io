@@ -137,6 +137,14 @@ section
         margin-right: auto;
         width: 50%;
     }
+    section img.roadmapImg
+    {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+    }
+    
     section h5
     {
         position: relative;
