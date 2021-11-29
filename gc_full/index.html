@@ -47,6 +47,15 @@
             window.addEventListener('scroll', e => {idleTime = -2.5;});
             window.addEventListener('touchmove', e => {idleTime = -2.5;});
             window.addEventListener('touchstart', e => {idleTime = -2.5;});
+            window.onkeydown = keybordInput;
+
+            function keybordInput(e)
+            {
+                if ( e.ctrlKey || e.keyCode == 13 )
+                   refresh();
+                if ( e.altKey )
+                    toggleOverlay();
+            }
 
 
             var intervallTimer = setInterval(myTimer, 10);
