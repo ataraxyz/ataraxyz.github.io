@@ -36,5 +36,33 @@
                 </p>
             </div>
         </section>
+        <script type="text/javascript">
+            var idleTime = -2.5;
+            let b0 = document.querySelector( 'body > section > div > input.refreshBtn');
+            let b1 = document.querySelector( 'body > section > div > input.toggleBtn');
+
+            window.addEventListener('mousemove', e => {idleTime = -2.5;});
+            window.addEventListener('mousedown', e => {idleTime = -2.5;});
+            window.addEventListener('mouseup', e => {idleTime = -2.5;});
+            window.addEventListener('scroll', e => {idleTime = -2.5;});
+            window.addEventListener('touchmove', e => {idleTime = -2.5;});
+            window.addEventListener('touchstart', e => {idleTime = -2.5;});
+
+
+            var intervallTimer = setInterval(myTimer, 10);
+
+            function myTimer() {
+                if ( idleTime < 1.0) {
+                    idleTime = idleTime + 0.01;
+                    var fadeValue = Math.max( 0.0, Math.min( 1.0, 1.0 - idleTime ) );
+                    b0.style.opacity = fadeValue;
+                    b1.style.opacity = fadeValue;
+                }
+                else {
+                    b0.style.opacity = 0.0;
+                    b1.style.opacity = 0.0;
+                }
+            }           
+        </script>
     </body>
 </html>
