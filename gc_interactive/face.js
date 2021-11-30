@@ -9,10 +9,11 @@ const video = document.getElementById('video')
 
 function startVideo() {
   navigator.getUserMedia(
-    { video: {} },
+    { audio: false, video: {facingMode: "user"} },
     stream => video.srcObject = stream,
     err => console.error(err)
   )
+  
 }
 startVideo();
 // video.addEventListener('play', () => {
