@@ -23,7 +23,7 @@ video
     position: absolute;
     top: 100px;
     left: 100px;
-    z-index: 1;
+    z-index: 0;
 }
 mark 
 {

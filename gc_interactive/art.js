@@ -966,7 +966,7 @@ const fragmentShader = `
     iInt4: { value : state.sdfblend },
     iInt5: { value : shape },
     iInt6: { value : seedC },
-    iInt7: { value : speed },
+    iInt7: { value : state.speed },
     iInt8: { value : size },
     iInt9: { value : level },
     iInt10: { value : cmode },
@@ -1137,7 +1137,7 @@ const fragmentShader = `
     uniforms.iInt4.value = state.sdfblend;
     uniforms.iInt5.value = state.three.uniforms.shape;
     uniforms.iInt6.value = state.three.uniforms.seedC;
-    uniforms.iInt7.value = state.three.uniforms.speed;
+    uniforms.iInt7.value = state.speed;
     uniforms.iInt8.value = state.three.uniforms.size;
     uniforms.iInt9.value = state.three.uniforms.level;
     uniforms.iInt10.value = state.three.uniforms.cmode;
@@ -1188,6 +1188,19 @@ const toggleOverlay = () => {
   }
   ;
 }
+
+const setBlendFactor = ( bf ) => {
+
+    tokenState.sdfblend = bf;
+  ;
+}
+
+const setSpeed = ( s ) => {
+
+  tokenState.speed = s;
+;
+}
+
 const refresh = () => {
   // update hash/state from token and rerun
   tokenData.hash    = randomHash(64);
@@ -1209,7 +1222,7 @@ const refresh = () => {
   tokenState.three.uniforms.seedC = seedC;
   tokenState.three.uniforms.pointsl = pointsl;
   tokenState.three.uniforms.shape = shape;
-  tokenState.three.uniforms.speed = speed;
+  //tokenState.three.uniforms.speed = state.speed;
   tokenState.three.uniforms.size = size;
   tokenState.three.uniforms.level = level;
   tokenState.three.uniforms.cmode = cmode;

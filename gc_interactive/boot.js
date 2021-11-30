@@ -28,7 +28,8 @@ const tokenData = {
 const tokenState = {
   sdfblend: 50,
   fadeout: 0,
-  textfade: 100
+  textfade: 100,
+  speed : 50
 };
 
 //const tokenState = {
