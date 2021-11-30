@@ -18,6 +18,13 @@ body
     height: 256px;
     
 }
+video
+{
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    z-index: 0;
+}
 mark 
 {
     background-color: white;
