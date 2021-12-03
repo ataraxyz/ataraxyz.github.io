@@ -13,14 +13,7 @@ const rotl = (x, k) => u64((x << k) | (x >> (64n - k)));
 // safari on osx fix
 // const rotl = (x, k) => u64((x << k) | (x >> (u64(64) - k))); 
 
-/**
- * xoshiro is a variation of the shift-register generator, using rotations in
- *   addition to shifts.
- *
- * Algorithm by [Blackmanand Vigna 2018]
- *   https://prng.di.unimi.it/xoshiro256starstar
- *
- */
+
 const xoshiro256strstr = s => () => {
   const result = u64(rotl(u64(s[1] * 5n), 7n) * 9n);
 
@@ -38,35 +31,17 @@ const xoshiro256strstr = s => () => {
   return result;
 };
 
-//-----------------------------------------------------------------------------
 
-/**
- * Returns a float between [0, 1) (inclusive of 0, exclusive of 1).
- */
 const randomDecimal = xss => () => {
   const t = xss();
   return Number(t % 9007199254740991n) / 9007199254740991;
 }
 
-//-----------------------------------------------------------------------------
 
-/**
- * Returns a float between a and b.
- */
 const randomNumber = r => (a, b) => a + (b - a) * r();
 
-//-----------------------------------------------------------------------------
+ randomInt = rn => (a, b) => Math.floor(rn(a, b + 1));
 
-/**
- * Returns an int between a and b.
- */
-const randomInt = rn => (a, b) => Math.floor(rn(a, b + 1));
-
-//-----------------------------------------------------------------------------
-
-/**
- * Seeds the randomization functions.
- */
 const mkRandom = hash => {
   const s  = Array(4).fill()
     .map((_,i) => i * 16 + 2)
@@ -78,11 +53,6 @@ const mkRandom = hash => {
   return {r, rn, ri};
 };
 
-//-----------------------------------------------------------------------------
-
-/**
- * Randomly shuffle and array of element.
- */
 const shuffle = (array, r) => {
   let m = array.length, t, i;
 
@@ -96,50 +66,16 @@ const shuffle = (array, r) => {
   return array;
 };
 
-//-----------------------------------------------------------------------------
-
-/**
- * Return an array of size n filled with item.
- */
 const repeat = (item, n) => Array.from({length:n}).map(_ => item);
 
-//-----------------------------------------------------------------------------
-
-/**
- * Returns a random element from the array.
- */
 const selectRandom = (array, r) => array[Math.floor(r() * array.length)];
 
-//-----------------------------------------------------------------------------
-
-/**
- * Randomly select a key from a distribution map of values.
- *
- *  DistMap should be of the form:
- *
- *    const distMap = {
- *      banana .4,
- *      apple: .3,
- *      pear:  .2,
- *      kiwi:  .1
- *    };
- *
- *   The values should add up to 1 (won't fail if it doesn't but selection will
- *     be off from what you expect).  The above should return a distribution of
- *     40% bananas, 30% apples, 20% pears, 10% kiwis.
- *
- */
 const selectRandomDist = (distMap, r) => {
   const keys = Object.keys(distMap)
     .reduce((a, k) => a.concat(repeat(k, distMap[k] * 100)), []);
   return selectRandom(shuffle(keys, r), r);
 };
 
-//-----------------------------------------------------------------------------
-
-/**
- * Convert from int to padded hex (for colors).
- */
 const toHex   = x => x.toString(16).padStart(2, '0');
 const fromHex = hex => parseInt(hex, 16);
 
@@ -153,33 +89,12 @@ const randomColorHex = r => {
   return `#${red}${green}${blue}`;
 };
 
-//-----------------------------------------------------------------------------
-// traits
-//-----------------------------------------------------------------------------
-
-//- distributions -------------------------------------------------------------
-
-// const levelDist = {
-//   A: 2,
-//   B: 3,
-//   C: 4,
-//   D: 5,
-//   E: 6,
-//   F: 4,
-//   G: 5,
-//   H: 4,
-//   I: 5,
-// };
-
-//-----------------------------------------------------------------------------
-// main
-//-----------------------------------------------------------------------------
 const hashToTraits = hash => {
   // setup random fns
   const R = mkRandom(hash);
 
   const isMobile = window.matchMedia("only screen and (max-width: 760px)").matches;
-  // const isMobile = true
+
   
 
   var maxPointsPerLayer = 10;
@@ -223,18 +138,6 @@ const hashToTraits = hash => {
 };
 
 
-// vim: ts=2:sw=2
-//-----------------------------------------------------------------------------
-// art.js - art generation
-//-----------------------------------------------------------------------------
-
-//-----------------------------------------------------------------------------
-// functions
-//-----------------------------------------------------------------------------
-
-/**
- * Example of setting up a canvas with three.js.
- */
  const setupCanvasThreeJs = () => {
   
 
@@ -1208,8 +1111,10 @@ const refresh = () => {
  * Main entry function.
  */
 const run = (tokenData, tokenState) => {
-  const renderer = setupCanvasThreeJs();
-  doArt(renderer, tokenData.hash, tokenState);
+  if ( !iOSSafari){
+    const renderer = setupCanvasThreeJs();
+    doArt(renderer, tokenData.hash, tokenState);
+  }
 };
 
 const sizeCanvas = () => {
