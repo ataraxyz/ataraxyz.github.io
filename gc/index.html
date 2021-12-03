@@ -76,12 +76,13 @@
         </section>
         <script type="text/javascript">
             // check for safari mobile forst and play only videp
-            var ua = window.navigator.userAgent;
-            var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
-            var webkit = !!ua.match(/WebKit/i);
-            var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
+            // var ua = window.navigator.userAgent;
+            // var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
+            // var webkit = !!ua.match(/WebKit/i);
+            // var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
+            var webGl2Supported = document.createElement('canvas').getContext('webgl2');
 
-            if (!iOSSafari) {
+            if (webGl2Supported) {
                 var videoElement = document.querySelector('#bannerVideo');
                 videoElement.parentNode.removeChild(videoElement);
                 let b0 = document.querySelector('body > section.section0 > div > input[type=button]')

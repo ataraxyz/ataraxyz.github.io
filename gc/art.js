@@ -1111,7 +1111,7 @@ const refresh = () => {
  * Main entry function.
  */
 const run = (tokenData, tokenState) => {
-  if ( !iOSSafari){
+  if ( webGl2Supported ){
     const renderer = setupCanvasThreeJs();
     doArt(renderer, tokenData.hash, tokenState);
   }
