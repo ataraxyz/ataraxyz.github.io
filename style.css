@@ -12,17 +12,24 @@
     text-decoration: none;
     touch-action: manipulation;
 }
+#bannerVideo {
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
 body
 {
     background: #000;
     height: 256px;
     
 }
+
 mark 
 {
     background-color: white;
     color: black;
 }
+
 section
 {
     position: relative;

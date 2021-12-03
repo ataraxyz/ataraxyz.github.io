@@ -25,6 +25,10 @@
                     <p><i>Seren Animo</i> is a series of collections that ATARA is creating on the GENETICCHAIN.io platform. Here is a description and roadmap for the upcoming NFT drops.</p>
                 </div>
             </div> -->
+            <video playsinline autoplay muted loop preload="auto" id="bannerVideo">
+                <source src="atara_gc_bg_fast.webm" type="video/webm">
+                <source src="atara_gc_bg_fast.mp4" type="video/mp4">
+            </video>
             <div class="collection">
                 <input type = "button" onclick = "refresh()" value = "RANDOMIZE ART">   
                 <!-- <p class="buttondesc">
@@ -71,12 +75,35 @@
                 </div>
         </section>
         <script type="text/javascript">
+            // check for safari mobile forst and play only videp
+            var ua = window.navigator.userAgent;
+            var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
+            var webkit = !!ua.match(/WebKit/i);
+            var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
+
+            if (!iOSSafari) {
+                var videoElement = document.querySelector('#bannerVideo');
+                videoElement.parentNode.removeChild(videoElement);
+                let b0 = document.querySelector('body > section.section0 > div > input[type=button]')
+                var intervallTimer = setInterval(myTimer, 10);
+                function myTimer() {
+                    if ( idleTime < 1.0) {
+                        idleTime = idleTime + 0.01;
+                        var fadeValue = Math.max( 0.0, Math.min( 1.0, 1.0 - idleTime ) );
+                        b0.style.opacity = fadeValue;
+                    }
+                    else { b0.style.opacity = 0.0; }
+                }
+            } else {
+                var buttonElement = document.querySelector( 'body > section.section0 > div > input[type=button]' );
+                buttonElement.parentNode.removeChild( buttonElement );
+            }
             let s0 = document.querySelector('body > section.section0');
             let s1 = document.querySelector('body > section.section1');
             let s2 = document.querySelector('body > section.section2');
             let s3 = document.querySelector('body > section.section3');
 
-            let b0 = document.querySelector('body > section.section0 > div > input[type=button]')
+            
 
             var idleTime = -2.5;
             window.addEventListener('mousemove', e => {idleTime = -2.5;});
@@ -89,18 +116,10 @@
             function keybordInput(e)
             {
                 if ( e.ctrlKey || e.keyCode == 13 )
-                   refresh();
+                refresh();
             }
 
-            var intervallTimer = setInterval(myTimer, 10);
-            function myTimer() {
-                if ( idleTime < 1.0) {
-                    idleTime = idleTime + 0.01;
-                    var fadeValue = Math.max( 0.0, Math.min( 1.0, 1.0 - idleTime ) );
-                    b0.style.opacity = fadeValue;
-                }
-                else { b0.style.opacity = 0.0; }
-            }
+           
 
             function offset(el) {
                 var rect = el.getBoundingClientRect(),
@@ -146,6 +165,8 @@
             window.onorientationchange = function() { 
                 window.location.reload(); 
             };
+
+            
         </script>
     </body>
 </html>
