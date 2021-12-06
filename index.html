@@ -103,7 +103,7 @@
             // var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
             // var webkit = !!ua.match(/WebKit/i);
             // var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
-            var webGl2Supported = !document.createElement('canvas').getContext('webgl2');
+            var webGl2Supported = document.createElement('canvas').getContext('webgl2');
 
             if (webGl2Supported) {
                 var videoElement = document.querySelector('#bannerVideo');
