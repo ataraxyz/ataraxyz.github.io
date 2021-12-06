@@ -1,17 +1,35 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
-
+@viewport {
+    width: device-width ;
+    zoom: 1.0 ;
+  }
 *
 {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Roboto Mono', monospace;
+    text-decoration: none;
+    touch-action: manipulation;
 }
+#bannerVideo {
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
 body
 {
     background: #000;
-    height: 1000px;
+    height: 256px;
+    
 }
+
+mark 
+{
+    background-color: white;
+    color: black;
+}
+
 section
 {
     position: relative;
@@ -21,77 +39,207 @@ section
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    padding: 100px;
-}
-section video
-{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    pointer-events: none;
-}
-section h2
-{
-    position: relative;
-    color: #fff;
-    font-size: 3em;
-}
-section h3
-{
-    position: relative;
-    color: #fff;
-    font-size: 3em;
-}
-section p
-{
-    position: relative;
-    color: #fff;
-    font-size: 1.2em;
-}
-.banner
-{
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.banner video
-{
-    position: absolute;
-    top: 0;
-    left: 0;
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-.banner .content
-{
-    position: relative;
-    z-index: 1;
-    max-width: 1000px;
-    margin: 0 auto;
-    text-align: center;
+    padding: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
-.banner .content h1
+
+@media screen and (max-width:320px) 
 {
-    margin : 0;
-    padding: 0;
-    font-size: 4.5em;
-    text-transform: uppercase;
-    color : #fff;
+    input[type="button"]
+    {
+        background-color: #ffffff; 
+        position:absolute;
+        left:10px;
+        top:10px;
+        z-index: 1;
+        border: 1px outset black;
+        color: rgb(0, 0, 0);
+        padding: 10px;
+        
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 2.0em;
+    }
+    section h2
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section h3
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section h4
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section img
+    {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+    }
+    section h5
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section h5
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section p
+    {
+        text-align: justify;
+        position: relative;
+        color: #fff;
+        font-size: 2vw;
+    }
 
 }
-
-.banner .content p
+@media screen and (min-width: 321px) and (max-width: 480px) 
 {
-    font-size: 1.5em;
-    color : #fff;
+    input[type="button"]
+    {
+        background-color: #ffffff; 
+        position:absolute;
+        left:10px;
+        top:10px;
+        z-index: 1;
+        border: 1px outset black;
+        color: rgb(0, 0, 0);
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 2.0em;
+    }
+    section h2
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section h3
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section h4
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section img
+    {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+    }
+    section img.roadmapImg
+    {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
+    }
     
+    section h5
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section h5
+    {
+        position: relative;
+        color: #fff;
+        font-size: 8vw;
+    }
+    section p
+    {
+        text-align: justify;
+        position: relative;
+        color: #fff;
+        font-size: 2vw;
+    }
+}
+@media screen and (min-width: 481px) 
+{
+    input[type="button"]
+    {
+        background-color: #ffffff; 
+        position:absolute;
+        left:10px;
+        top:10px;
+        z-index: 1;
+        border: 1px outset black;
+        color: rgb(0, 0, 0);
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1.2em;
+    }
+    
+    section h2
+    {
+        position: relative;
+        color: #fff;
+        font-size: 3em;
+    }
+    section h3
+    {
+        position: relative;
+        color: #fff;
+        font-size: 3em;
+    }
+    section h4
+    {
+        position: relative;
+        color: #fff;
+        font-size: 3em;
+    }
+    section img
+    {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+    }
+    section h5
+    {
+        position: relative;
+        color: #fff;
+        font-size: 3em;
+    }
+    section h5
+    {
+        position: relative;
+        color: #fff;
+        font-size: 3em;
+    }
+    section p
+    {
+        text-align: justify;
+        position: relative;
+        color: #fff;
+        font-size: 1.0em;
+    }
+
 }
