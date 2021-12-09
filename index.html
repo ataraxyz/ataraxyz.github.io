@@ -30,7 +30,7 @@
         <meta name="description" content="ATARA presents SERENE ANIMO - A GENETICCHAIN project in multiple acts. First drop Trip in space filling curves releasing soon!">
         <meta property="og:image" content="https://drive.google.com/file/d/1Q2D-ofxIWcHFNQJRQZ5aybXCpZqxOMef?export=download" />
         <meta property="og:description" content="ATARA presents SERENE ANIMO - A GENETICCHAIN project in multiple acts. First drop Trip in space filling curves releasing soon!" />
-        <meta property="og:url"content="https://ataraxyz.github.io/gc" />
+        <meta property="og:url"content="https://atara.xyz" />
         <meta property="og:title" content="A T A R A  -  procedural art" />
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>A T A R A  -  procedural art</title>
@@ -63,6 +63,8 @@
 
                 </p>
             </div>
+            <a class="ca3-scroll-down-link ca3-scroll-down-arrow" data-ca3_iconfont="ETmodules" data-ca3_icon=""></a>    
+            
         </section>
         <section class="section1">
             <div class="content">
@@ -95,7 +97,7 @@
                 <p><br></p>
                 <p><a href="https://docs.google.com/document/d/1zgMBNEetXOaoR1umeMu0g0GEghdgqdTp0pvs3mHaaXo/edit" target="_blank"><mark>RESUME</mark></a></p>
                 <p><br></p>
-                <p><a href="https://ataraxyz.github.io/gc_full/" target="_blank"><mark>I SERENE ANIMO - Fullscreen collection preview</mark></a></p>
+                <p><a href="https://atara.xyz/gc_full/" target="_blank"><mark>I SERENE ANIMO - Fullscreen collection preview</mark></a></p>
                 <br><br>
                 </div>
         </section>
@@ -110,7 +112,9 @@
             
             if (webGl2Supported) {
                 videoElement.parentNode.removeChild(videoElement);
-                let b0 = document.querySelector('body > section.section0 > div > input[type=button]')
+                let b0 = document.querySelector('body > section.section0 > div > input[type=button]');
+                let s0 = document.querySelector('body > section.section0 > a');
+                
                 var intervallTimer = setInterval(myTimer, 10);
                 function myTimer() {
                     if ( idleTime < 1.0) {
@@ -118,7 +122,9 @@
                         var fadeValue = Math.max( 0.0, Math.min( 1.0, 1.0 - idleTime ) );
                         b0.style.opacity = fadeValue;
                     }
-                    else { b0.style.opacity = 0.0; }
+                    else { 
+                        b0.style.opacity = 0.0;
+                    }
                 }
             } else {
                 var buttonElement = document.querySelector( 'body > section.section0 > div > input[type=button]' );
