@@ -581,7 +581,7 @@ const iChannel0FragmentShader = `
       if ( l == 1 )
         backgroundD = d;
       else
-        backgroundD = smoothMerge( backgroundD, d, 0.001 ); // tiny merge to remove black edges
+        backgroundD = smoothMerge( backgroundD, d, float(iInt4) ); // tiny merge to remove black edges
       
       float layerSpeed = iTime * (5.+hash11( seeedC + ll + 5.0 )*100.0 ) * gSpeed;
 
