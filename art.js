@@ -89,11 +89,37 @@ const randomColorHex = r => {
   return `#${red}${green}${blue}`;
 };
 
+const colorDist = {
+  0: .225,
+  1: .225,
+  2: .05,
+  3: .05,
+  4: .05,
+  5: .05,
+  6: .05,
+  7: .05,
+  8: .05,
+  9: .05,
+  10: .05,
+  11: .05,
+  12: .025,
+  13: .025
+};
+
+const shapeDist = {
+  0: 0.6,
+  1: .1,
+  2: .1,
+  3: .1,
+  4: .1
+};
+
+
 const hashToTraits = hash => {
   // setup random fns
   const R = mkRandom(hash);
 
-  const isMobile = window.matchMedia("only screen and (max-width: 760px)").matches;
+  const isMobile = !window.matchMedia("only screen and (max-width: 760px)").matches;
 
   
 
@@ -113,14 +139,13 @@ const hashToTraits = hash => {
   const seed = R.ri(0, 10000 );
   const seedC = R.ri(0, 10000 );
   const pointsl = R.ri(3, maxPointsPerLayer);//Math.min( maxPointsPerLayer, R.ri(0, (4-layers) * 10 ));
-  const shape = R.ri(-1,3 );
+  const shape = selectRandomDist(shapeDist, R.r)-1;
   const speed = R.ri( 50, 200 );
   const size = R.ri( 50, 200 );
 
   const level = R.ri( 2, 5 );
-  // hack so layers are bisased to higher orders
-  // const level = selectRandomDist(levelDist, R.r);
-  const cmode = R.ri( 0, 14 );
+  
+  const cmode = selectRandomDist(colorDist, R.r);
 
   return {
     layers,
@@ -146,7 +171,7 @@ const hashToTraits = hash => {
   const width  = window.innerWidth / 8;
   const height = window.innerHeight / 8;
   // const body   = document.querySelector('body');
-  //const body   = document.querySelector('body > section:nth-child(3) > div > div');
+  //const body   = document.querySelector('body > section:nth-child(14) > div > div');
   const body = document.querySelector('body > section:nth-child(1) > div > p');
 
   // const body = document.querySelector('body > section:nth-child(1)');
@@ -440,51 +465,45 @@ const iChannel0FragmentShader = `
     } 
     else if ( iInt10 == 2 )
     {
-      // golden angle mode with random sat and value
-      float h = hash11(ss+666.0) + floor(distance / colorWidth) * GOLDEN_ANGLE;
-      return hsv2rgb( vec3(h, 0.5+hash11(ss+555.0)*0.5,0.5+hash11(ss+777.0)*0.5));
+      return viridis(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
     } 
     else if ( iInt10 == 3 )
     {
-      return viridis(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
+      return viridis(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
     } 
     else if ( iInt10 == 4 )
     {
-      return viridis(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
+      return plasma(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
     } 
     else if ( iInt10 == 5 )
     {
-      return plasma(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
+      return plasma(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
     } 
     else if ( iInt10 == 6 )
     {
-      return plasma(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
+      return magma(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
     } 
     else if ( iInt10 == 7 )
     {
-      return magma(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
+      return magma(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
     } 
     else if ( iInt10 == 8 )
     {
-      return magma(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
+      return inferno(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
     } 
     else if ( iInt10 == 9 )
     {
-      return inferno(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
+      return inferno(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
     } 
     else if ( iInt10 == 10 )
     {
-      return inferno(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
+      return turbo(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
     } 
     else if ( iInt10 == 11 )
     {
-      return turbo(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
-    } 
-    else if ( iInt10 == 12 )
-    {
       return turbo(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
     } 
-    else if ( iInt10 == 13 )
+    else if ( iInt10 == 12 )
     {
       // rainbow mode
       vec3 cola = vec3( 0.5, 0.5, 0.5 );
@@ -496,7 +515,7 @@ const iChannel0FragmentShader = `
       return pal( hash11(ss + floor(distance / colorWidth ) + 666.0 ), cola, colb, colc, cold );
 
     } 
-    else if ( iInt10 == 14 )
+    else if ( iInt10 == 13 )
     {
       // rainbow mode
       vec3 cola = vec3( 0.5, 0.5, 0.5 );

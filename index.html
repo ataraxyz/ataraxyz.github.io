@@ -96,7 +96,9 @@
                 <br><br>
                 </div>
         </section>
+        
         <script type="text/javascript">
+            
             // check for safari mobile forst and play only videp
             // var ua = window.navigator.userAgent;
             // var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
@@ -149,8 +151,24 @@
 
             function keybordInput(e)
             {
+                console.log(e.keyCode )
                 if ( e.ctrlKey || e.keyCode == 13 )
-                refresh();
+                    refresh();
+                if ( e.keyCode == 80 )
+                {
+                    var dataCanvas = document.querySelector("body > section.section0 > div > p > canvas");
+                    var image = dataCanvas.toDataURL();  
+                    // create temporary link  
+                    var tmpLink = document.createElement( 'a' );  
+                    tmpLink.download = tokenData.hash + '_image.png'; // set the name of the download file 
+                    tmpLink.href = image;  
+                
+                    // temporarily add link to body and initiate the download  
+                    document.body.appendChild( tmpLink );  
+                    tmpLink.click();  
+                    document.body.removeChild( tmpLink );  
+                    
+                }
             }
 
                     
