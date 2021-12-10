@@ -43,7 +43,14 @@
                 <source src="atara_gc_bg_full.mp4" type="video/mp4">
             </video>
             <div class="collection">
-                <input type = "button" onclick = "refresh()" value = "RANDOMIZE ART">   
+                <input type = "button" onclick = "refresh()" value = "RANDOMIZE ART" id="hidables">
+                <div class="controls">
+                    <!-- <label for="sdfblend">SDF Blend</label> -->
+                    <input id="sdfblend" type="range" min="0" max="100" value="50" step="1" oninput="onChangeSdfblend(this.value);">
+                    <label>SDF Blend<span id="sdfblend"></span></label>
+                    <input id="speed" type="range" min="0" max="200" value="0" step="1" oninput="onChangeSpeed(this.value);">
+                    <label>Speed Boost<span id="speed"></span></label>
+                </div>
                 <!-- <p class="buttondesc">
                     <mark>CLICK</mark> for a new random example artpiece from the collection.
                 </p> -->
@@ -101,7 +108,7 @@
             if (webGl2Supported) {
                 videoElement.parentNode.removeChild(videoElement);
                 let b0 = document.querySelector('body > section.section0 > div > input[type=button]');
-                let s0 = document.querySelector('body > section.section0 > a');
+                let c0 = document.querySelector('body > section.section0 > div > div');
                 
                 var intervallTimer = setInterval(myTimer, 10);
                 function myTimer() {
@@ -109,9 +116,11 @@
                         idleTime = idleTime + 0.01;
                         var fadeValue = Math.max( 0.0, Math.min( 1.0, 1.0 - idleTime ) );
                         b0.style.opacity = fadeValue;
+                        c0.style.opacity = fadeValue;
                     }
                     else { 
                         b0.style.opacity = 0.0;
+                        c0.style.opacity = 0.0;
                     }
                 }
             } else {
@@ -189,6 +198,16 @@
             // };
             window.onorientationchange = function() { 
                 window.location.reload(); 
+            };
+
+            function resize()
+            {
+                var heights = window.innerHeight;
+                document.querySelector("body > section.section0").style.height = heights + "px";
+            }
+            resize();
+            window.onresize = function() {
+                resize();
             };
 
             

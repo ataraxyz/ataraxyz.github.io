@@ -870,7 +870,7 @@ const fragmentShader = `
     iInt4: { value : state.sdfblend },
     iInt5: { value : shape },
     iInt6: { value : seedC },
-    iInt7: { value : speed },
+    iInt7: { value : speed+state.speed },
     iInt8: { value : size },
     iInt9: { value : level },
     iInt10: { value : cmode },
@@ -1041,7 +1041,7 @@ const fragmentShader = `
     uniforms.iInt4.value = state.sdfblend;
     uniforms.iInt5.value = state.three.uniforms.shape;
     uniforms.iInt6.value = state.three.uniforms.seedC;
-    uniforms.iInt7.value = state.three.uniforms.speed;
+    uniforms.iInt7.value = state.three.uniforms.speed+state.speed;
     uniforms.iInt8.value = state.three.uniforms.size;
     uniforms.iInt9.value = state.three.uniforms.level;
     uniforms.iInt10.value = state.three.uniforms.cmode;

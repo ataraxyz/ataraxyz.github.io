@@ -20,9 +20,15 @@
 body
 {
     background: #000;
-    height: 256px;
+    /* height: 256px; */
+    min-height: 100vh;
+    /* mobile viewport bug fix */
+    min-height: -webkit-fill-available;
     
 }
+html {
+    height: -webkit-fill-available;
+  }
 [data-ca3_icon]::before {
     font-weight: normal;
     content: attr(data-ca3_icon);
@@ -44,7 +50,7 @@ body
     margin-left: auto; 
     margin-right: auto; 
 	position: absolute;
-	right: 50%;
+	right: 3vw;
 	bottom: 10px;
 	color: #FFF;
 	text-align: center;
@@ -78,7 +84,23 @@ body
 }
 
 
-
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background-color: #1a1919;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid white;
+    cursor: pointer;
+    transition: .3s ease-in-out;
+  }​
+    input[type="range"]::-webkit-slider-thumb:hover {
+      background-color: white;
+      /* border: 2px solid #e74c3c; */
+    }
+    input[type="range"]::-webkit-slider-thumb:active {
+      transform: scale(1.5);
+    }
 mark 
 {
     background-color: white;
@@ -102,22 +124,45 @@ section
 
 @media screen and (max-width:320px) 
 {
-    input[type="button"]
-    {
-        background-color: #ffffff; 
-        position:absolute;
-        left:10px;
-        top:10px;
-        z-index: 1;
-        border: 1px outset black;
-        color: rgb(0, 0, 0);
-        padding: 10px;
+    .controls {
+        background: rgba(0, 0, 0, 0);
+        position: absolute;
+        bottom: 10vh;
+        left: 20px;
         
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 2.0em;
-    }
+        color: rgb(255, 255, 255);
+        flex-flow: row-reverse; /* or 'row' and change the order of your html elements */
+        align-items: center;
+        z-index: 2;
+        }
+    input[type="range"] {
+        /* display: block; */
+        -webkit-appearance: none;
+        background-color: #bdc3c7;
+        width: 20vw;
+        height: 0.5vh;
+        border-radius: 5px;
+        margin: 0 auto;
+        outline: 0;
+      }
+    input[type="button"]
+      {
+          background-color: #ffffff; 
+          position:absolute;
+          left:0dp;
+          width:100%;
+          top:1vh;
+          z-index: 1;
+          border: 1px outset black;
+          color: rgb(0, 0, 0);
+          padding: 10px;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          text-decoration: none;
+          display: flex;
+          font-size: 2.0em;
+      }
     section h2
     {
         position: relative;
@@ -166,19 +211,43 @@ section
 }
 @media screen and (min-width: 321px) and (max-width: 480px) 
 {
+    .controls {
+        background: rgba(0, 0, 0, 0);
+        position: absolute;
+        bottom: 17vh;
+        left: 1vw;
+        
+        color: rgb(255, 255, 255);
+        flex-flow: row-reverse; /* or 'row' and change the order of your html elements */
+        align-items: center;
+        z-index: 2;
+        }
+    input[type="range"] {
+        /* display: block; */
+        -webkit-appearance: none;
+        background-color: #bdc3c7;
+        width: 20vw;
+        height: 0.5vh;
+        border-radius: 5px;
+        margin: 0 auto;
+        outline: 0;
+      }
     input[type="button"]
     {
         background-color: #ffffff; 
         position:absolute;
-        left:10px;
-        top:10px;
+        left: 0px;;
+        width:100%;
+        top:1vh;
         z-index: 1;
         border: 1px outset black;
         color: rgb(0, 0, 0);
         padding: 10px;
+        align-items: center;
+        justify-content: center;
         text-align: center;
         text-decoration: none;
-        display: inline-block;
+        display: flex;
         font-size: 2.0em;
     }
     section h2
@@ -236,6 +305,27 @@ section
 }
 @media screen and (min-width: 481px) 
 {
+    .controls {
+        background: rgba(0, 0, 0, 0);
+        position: absolute;
+        bottom: 2vh;
+        left: 1vw;
+        
+        color: rgb(255, 255, 255);
+        flex-flow: row-reverse; /* or 'row' and change the order of your html elements */
+        align-items: center;
+        z-index: 2;
+        }
+    input[type="range"] {
+        /* display: block; */
+        -webkit-appearance: none;
+        background-color: #bdc3c7;
+        width: 12vw;
+        height: 0.5vh;
+        border-radius: 5px;
+        margin: 0 auto;
+        outline: 0;
+      }
     input[type="button"]
     {
         background-color: #ffffff; 
