@@ -97,7 +97,7 @@ const hashToTraits = hash => {
 
   
 
-  var maxPointsPerLayer = 10;
+  var maxPointsPerLayer = 20;
   if ( isMobile )
   {
     maxPointsPerLayer = 5;
@@ -105,14 +105,14 @@ const hashToTraits = hash => {
   var maxLayer = 4;
   if ( isMobile )
   {
-    maxLayer = 1;
+    maxLayer = 2;
   }
 
   const layers = Math.min(maxLayer,R.ri( 2, 3 ));
   const post  = 10;
   const seed = R.ri(0, 10000 );
   const seedC = R.ri(0, 10000 );
-  const pointsl = Math.min( maxPointsPerLayer, R.ri(0, (4-layers) * 10 ));
+  const pointsl = R.ri(3, maxPointsPerLayer);//Math.min( maxPointsPerLayer, R.ri(0, (4-layers) * 10 ));
   const shape = R.ri(-1,3 );
   const speed = R.ri( 50, 200 );
   const size = R.ri( 50, 200 );
