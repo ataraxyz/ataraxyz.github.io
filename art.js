@@ -119,8 +119,7 @@ const hashToTraits = hash => {
   // setup random fns
   const R = mkRandom(hash);
 
-  const isMobile = !window.matchMedia("only screen and (max-width: 760px)").matches;
-
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   
 
   var maxPointsPerLayer = 20;
@@ -128,22 +127,26 @@ const hashToTraits = hash => {
   {
     maxPointsPerLayer = 5;
   }
-  var maxLayer = 4;
+  var maxLayer = 12;
   if ( isMobile )
   {
     maxLayer = 2;
   }
 
-  const layers = Math.min(maxLayer,R.ri( 2, 3 ));
-  const post  = 10;
+  const layers = R.ri( 2, maxLayer );
+  console.log(isMobile);
+  //const layers = 10;
+  const post  = R.ri(0,100);
   const seed = R.ri(0, 10000 );
   const seedC = R.ri(0, 10000 );
-  const pointsl = R.ri(3, maxPointsPerLayer);//Math.min( maxPointsPerLayer, R.ri(0, (4-layers) * 10 ));
+  const pointsl = 10;//R.ri(3, maxPointsPerLayer);//Math.min( maxPointsPerLayer, R.ri(0, (4-layers) * 10 ));
+  // const pointsl = 10;
   const shape = selectRandomDist(shapeDist, R.r)-1;
-  const speed = R.ri( 50, 200 );
-  const size = R.ri( 50, 200 );
+  const speed = R.ri( 20, 150 );
+  const size = R.ri( 100, 200 );
 
-  const level = R.ri( 2, 5 );
+  //const level = R.ri( 2, 5 );
+  const level = 6;
   
   const cmode = selectRandomDist(colorDist, R.r);
 
@@ -279,6 +282,7 @@ const iChannel0FragmentShader = `
 
   vec2 curve( int i )
   {
+    return vec2( hash11(float(i)), hash11(float(i)+123.) );
       ivec2 res = ivec2(0,0);
       for( int k=0; k<iInt9; k++ )
       {
@@ -292,24 +296,12 @@ const iChannel0FragmentShader = `
       return vec2(float(res.x), float(res.y));
   }
 
-  vec2 rotateCCW(vec2 p, float a)
-  {
-    mat2 m = mat2(cos(a), sin(a), -sin(a), cos(a));
-    return p * m;	
-  }
-
-  vec2 rotateCW(vec2 p, float a)
-  {
-    mat2 m = mat2(cos(a), -sin(a), sin(a), cos(a));
-    return p * m;
-  }
-
   vec2 rotate( vec2 p, float a )
   {
     if ( a > 0.0 )
-      return rotateCW( p, a );
+      return p * mat2(cos(a), sin(a), -sin(a), cos(a));
     else if ( a < 0.0 )
-      return rotateCCW( -p, a );
+      return -p * mat2(cos(a), -sin(a), sin(a), cos(a));
     else
       return p;
   }
@@ -530,7 +522,7 @@ const iChannel0FragmentShader = `
     return vec3(0.);
   }
 
-  float sceneDist( int type, vec2 PP, vec2 hilbertP, float ss, float globalSize )
+  float sceneDist( int type, vec2 PP, vec2 hilbertP, float ss, float globalSize, float globalSpeed )
   {
     
     float sign = 1.0;
@@ -545,9 +537,9 @@ const iChannel0FragmentShader = `
       return boxDist(      translate( PP, hilbertP ), vec2(radiusBox), radiusBox * 0.1 );
     }
     else if ( type == 2 )
-      return triangleDist( rotate( translate(PP, hilbertP),sign * hash11( ss ) * 360. / 180. * 3.14159 + iTime*0.25 ), hash11( ss + 1234. ) * 200. * globalSize ); 
+      return triangleDist( rotate( translate(PP, hilbertP),sign * (hash11( ss ) * 360. / 180. * 3.14159 + iTime*0.25) * globalSpeed ), hash11( ss + 1234. ) * 200. * globalSize ); 
     else
-      return hexagonDist( rotate( translate(PP, hilbertP),sign * hash11( ss ) * 360. / 180. * 3.14159 + iTime*0.25 ), hash11( ss + 1234. ) * 200. * globalSize ); 
+      return hexagonDist( rotate( translate(PP, hilbertP),sign * (hash11( ss ) * 360. / 180. * 3.14159 + iTime*0.25) * globalSpeed ), hash11( ss + 1234. ) * 200. * globalSize ); 
   }
   
 
@@ -569,32 +561,40 @@ const iChannel0FragmentShader = `
     vec4 accumulatedCol = vec4(0.); // black background
     
     
-    // camera shake if wanted
-    // P.y += (hash11( seeed + 666.0 + iTime ) * 2.0 - 1.0 ) * 2.0 * abs(sin(iTime));
+    //camera shake if wanted
+    //P.y += (hash11( seeed + 666.0 + iTime ) * 2.0 - 1.0 ) * 5.0 * abs(sin(iTime));
 
     float numLayers = float(iInt0);
 
     for ( int l = 1; l<=iInt0; l++ )
     {
       float ll = float(l);
-      int numPointsInLayer = min(numPoints, int(hash11( seeed+ll + 2.0 ) * float(iInt3) + 0.5) );
+      //int numPointsInLayer = min(numPoints, int(hash11( seeed+ll + 2.0 ) * float(iInt3) + 0.5) );
+      int numPointsInLayer = iInt3;
       float gs = gSize * ( 0.5 + ( 1.-ll/numLayers) * 0.5);
 
-      int curveIndex = int(hash11( seeed + ll + 33.0 ) * numPointsFloat);
-      vec2 PHC = curve(curveIndex)/gridDistance * iResolution.xy;
+      if ( iInt1 < 50 && l == 1 ){
+        gs *= 10.;
+        numPointsInLayer = max(4,numPointsInLayer / 2);
+      }
 
-      float d = sceneDist( iInt5, P, PHC, seeed + ll + 4.0, gs );
+      int curveIndex = int(hash11( seeed + ll + 33.0 ) * numPointsFloat);
+      //vec2 PHC = curve(curveIndex)/gridDistance * iResolution.xy;
+      vec2 PHC = curve(curveIndex) * iResolution.xy;
+
+      float d = sceneDist( iInt5, P, PHC, seeed + ll + 4.0, gs, gSpeed );
       
       for ( int i = 1; i<numPointsInLayer; i++ )
       {
         float ii = float(i);
         curveIndex = int(hash11( seeed + ii*ll + 3.0 ) * numPointsFloat);
-        PHC = curve(curveIndex)/gridDistance * iResolution.xy;
+        //PHC = curve(curveIndex)/gridDistance * iResolution.xy;
+        PHC = curve(curveIndex) * iResolution.xy;
         
         if ( iInt5<0)
-          d = smoothMerge( d, sceneDist( (iInt5+l)%4, P, PHC, seeed + ii+ll + 4.0, gs ), float(iInt4) );
+          d = smoothMerge( d, sceneDist( (iInt5+l)%4, P, PHC, seeed + ii+ll + 4.0, gs, gSpeed ), float(iInt4) );
         else
-          d = smoothMerge( d, sceneDist( iInt5, P, PHC, seeed + ii+ll + 4.0, gs ), float(iInt4) );
+          d = smoothMerge( d, sceneDist( iInt5, P, PHC, seeed + ii+ll + 4.0, gs, gSpeed ), float(iInt4) );
       }
 
       if ( l == 1 )
@@ -609,6 +609,7 @@ const iChannel0FragmentShader = `
       layerCol *= alpha; // premult;
       accumulatedCol.rgb = layerCol + accumulatedCol.rgb * ( 1.0 - alpha ); // over
       accumulatedCol.a = max(accumulatedCol.a, alpha);
+      // accumulatedCol.rgb = vec3(-d);
     }
     
     
@@ -665,7 +666,8 @@ const iChannel0FragmentShader = `
     float seed = float(iInt2);
     vec2 uv = fragCoord / iResolution.xy;
     vec2 fromCenter = vec2(0.5) - uv;
-    vec2 delta = fromCenter * 0.5 * float(iInt1)/2000.0;
+    //vec2 delta = fromCenter * 0.5 * float(iInt1)/2000.0;
+    vec2 delta = fromCenter * 0.0035;
     vec4 tx  = texture(iChannel0, uv);
     vec4 ttx = vec4(0.);
     vec4 origCol = vec4(0.);
@@ -680,9 +682,10 @@ const iChannel0FragmentShader = `
 
     vec2 vinCoord = ( 2.0 * fragCoord - iResolution.xy ) / min(iResolution.x, iResolution.y);
     float vignette = smoothstep( 1.2, 0.3,length(vinCoord*0.5));
-    vec4 chroma = vec4( tx.r, ttx.g, tx.b, tx.a) * vignette;
+    //vec4 chroma = vec4( tx.r, ttx.g, tx.b, tx.a) * vignette;
+    fragColor = vec4( tx.r, ttx.g, tx.b, tx.a) * vignette;
+    //fragColor = mix(origCol, chroma, 0.5 );
     
-    fragColor = mix(origCol, chroma, float(iInt1) / 10. );
 
     float globalfade = float(iInt11) / 100.0;
     fragColor.rgb = mix(fragColor.rgb, vec3(0.), globalfade );
@@ -890,7 +893,7 @@ const fragmentShader = `
     iInt5: { value : shape },
     iInt6: { value : seedC },
     iInt7: { value : speed+state.speed },
-    iInt8: { value : size },
+    iInt8: { value : size*(state.size/100) },
     iInt9: { value : level },
     iInt10: { value : cmode },
     iInt11: { value: state.fadeout },
@@ -1061,12 +1064,13 @@ const fragmentShader = `
     uniforms.iInt5.value = state.three.uniforms.shape;
     uniforms.iInt6.value = state.three.uniforms.seedC;
     uniforms.iInt7.value = state.three.uniforms.speed+state.speed;
-    uniforms.iInt8.value = state.three.uniforms.size;
+    uniforms.iInt8.value = state.three.uniforms.size*(state.size/100);
     uniforms.iInt9.value = state.three.uniforms.level;
     uniforms.iInt10.value = state.three.uniforms.cmode;
     uniforms.iInt11.value = state.fadeout;
     uniforms.iInt12.value = state.textfade;
     uniforms.overlayTx.value = overlayTexture;
+
   };
 
   // render/update loop

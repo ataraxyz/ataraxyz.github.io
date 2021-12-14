@@ -226,10 +226,10 @@ section
         /* display: block; */
         -webkit-appearance: none;
         background-color: #bdc3c7;
-        width: 20vw;
+        width: 50vw;
         height: 0.5vh;
         border-radius: 5px;
-        margin: 0 auto;
+        margin: 20px auto;
         outline: 0;
       }
     input[type="button"]
