@@ -134,7 +134,7 @@ const hashToTraits = hash => {
   }
 
   const layers = R.ri( 2, maxLayer );
-  console.log(isMobile);
+  
   //const layers = 10;
   const post  = R.ri(0,100);
   const seed = R.ri(0, 10000 );
@@ -144,11 +144,12 @@ const hashToTraits = hash => {
   const shape = selectRandomDist(shapeDist, R.r)-1;
   const speed = R.ri( 20, 150 );
   const size = R.ri( 100, 200 );
-
+  
   //const level = R.ri( 2, 5 );
   const level = 6;
   
   const cmode = selectRandomDist(colorDist, R.r);
+  const sameProb = R.ri( 0, 100);
 
   return {
     layers,
@@ -160,7 +161,8 @@ const hashToTraits = hash => {
     speed,
     size,
     level,
-    cmode
+    cmode,
+    sameProb
   };
 
 };
@@ -210,7 +212,8 @@ const doArt = (renderer, hash, state) => {
     speed,
     size,
     level,
-    cmode
+    cmode,
+    sameProb
   } = hashToTraits(hash);
   
   // console.log( hashToTraits(hash));
@@ -257,6 +260,7 @@ const iChannel0FragmentShader = `
   uniform int iInt10; // color mode
   uniform int iInt11; // fadeout
   uniform int iInt12; // textfade
+  uniform int iInt13; // sameProb
 
 
   //const int level = iInt9; // numpoints == (2^level)^2
@@ -282,7 +286,7 @@ const iChannel0FragmentShader = `
 
   vec2 curve( int i )
   {
-    return vec2( hash11(float(i)), hash11(float(i)+123.) );
+    // return vec2( hash11(float(i)), hash11(float(i)+123.) );
       ivec2 res = ivec2(0,0);
       for( int k=0; k<iInt9; k++ )
       {
@@ -438,6 +442,9 @@ const iChannel0FragmentShader = `
 
   vec3 colorize( float distance, float colorWidth, float ss )
   {
+    // if ( hash11(ss + 68789.0 ) < 0.5 )
+    // distance = -distance;
+
     if ( iInt10 == 0 )
     {
       // random mode
@@ -548,6 +555,7 @@ const iChannel0FragmentShader = `
     vec2 uv = fragCoord / iResolution.xy;
     vec2 P = fragCoord + vec2( 0.5 );
     int numPoints      = 1<<(iInt9<<1);
+    int deltaP = int(float(numPoints) / 1.61803398874 + 0.5);
     float numPointsFloat = float(numPoints);
     float gridDistance = float((1<<iInt9)-1); 
     
@@ -562,7 +570,7 @@ const iChannel0FragmentShader = `
     
     
     //camera shake if wanted
-    //P.y += (hash11( seeed + 666.0 + iTime ) * 2.0 - 1.0 ) * 5.0 * abs(sin(iTime));
+    // P.y += (hash11( seeed + 666.0 + iTime ) * 2.0 - 1.0 ) * 5.0 * abs(sin(iTime));
 
     float numLayers = float(iInt0);
 
@@ -579,22 +587,26 @@ const iChannel0FragmentShader = `
       }
 
       int curveIndex = int(hash11( seeed + ll + 33.0 ) * numPointsFloat);
-      //vec2 PHC = curve(curveIndex)/gridDistance * iResolution.xy;
-      vec2 PHC = curve(curveIndex) * iResolution.xy;
+      vec2 PHC = curve(curveIndex)/gridDistance * iResolution.xy;
+      // vec2 PHC = curve(curveIndex) * iResolution.xy;
 
       float d = sceneDist( iInt5, P, PHC, seeed + ll + 4.0, gs, gSpeed );
       
       for ( int i = 1; i<numPointsInLayer; i++ )
       {
         float ii = float(i);
-        curveIndex = int(hash11( seeed + ii*ll + 3.0 ) * numPointsFloat);
-        //PHC = curve(curveIndex)/gridDistance * iResolution.xy;
-        PHC = curve(curveIndex) * iResolution.xy;
+        int layerType = iInt5;
         
         if ( iInt5<0)
-          d = smoothMerge( d, sceneDist( (iInt5+l)%4, P, PHC, seeed + ii+ll + 4.0, gs, gSpeed ), float(iInt4) );
-        else
-          d = smoothMerge( d, sceneDist( iInt5, P, PHC, seeed + ii+ll + 4.0, gs, gSpeed ), float(iInt4) );
+          layerType = (iInt5+l)%4;
+
+        
+          if ( layerType < 2 || hash11( seeed + ii*ll + 4589.0 ) < float(iInt13)/100.) {
+            curveIndex = ( curveIndex + deltaP ) % numPoints; 
+          }
+        PHC = curve(curveIndex)/gridDistance * iResolution.xy;
+
+        d = smoothMerge( d, sceneDist( layerType, P, PHC, seeed + ii+ll + 4.0, gs, gSpeed ), float(iInt4) );
       }
 
       if ( l == 1 )
@@ -605,7 +617,7 @@ const iChannel0FragmentShader = `
       float layerSpeed = iTime * (5.+hash11( seeedC + ll + 5.0 )*100.0 ) * gSpeed;
 
       float alpha = smoothstep( 0.005, 0., d );
-      vec3 layerCol = colorize( -d-layerSpeed, 5.+40.*hash11( seeedC + ll + 6.0 ), seeedC + ll + 7.0 );
+      vec3 layerCol = colorize( -d-layerSpeed, 3.+hash11( seeedC + ll + 6.0 )*60.*gSize, seeedC + ll + 7.0 );
       layerCol *= alpha; // premult;
       accumulatedCol.rgb = layerCol + accumulatedCol.rgb * ( 1.0 - alpha ); // over
       accumulatedCol.a = max(accumulatedCol.a, alpha);
@@ -898,6 +910,7 @@ const fragmentShader = `
     iInt10: { value : cmode },
     iInt11: { value: state.fadeout },
     iInt12: { value: state.textfade },
+    iInt13: { value : sameProb },
     overlayTx: { type: 't', value: 0, texture: overlayTexture }
   };
 
@@ -1069,6 +1082,7 @@ const fragmentShader = `
     uniforms.iInt10.value = state.three.uniforms.cmode;
     uniforms.iInt11.value = state.fadeout;
     uniforms.iInt12.value = state.textfade;
+    uniforms.iInt13.value = state.three.uniforms.sameProb;
     uniforms.overlayTx.value = overlayTexture;
 
   };
@@ -1117,7 +1131,8 @@ const refresh = () => {
     speed,
     size,
     level,
-    cmode
+    cmode,
+    sameProb
   } = hashToTraits(tokenData.hash);
   tokenState.three.uniforms.layers = layers;
   tokenState.three.uniforms.post = post;
@@ -1129,6 +1144,7 @@ const refresh = () => {
   tokenState.three.uniforms.size = size;
   tokenState.three.uniforms.level = level;
   tokenState.three.uniforms.cmode = cmode;
+  tokenState.three.uniforms.sameProb = sameProb;
 }
 /**
  * Main entry function.
