@@ -12,7 +12,7 @@ const u64  = n => BigInt.asUintN(64, n);
 const rotl = (x, k) => u64((x << k) | (x >> (64n - k)));
 // safari on osx fix
 // const rotl = (x, k) => u64((x << k) | (x >> (u64(64) - k))); 
-
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
 const xoshiro256strstr = s => () => {
   const result = u64(rotl(u64(s[1] * 5n), 7n) * 9n);
@@ -102,26 +102,25 @@ const colorDist = {
   9: .05,
   10: .05,
   11: .05,
-  12: .025,
-  13: .025
+  12: 0.05, 
+  13: 0.05,
+  14: .025,
+  15: .025
 };
 
 const shapeDist = {
-  0: 0.6,
-  1: .1,
-  2: .1,
-  3: .1,
-  4: .1
+  0: 0.5,
+  1: .09,
+  2: .09,
+  3: .09,
+  4: .09,
+  5: .04
 };
 
 
 const hashToTraits = hash => {
   // setup random fns
   const R = mkRandom(hash);
-
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  
-
   var maxPointsPerLayer = 20;
   if ( isMobile )
   {
@@ -141,12 +140,15 @@ const hashToTraits = hash => {
   const seedC = R.ri(0, 10000 );
   const pointsl = 10;//R.ri(3, maxPointsPerLayer);//Math.min( maxPointsPerLayer, R.ri(0, (4-layers) * 10 ));
   // const pointsl = 10;
-  const shape = selectRandomDist(shapeDist, R.r)-1;
+  const shape = selectRandomDist(shapeDist, R.r);
+  console.log(shape);
   const speed = R.ri( 20, 150 );
   const size = R.ri( 100, 200 );
   
-  //const level = R.ri( 2, 5 );
-  const level = 6;
+  const level = R.ri( 2, 7 );
+  if ( isMobile )
+    level = 4;
+  // const level = 4;
   
   const cmode = selectRandomDist(colorDist, R.r);
   const sameProb = R.ri( 0, 100);
@@ -314,7 +316,7 @@ const iChannel0FragmentShader = `
   {
     return p - t;
   }
-
+  
   float circleDist(vec2 p, float radius)
   {
     float result = length(p) - radius;
@@ -328,10 +330,16 @@ const iChannel0FragmentShader = `
     return result;
   }
 
-
   float triangleDist(vec2 p, float radius)
   {
     return max(	abs(p).x * 0.866025 + 
+            p.y * 0.5, -p.y) 
+          -radius * 0.5;
+  }
+
+  float insaneDist(vec2 p, float radius)
+  {
+    return max(	abs(p).x * hash11(p.x) + 
             p.y * 0.5, -p.y) 
           -radius * 0.5;
   }
@@ -440,6 +448,11 @@ const iChannel0FragmentShader = `
     return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));
   }
 
+  vec3 bbody(float t)
+  {
+    return vec3(1,1./4.,1./16.) * exp(4.*t - 1.);
+  }
+
   vec3 colorize( float distance, float colorWidth, float ss )
   {
     // if ( hash11(ss + 68789.0 ) < 0.5 )
@@ -504,6 +517,14 @@ const iChannel0FragmentShader = `
     } 
     else if ( iInt10 == 12 )
     {
+      return bbody(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
+    } 
+    else if ( iInt10 == 13 )
+    {
+      return bbody(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
+    } 
+    else if ( iInt10 == 14 )
+    {
       // rainbow mode
       vec3 cola = vec3( 0.5, 0.5, 0.5 );
       vec3 colb = vec3( 0.5, 0.5, 0.5 );
@@ -514,7 +535,7 @@ const iChannel0FragmentShader = `
       return pal( hash11(ss + floor(distance / colorWidth ) + 666.0 ), cola, colb, colc, cold );
 
     } 
-    else if ( iInt10 == 13 )
+    else if ( iInt10 == 15 )
     {
       // rainbow mode
       vec3 cola = vec3( 0.5, 0.5, 0.5 );
@@ -531,22 +552,23 @@ const iChannel0FragmentShader = `
 
   float sceneDist( int type, vec2 PP, vec2 hilbertP, float ss, float globalSize, float globalSpeed )
   {
-    
     float sign = 1.0;
     if ( hash11(ss+789456.) < 0.5 )
       sign = -1.0;
 
-    if ( type == 0 )
+    if ( type == 1 )
       return circleDist(   translate( PP, hilbertP ), hash11( ss ) * 200. * globalSize );
-    else if ( type == 1 )
+    else if ( type == 2 )
     {
       float radiusBox = hash11( ss ) * 200. * globalSize;
       return boxDist(      translate( PP, hilbertP ), vec2(radiusBox), radiusBox * 0.1 );
     }
-    else if ( type == 2 )
+    else if ( type == 3 )
       return triangleDist( rotate( translate(PP, hilbertP),sign * (hash11( ss ) * 360. / 180. * 3.14159 + iTime*0.25) * globalSpeed ), hash11( ss + 1234. ) * 200. * globalSize ); 
-    else
+    else if ( type == 4 )
       return hexagonDist( rotate( translate(PP, hilbertP),sign * (hash11( ss ) * 360. / 180. * 3.14159 + iTime*0.25) * globalSpeed ), hash11( ss + 1234. ) * 200. * globalSize ); 
+    else if ( type == 5 )
+      return insaneDist(   translate( PP, hilbertP ), hash11( ss ) * 200. * globalSize );
   }
   
 
@@ -585,20 +607,24 @@ const iChannel0FragmentShader = `
         gs *= 10.;
         numPointsInLayer = max(4,numPointsInLayer / 2);
       }
+        // gs *= 10.;
+        // numPointsInLayer = max(4,numPointsInLayer / 2);
 
       int curveIndex = int(hash11( seeed + ll + 33.0 ) * numPointsFloat);
       vec2 PHC = curve(curveIndex)/gridDistance * iResolution.xy;
       // vec2 PHC = curve(curveIndex) * iResolution.xy;
+      int layerType = iInt5;
+      if ( iInt5==0 )
+          layerType = 1+(int(hash11( seeed + ll + 34468.0 )*4.)%5);
 
-      float d = sceneDist( iInt5, P, PHC, seeed + ll + 4.0, gs, gSpeed );
+      float d = sceneDist( layerType, P, PHC, seeed + ll + 4.0, gs, gSpeed );
       
       for ( int i = 1; i<numPointsInLayer; i++ )
       {
         float ii = float(i);
-        int layerType = iInt5;
         
-        if ( iInt5<0)
-          layerType = (iInt5+l)%4;
+        
+        
 
         
           if ( layerType < 2 || hash11( seeed + ii*ll + 4589.0 ) < float(iInt13)/100.) {
@@ -630,6 +656,7 @@ const iChannel0FragmentShader = `
     fragColor.rgb = accumulatedCol.rgb + bgColor * (1.-accumulatedCol.a);
     fragColor.a = 1.0;
 
+    // fragColor.rgb = vec3(-backgroundD*0.0001);
     
 
   }
