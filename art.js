@@ -98,7 +98,7 @@ const hashToTraits = hash => {
   const speed = R.ri( 20, 150 );
   const size = R.ri( 100, 200 );
   
-  const level = R.ri( 2, 7 );
+  var level = R.ri( 2, 7 );
   if ( isMobile )
     level = 4;
   const cmode = selectRandomDist(colorDist, R.r);
