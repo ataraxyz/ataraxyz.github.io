@@ -17,7 +17,6 @@ uniform int iInt11; // fadeout
 uniform int iInt12; // textfade
 uniform int iInt13; // sameProb
 
-#define GOLDEN_ANGLE 0.381966011
 float dot2( in vec2 v ) { return dot(v,v); }
 float hash11(float p){
   p = fract(p * .1031);
@@ -147,7 +146,7 @@ if ( iInt10 == 0 ){
   float colB = hash11(ss + floor(distance / colorWidth ) + 777.0 );
   return vec3( colR, colG, colB );
 } else if ( iInt10 == 1 ) {
-  float h = hash11(ss+666.0) + floor(distance / colorWidth) * GOLDEN_ANGLE;
+  float h = hash11(ss+666.0) + floor(distance / colorWidth) * 0.381966011;
   return hsv2rgb( vec3(h, 0.75,0.75));
 } else if ( iInt10 == 2 ){
   return viridis(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
