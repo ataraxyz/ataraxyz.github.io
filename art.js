@@ -4,18 +4,13 @@ const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/
 
 const xoshiro256strstr = s => () => {
   const result = u64(rotl(u64(s[1] * 5n), 7n) * 9n);
-
   let t = u64(s[1] << 17n);
-
   s[2] ^= s[0];
   s[3] ^= s[1];
   s[1] ^= s[2];
   s[0] ^= s[3];
-
   s[2] ^= t;
-
   s[3] = rotl(s[3], 45n);
-
   return result;
 };
 const randomDecimal = xss => () => {
@@ -60,7 +55,6 @@ const randomColorHex = r => {
   const blue  = rc();
   return `#${red}${green}${blue}`;
 };
-
 const colorDist = {
   0: .225,
   1: .225,
@@ -79,7 +73,6 @@ const colorDist = {
   14: .025,
   15: .025
 };
-
 const shapeDist = {
   0: 0.5,
   1: .09,
@@ -88,8 +81,6 @@ const shapeDist = {
   4: .09,
   5: .04
 };
-
-
 const hashToTraits = hash => {
   const R = mkRandom(hash);
   var maxPointsPerLayer = 20;
