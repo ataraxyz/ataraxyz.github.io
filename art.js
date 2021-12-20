@@ -1,7 +1,8 @@
 const u64  = n => BigInt.asUintN(64, n);
 const rotl = (x, k) => u64((x << k) | (x >> (64n - k)));
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
+// var lsound = 0;
+// var usound = 0;
 const xoshiro256strstr = s => () => {
   const result = u64(rotl(u64(s[1] * 5n), 7n) * 9n);
   let t = u64(s[1] << 17n);
@@ -58,20 +59,20 @@ const randomColorHex = r => {
 const colorDist = {
   0: .225,
   1: .225,
-  2: .05,
+  2: .1,
   3: .05,
-  4: .05,
-  5: .05,
+  4: .15,
+  5: .025,
   6: .05,
-  7: .05,
-  8: .05,
-  9: .05,
-  10: .05,
-  11: .05,
+  7: .012,
+  8: .2,
+  9: .15,
+  10: .035,
+  11: .035,
   12: 0.05, 
   13: 0.05,
-  14: .025,
-  15: .025
+  14: .005,
+  15: .0025
 };
 const shapeDist = {
   0: 0.5,
@@ -84,6 +85,7 @@ const shapeDist = {
 const hashToTraits = hash => {
   const R = mkRandom(hash);
   var maxPointsPerLayer = 20;
+  
   if ( isMobile )
     maxPointsPerLayer = 5;
   var maxLayer = 12;
@@ -118,7 +120,8 @@ const hashToTraits = hash => {
   };
 
 };
- const setupCanvasThreeJs = () => {
+
+const setupCanvasThreeJs = () => {
   const width  = window.innerWidth / 8;
   const height = window.innerHeight / 8;
   const body = document.querySelector('body > section:nth-child(1) > div > p');
@@ -154,8 +157,265 @@ const doArt = (renderer, hash, state) => {
 
   
   var fragmentShader =`
-  uniform vec3 iResolution;uniform float iTime;uniform vec4 iDate;uniform sampler2D iChannel0;uniform int iInt0,iInt1,iInt2,iInt3,iInt4,iInt5,iInt6,iInt7,iInt8,iInt9,iInt10,iInt11,iInt12,iInt13;
-float t(in vec2 i){return dot(i,i);}float f(float f){return f=fract(f*.1031),f*=f+33.33,f*=f+f,fract(f);}float i(vec2 i){vec3 f=fract(vec3(i.xyx)*.1031);f+=dot(f,f.yzx+33.33);return fract((f.x+f.y)*f.z);}vec2 v(int i){ivec2 v=ivec2(0,0);for(int f=0;f<iInt9;f++){ivec2 m=ivec2(i>>1,i^i>>1)&1;if(m.y==0){if(m.x==1)v=(1<<f)-1-v;v=v.yx;}v+=m<<f;i>>=2;}return vec2(float(v.x),float(v.y));}vec2 f(vec2 i,float f){if(f>0.)return i*mat2(cos(f),sin(f),-sin(f),cos(f));else if(f<0.)return-i*mat2(cos(f),-sin(f),sin(f),cos(f));else return i;}vec2 i(vec2 i,vec2 v){return i-v;}float t(vec2 f,float i){float v=length(f)-i;return v;}float v(vec2 f,float i){return max(abs(f).x*.866025+f.y*.5,-f.y)-i*.5;}float r(vec2 i,float v){return max(abs(i).x*f(i.x)+i.y*.5,-i.y)-v*.5;}float f(vec2 i,vec2 v,float f){v-=vec2(f);vec2 m=abs(i)-v;return min(max(m.x,m.y),0.)+length(max(m,0.))-f;}float s(in vec2 f,in float i){const vec3 v=vec3(-.866025,.5,.57735);vec2 m=sign(f);f=abs(f);float x=dot(v.xy,f);f-=2.*min(x,0.)*v.xy;f-=vec2(clamp(f.x,-v.z*i,v.z*i),i);return length(f)*sign(f.y);}float i(float i,float f,float v){float m=clamp(.5+.5*(f-i)/v,0.,1.);return mix(f,i,m)-v*m*(1.-m);}vec3 r(vec3 f){vec4 i=vec4(1.,2./3.,1./3.,3.);vec3 v=abs(fract(f.xxx+i.xyz)*6.-i.www);return f.z*mix(i.xxx,clamp(v-i.xxx,0.,1.),f.y);}vec3 f(in float i,in vec3 v,in vec3 f,in vec3 m,in vec3 y){return v+f*cos(6.28318*(m*i+y));}vec3 s(float f){const vec3 i=vec3(.277727,.00540734,.3341),v=vec3(.105093,1.40461,1.38459),m=vec3(-.330862,.214848,.0950952),x=vec3(-4.63423,-5.7991,-19.3324),c=vec3(6.22827,14.1799,56.6906),z=vec3(4.77638,-13.7451,-65.353),y=vec3(-5.43546,4.64585,26.3124);return i+f*(v+f*(m+f*(x+f*(c+f*(z+f*y)))));}vec3 n(float f){const vec3 i=vec3(.0587323,.0233367,.54334),v=vec3(2.17651,.238383,.75396),m=vec3(-2.68946,-7.45585,3.1108),x=vec3(6.13035,42.3462,-28.5189),c=vec3(-11.1074,-82.6663,60.1398),z=vec3(10.0231,71.4136,-54.0722),y=vec3(-3.65871,-22.9315,18.1919);return i+f*(v+f*(m+f*(x+f*(c+f*(z+f*y)))));}vec3 x(float f){const vec3 i=vec3(-.00213649,-.000749655,-.00538613),v=vec3(.251661,.677523,2.49403),m=vec3(8.35372,-3.57772,.314468),x=vec3(-27.6687,14.2647,-13.6492),c=vec3(52.1761,-27.9436,12.9442),z=vec3(-50.7685,29.0466,4.23415),y=vec3(18.6557,-11.4898,-5.60196);return i+f*(v+f*(m+f*(x+f*(c+f*(z+f*y)))));}vec3 p(float f){const vec3 i=vec3(.00021894,.001651,-.0194809),v=vec3(.106513,.563956,3.93271),m=vec3(11.6025,-3.97285,-15.9424),x=vec3(-41.704,17.4364,44.3541),c=vec3(77.1629,-33.4024,-81.8073),z=vec3(-71.3194,32.6261,73.2095),y=vec3(25.1311,-12.2427,-23.0703);return i+f*(v+f*(m+f*(x+f*(c+f*(z+f*y)))));}vec3 m(float f){const vec3 i=vec3(.114089,.0628834,.224834),v=vec3(6.71642,3.18229,7.57158),m=vec3(-66.094,-4.92798,-10.0944),x=vec3(228.766,25.0499,-91.5411),c=vec3(-334.835,-69.3175,288.586),z=vec3(218.764,67.5215,-305.205),y=vec3(-52.889,-21.5453,110.517);return i+f*(v+f*(m+f*(x+f*(c+f*(z+f*y)))));}vec3 h(float i){return vec3(1,.25,.0625)*exp(4.*i-1.);}vec3 h(float i,float v,float y){if(iInt10==0){float c=f(y+floor(i/v)+555.),z=f(y+floor(i/v)+666.),w=f(y+floor(i/v)+777.);return vec3(c,z,w);}else if(iInt10==1){float c=f(y+666.)+floor(i/v)*0.381966011;return r(vec3(c,.75,.75));}else if(iInt10==2)return s(fract(f(y+666.)+floor(i/v)*.025*v));else if(iInt10==3)return s(fract(f(y+floor(i/v)+666.)));else if(iInt10==4)return n(fract(f(y+666.)+floor(i/v)*.025*v));else if(iInt10==5)return n(fract(f(y+floor(i/v)+666.)));else if(iInt10==6)return x(fract(f(y+666.)+floor(i/v)*.025*v));else if(iInt10==7)return x(fract(f(y+floor(i/v)+666.)));else if(iInt10==8)return p(fract(f(y+666.)+floor(i/v)*.025*v));else if(iInt10==9)return p(fract(f(y+floor(i/v)+666.)));else if(iInt10==10)return m(fract(f(y+666.)+floor(i/v)*.025*v));else if(iInt10==11)return m(fract(f(y+floor(i/v)+666.)));else if(iInt10==12)return h(fract(f(y+666.)+floor(i/v)*.025*v));else if(iInt10==13)return h(fract(f(y+floor(i/v)+666.)));else if(iInt10==14){vec3 c=vec3(.5,.5,.5),z=vec3(.5,.5,.5),w=vec3(1.,1.,1.),l=vec3(0.,.33,.67);return f(f(y+floor(i/v)+666.),c,z,w,l);}else if(iInt10==15){vec3 c=vec3(.5,.5,.5),z=vec3(.5,.5,.5),w=vec3(1.,1.,1.),l=vec3(0.,.33,.67);return f(f(y+666.)+floor(i/v)*.0025*v,c,z,w,l);}return vec3(0.);}float f(int m,vec2 y,vec2 x,float c,float w,float n){float z=1.;if(f(c+789456.)<.5)z=-1.;if(m==1)return t(i(y,x),f(c)*200.*w);else if(m==2){float l=f(c)*200.*w;return f(i(y,x),vec2(l),l*.1);}else if(m==3)return v(f(i(y,x),z*(f(c)*360./180.*3.14159+iTime*.25)*n),f(c+1234.)*200.*w);else if(m==4)return s(f(i(y,x),z*(f(c)*360./180.*3.14159+iTime*.25)*n),f(c+1234.)*200.*w);else if(m==5)return r(i(y,x),f(c)*200.*w);}void h(out vec4 m,in vec2 y){vec2 c=y/iResolution.xy,z=y+vec2(.5);int x=1<<(iInt9<<1),w=int(float(x)/1.61803+.5);float n=float(x),l=float((1<<iInt9)-1),s=float(iInt2),a=float(iInt6),r=float(iInt7)/100.,e=float(iInt8)/100.,p;vec4 u=vec4(0.);float t=float(iInt0);for(int o=1;o<=iInt0;o++){float G=float(o);int g=iInt3;float d=e*(.5+(1.-G/t)*.5);if(iInt1<50&&o==1)d*=10.,g=max(4,g/2);int I=int(f(s+G+33.)*n);vec2 R=v(I)/l*iResolution.xy;int T=iInt5;if(iInt5==0)T=1+int(f(s+G+34468.)*4.)%5;float E=f(T,z,R,s+G+4.,d,r);for(int b=1;b<g;b++){float N=float(b);if(T<2||f(s+N*G+4589.)<float(iInt13)/100.)I=(I+w)%x;R=v(I)/l*iResolution.xy;E=i(E,f(T,z,R,s+N+G+4.,d,r),float(iInt4));}if(o==1)p=E;else p=i(p,E,float(iInt4));float b=iTime*(5.+f(a+G+5.)*100.)*r,N=smoothstep(.005,0.,E);vec3 L=h(-E-b,3.+f(a+G+6.)*60.*e,a+G+7.);L*=N;u.xyz=L+u.xyz*(1.-N);u.w=max(u.w,N);}vec3 G=h(p-iTime*50.*r,(10.+f(a+99.)*60.)*e,a+8.);vec2 o=(2.*y-iResolution.xy)/min(iResolution.x,iResolution.y);float E=smoothstep(1.,0.,length(o*.5));m.xyz=(u.xyz+G*(1.-u.w))*E;m.w=1.;}void main(){h(gl_FragColor,gl_FragCoord.xy);}
+  uniform vec3 iResolution;
+uniform float iTime;
+uniform vec4 iDate;
+uniform sampler2D iChannel0;
+uniform int iInt0;  // layers
+uniform int iInt1;  // post
+uniform int iInt2;  // seed
+uniform int iInt3;  // pointsl
+uniform int iInt4;  // sdfblend
+uniform int iInt5;  // shape
+uniform int iInt6;  // seed Color
+uniform int iInt7;  // global speed
+uniform int iInt8;  // global size
+uniform int iInt9;  // hilbert level
+uniform int iInt10; // color mode
+uniform int iInt13; // sameProb
+
+float dot2( in vec2 v ) { return dot(v,v); }
+float hash11(float p){
+  p = fract(p * .1031);
+  p *= p + 33.33;
+  p *= p + p;
+  return fract(p);}
+
+float hash12(vec2 p){
+vec3 p3  = fract(vec3(p.xyx) * .1031);
+p3 += dot(p3, p3.yzx + 33.33);
+return fract((p3.x + p3.y) * p3.z);}
+
+vec2 curve( int i ){
+  ivec2 res = ivec2(0,0);
+  for( int k=0; k<iInt9; k++ ){
+      ivec2 r = ivec2( i>>1, i^(i>>1) ) & 1;
+      if (r.y==0) { if(r.x==1) { res = (1<<k)-1-res; } res = res.yx; }
+      
+      res += r<<k;
+      i >>= 2; }
+  return vec2(float(res.x), float(res.y));  }
+
+vec2 rotate( vec2 p, float a ) {
+if ( a > 0.0 )
+  return p * mat2(cos(a), sin(a), -sin(a), cos(a));
+else if ( a < 0.0 )
+  return -p * mat2(cos(a), -sin(a), sin(a), cos(a));
+else
+  return p;}
+
+vec2 translate(vec2 p, vec2 t) {return p - t;}
+
+float circleDist(vec2 p, float radius){
+float result = length(p) - radius;
+return result;}
+float triangleDist(vec2 p, float radius){
+return max(	abs(p).x * 0.866025 + 
+        p.y * 0.5, -p.y) 
+      -radius * 0.5;}
+
+float insaneDist(vec2 p, float radius){
+return max(	abs(p).x * hash11(p.x) + 
+        p.y * 0.5, -p.y) 
+      -radius * 0.5;}
+float boxDist(vec2 p, vec2 size, float radius){
+size -= vec2(radius);
+vec2 d = abs(p) - size;
+return min(max(d.x, d.y), 0.0) + length(max(d, 0.0)) - radius;}
+
+float hexagonDist( in vec2 p, in float radius )  {
+const vec3 k = vec3(-0.866025404,0.5,0.577350269);
+vec2 s = sign(p);
+p = abs(p);
+float w = dot(k.xy,p);    
+p -= 2.0*min(w,0.0)*k.xy;
+p -= vec2(clamp(p.x, -k.z*radius, k.z*radius), radius);
+return length(p)*sign(p.y);}
+float smoothMerge(float d1, float d2, float k){
+  float h = clamp(0.5 + 0.5*(d2 - d1)/k, 0.0, 1.0);
+  return mix(d2, d1, h) - k * h * (1.0-h);}
+
+vec3 hsv2rgb(vec3 c){
+  vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+  vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+  return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);}
+
+
+vec3 pal( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d ){return a + b*cos( 6.28318*(c*t+d) );}
+
+vec3 viridis(float t) {
+const vec3 c0 = vec3(0.2777273272234177, 0.005407344544966578, 0.3340998053353061);
+const vec3 c1 = vec3(0.1050930431085774, 1.404613529898575, 1.384590162594685);
+const vec3 c2 = vec3(-0.3308618287255563, 0.214847559468213, 0.09509516302823659);
+const vec3 c3 = vec3(-4.634230498983486, -5.799100973351585, -19.33244095627987);
+const vec3 c4 = vec3(6.228269936347081, 14.17993336680509, 56.69055260068105);
+const vec3 c5 = vec3(4.776384997670288, -13.74514537774601, -65.35303263337234);
+const vec3 c6 = vec3(-5.435455855934631, 4.645852612178535, 26.3124352495832);
+return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));}
+
+vec3 plasma(float t) {
+const vec3 c0 = vec3(0.05873234392399702, 0.02333670892565664, 0.5433401826748754);
+const vec3 c1 = vec3(2.176514634195958, 0.2383834171260182, 0.7539604599784036);
+const vec3 c2 = vec3(-2.689460476458034, -7.455851135738909, 3.110799939717086);
+const vec3 c3 = vec3(6.130348345893603, 42.3461881477227, -28.51885465332158);
+const vec3 c4 = vec3(-11.10743619062271, -82.66631109428045, 60.13984767418263);
+const vec3 c5 = vec3(10.02306557647065, 71.41361770095349, -54.07218655560067);
+const vec3 c6 = vec3(-3.658713842777788, -22.93153465461149, 18.19190778539828);
+return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));}
+
+vec3 magma(float t) {
+const vec3 c0 = vec3(-0.002136485053939582, -0.000749655052795221, -0.005386127855323933);
+const vec3 c1 = vec3(0.2516605407371642, 0.6775232436837668, 2.494026599312351);
+const vec3 c2 = vec3(8.353717279216625, -3.577719514958484, 0.3144679030132573);
+const vec3 c3 = vec3(-27.66873308576866, 14.26473078096533, -13.64921318813922);
+const vec3 c4 = vec3(52.17613981234068, -27.94360607168351, 12.94416944238394);
+const vec3 c5 = vec3(-50.76852536473588, 29.04658282127291, 4.23415299384598);
+const vec3 c6 = vec3(18.65570506591883, -11.48977351997711, -5.601961508734096);
+return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));}
+
+vec3 inferno(float t) {
+const vec3 c0 = vec3(0.0002189403691192265, 0.001651004631001012, -0.01948089843709184);
+const vec3 c1 = vec3(0.1065134194856116, 0.5639564367884091, 3.932712388889277);
+const vec3 c2 = vec3(11.60249308247187, -3.972853965665698, -15.9423941062914);
+const vec3 c3 = vec3(-41.70399613139459, 17.43639888205313, 44.35414519872813);
+const vec3 c4 = vec3(77.162935699427, -33.40235894210092, -81.80730925738993);
+const vec3 c5 = vec3(-71.31942824499214, 32.62606426397723, 73.20951985803202);
+const vec3 c6 = vec3(25.13112622477341, -12.24266895238567, -23.07032500287172);
+return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));}
+
+vec3 turbo(float t) {
+const vec3 c0 = vec3(0.1140890109226559, 0.06288340699912215, 0.2248337216805064);
+const vec3 c1 = vec3(6.716419496985708, 3.182286745507602, 7.571581586103393);
+const vec3 c2 = vec3(-66.09402360453038, -4.9279827041226, -10.09439367561635);
+const vec3 c3 = vec3(228.7660791526501, 25.04986699771073, -91.54105330182436);
+const vec3 c4 = vec3(-334.8351565777451, -69.31749712757485, 288.5858850615712);
+const vec3 c5 = vec3(218.7637218434795, 67.52150567819112, -305.2045772184957);
+const vec3 c6 = vec3(-52.88903478218835, -21.54527364654712, 110.5174647748972);
+return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));}
+
+vec3 bbody(float t){return vec3(1,1./4.,1./16.) * exp(4.*t - 1.);}
+
+vec3 colorize( float distance, float colorWidth, float ss ){
+if ( iInt10 == 0 ){
+  // random mode
+  float colR = hash11(ss + floor(distance / colorWidth ) + 555.0 );
+  float colG = hash11(ss + floor(distance / colorWidth ) + 666.0 );
+  float colB = hash11(ss + floor(distance / colorWidth ) + 777.0 );
+  return vec3( colR, colG, colB );
+} else if ( iInt10 == 1 ) {
+  float h = hash11(ss+666.0) + floor(distance / colorWidth) * 0.381966011;
+  return hsv2rgb( vec3(h, 0.75,0.75));
+} else if ( iInt10 == 2 ){
+  return viridis(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
+} else if ( iInt10 == 3 ){
+  return viridis(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
+} else if ( iInt10 == 4 ) {
+  return plasma(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
+} else if ( iInt10 == 5 ){
+  return plasma(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
+} else if ( iInt10 == 6 ){
+  return magma(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
+} else if ( iInt10 == 7 ){
+  return magma(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
+} else if ( iInt10 == 8 ){
+  return inferno(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
+} else if ( iInt10 == 9 ){
+  return inferno(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
+} else if ( iInt10 == 10 ){
+  return turbo(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
+} else if ( iInt10 == 11 ){
+  return turbo(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
+} else if ( iInt10 == 12 ) {
+  return bbody(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
+} else if ( iInt10 == 13 ){
+  return bbody(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
+} else if ( iInt10 == 14 ){
+  vec3 cola = vec3( 0.5, 0.5, 0.5 );
+  vec3 colb = vec3( 0.5, 0.5, 0.5 );
+  vec3 colc = vec3( 1.0, 1.0, 1.0 );
+  vec3 cold = vec3( 0.00, 0.33, 0.67 );
+  return pal( hash11(ss + floor(distance / colorWidth ) + 666.0 ), cola, colb, colc, cold );
+} else if ( iInt10 == 15 ) {
+  vec3 cola = vec3( 0.5, 0.5, 0.5 );
+  vec3 colb = vec3( 0.5, 0.5, 0.5 );
+  vec3 colc = vec3( 1.0, 1.0, 1.0 );
+  vec3 cold = vec3( 0.00, 0.33, 0.67 );
+  return pal( hash11(ss+666.0) + floor(distance / colorWidth)*0.0025*colorWidth, cola, colb, colc, cold );
+} return vec3(0.);
+}
+
+float sceneDist( int type, vec2 PP, vec2 hilbertP, float ss, float globalSize, float globalSpeed ){
+float sign = 1.0;
+if ( hash11(ss+789456.) < 0.5 )
+  sign = -1.0;
+
+if ( type == 1 )
+  return circleDist(   translate( PP, hilbertP ), hash11( ss ) * 200. * globalSize );
+else if ( type == 2 ){
+  float radiusBox = hash11( ss ) * 200. * globalSize;
+  return boxDist(      translate( PP, hilbertP ), vec2(radiusBox), radiusBox * 0.1 );
+} else if ( type == 3 )
+  return triangleDist( rotate( translate(PP, hilbertP),sign * (hash11( ss ) * 360. / 180. * 3.14159 + iTime*0.25) * globalSpeed ), hash11( ss + 1234. ) * 200. * globalSize ); 
+else if ( type == 4 )
+  return hexagonDist( rotate( translate(PP, hilbertP),sign * (hash11( ss ) * 360. / 180. * 3.14159 + iTime*0.25) * globalSpeed ), hash11( ss + 1234. ) * 200. * globalSize ); 
+else if ( type == 5 )
+  return insaneDist(   translate( PP, hilbertP ), hash11( ss ) * 200. * globalSize );}
+void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
+vec2 uv = fragCoord / iResolution.xy;
+vec2 P = fragCoord + vec2( 0.5 );
+int numPoints      = 1<<(iInt9<<1);
+int deltaP = int(float(numPoints) / 1.61803398874 + 0.5);
+float numPointsFloat = float(numPoints);
+float gridDistance = float((1<<iInt9)-1); 
+
+float seeed = float(iInt2);
+float seeedC = float(iInt6);
+
+float gSpeed = float(iInt7) / 100.0;
+float gSize  = float(iInt8) / 100.0;
+
+float backgroundD;
+vec4 accumulatedCol = vec4(0.); // black background
+float numLayers = float(iInt0);
+for ( int l = 1; l<=iInt0; l++ ){
+  float ll = float(l);
+  int numPointsInLayer = iInt3;
+  float gs = gSize * ( 0.5 + ( 1.-ll/numLayers) * 0.5);
+
+  if ( iInt1 < 50 && l == 1 ){
+    gs *= 10.;
+    numPointsInLayer = max(4,numPointsInLayer / 2);}
+  int curveIndex = int(hash11( seeed + ll + 33.0 ) * numPointsFloat);
+  vec2 PHC = curve(curveIndex)/gridDistance * iResolution.xy;
+  int layerType = iInt5;
+  if ( iInt5==0 )
+      layerType = 1+(int(hash11( seeed + ll + 34468.0 )*4.)%5);
+  float d = sceneDist( layerType, P, PHC, seeed + ll + 4.0, gs, gSpeed );
+  for ( int i = 1; i<numPointsInLayer; i++ ) {
+    float ii = float(i);
+    if ( layerType < 2 || hash11( seeed + ii*ll + 4589.0 ) < float(iInt13)/100.) {
+      curveIndex = ( curveIndex + deltaP ) % numPoints; 
+    }
+    PHC = curve(curveIndex)/gridDistance * iResolution.xy;
+    d = smoothMerge( d, sceneDist( layerType, P, PHC, seeed + ii+ll + 4.0, gs, gSpeed ), float(iInt4) );}
+  if ( l == 1 )
+    backgroundD = d;
+  else
+    backgroundD = smoothMerge( backgroundD, d, float(iInt4) );
+  float layerSpeed = iTime * (5.+hash11( seeedC + ll + 5.0 )*100.0 ) * gSpeed;
+  float alpha = smoothstep( 0.005, 0., d );
+  vec3 layerCol = colorize( -d-layerSpeed, 3.+hash11( seeedC + ll + 6.0 )*60.*gSize, seeedC + ll + 7.0 );
+  layerCol *= alpha; 
+  accumulatedCol.rgb = layerCol + accumulatedCol.rgb * ( 1.0 - alpha );
+  accumulatedCol.a = max(accumulatedCol.a, alpha);
+}
+vec3 bgColor  = colorize( backgroundD-iTime*50.*gSpeed, (10.+hash11( seeedC + 99.0 )*60.)*gSize, seeedC + 8.0 );
+vec2 vinCoord = ( 2.0 * fragCoord - iResolution.xy ) / min(iResolution.x, iResolution.y);
+fragColor.rgb = (accumulatedCol.rgb + bgColor * (1.-accumulatedCol.a));
+fragColor.a = 1.0;}
+
+void main(){
+mainImage(gl_FragColor, gl_FragCoord.xy);}
   `
   const uniforms = {
     iTime: { value: 0 },
@@ -172,14 +432,26 @@ float t(in vec2 i){return dot(i,i);}float f(float f){return f=fract(f*.1031),f*=
     iInt8: { value : size*(state.size/100) },
     iInt9: { value : level },
     iInt10: { value : cmode },
-    iInt11: { value: state.fadeout },
-    iInt12: { value: state.textfade },
     iInt13: { value : sameProb },
   };
   const clock = new THREE.Clock();
   canvas.initialize = () => {
     const scene           = new THREE.Scene();
     const camera          = new THREE.OrthographicCamera( -1, 1, 1, -1, 0, 1, );
+
+    /*
+    const listener = new THREE.AudioListener();
+    camera.add( listener );
+    const sound = new THREE.Audio( listener );
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load( 'sounds/cyber.mp3', function( buffer ) {
+      sound.setBuffer( buffer );
+      sound.setLoop(true);
+      sound.setVolume(0.5);
+      sound.play();
+    });
+    const analyser = new THREE.AudioAnalyser( sound, 32 );*/
+
     const plane = new THREE.PlaneGeometry(2, 2);
     const material = new THREE.ShaderMaterial( {
       fragmentShader: fragmentShader,
@@ -193,8 +465,18 @@ float t(in vec2 i){return dot(i,i);}float f(float f){return f=fract(f*.1031),f*=
       mesh: mesh,
       clock: clock,
       uniforms: uniforms,
+      //analyser: analyser,
     };
+    window.addEventListener('resize', canvas.resize, false);
     refresh();
+  };
+
+  canvas.resize = () => {
+    const width  = window.innerWidth;
+    const height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+    renderer.setSize(width/8, height/8, false);
   };
 
   canvas.render = () => {
@@ -222,13 +504,48 @@ float t(in vec2 i){return dot(i,i);}float f(float f){return f=fract(f*.1031),f*=
     uniforms.iInt4.value = state.sdfblend;
     uniforms.iInt5.value = state.three.uniforms.shape;
     uniforms.iInt6.value = state.three.uniforms.seedC;
-    uniforms.iInt7.value = state.three.uniforms.speed+state.speed;
-    uniforms.iInt8.value = state.three.uniforms.size*(state.size/100);
+    uniforms.iInt7.value = state.three.uniforms.speed+state.speed;//+usound;
+    uniforms.iInt8.value = state.three.uniforms.size*(state.size/100);//+lsound;
     uniforms.iInt9.value = state.three.uniforms.level;
     uniforms.iInt10.value = state.three.uniforms.cmode;
-    uniforms.iInt11.value = state.fadeout;
-    uniforms.iInt12.value = state.textfade;
     uniforms.iInt13.value = state.three.uniforms.sameProb;
+
+    /*
+    const data = state.three.analyser.getAverageFrequency();
+    const dataArray = state.three.analyser.getFrequencyData();
+    var lowerHalfArray = dataArray.slice(0, (dataArray.length/2) - 1);
+    var upperHalfArray = dataArray.slice((dataArray.length/2) - 1, dataArray.length - 1);
+    var lowerMax = -1;
+    var lowerAvg = 0;
+    for( var i = 0; i<lowerHalfArray.length; i++ )
+    {
+      if ( lowerHalfArray[i] > lowerMax )
+        lowerMax = lowerHalfArray[i];
+
+      lowerAvg += lowerHalfArray[i];
+    }
+    var upperMax = -1;
+    var upperAvg = 0;
+    for( var i = 0; i<upperHalfArray.length; i++ )
+    {
+      if ( upperHalfArray[i] > upperMax )
+        upperMax = upperHalfArray[i];
+        
+        upperAvg += upperHalfArray[i];
+    }
+    if( ( lowerMax / 255.0 * 100 ) > 98.0 )
+      lsound += 0.1;
+    else
+       lsound -= 10;
+    lsound = Math.max(0,lsound );
+
+    if( ( upperMax / 255.0 * 100 ) > 70.0 )
+      usound += 1;
+    else
+      usound -= 10;
+      usound = Math.max(0,usound );
+    */
+    
   };
 
   canvas.loop = () => {
