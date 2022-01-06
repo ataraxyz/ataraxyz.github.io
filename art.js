@@ -1775,11 +1775,14 @@ const ik_hashArray = [  'a21840e3390535312bff0a539e8cd03ac47293f346b31c5ac42592d
 '7f4081fb9bb7cbe522f3575895f4e50aef87dfa51603050c46de7e047bee1b0c',
 '4aec53f4690e74500449f0f6d86461b6811b86940ff5c368f7579e9bd3cae0ab'
 ]
+var ik_arrayCounter = 0;
 
 const staticRefresh = inputHash => {
     //tokenData.hash    = randomHash(64);
     //tokenData.hash = '0x' + inputHash;
-    tokenData.hash = '0x' +  ik_hashArray[Math.floor(Math.random() * ik_hashArray.length)];
+    //tokenData.hash = '0x' +  ik_hashArray[Math.floor(Math.random() * ik_hashArray.length)];
+    tokenData.hash = '0x' +  ik_hashArray[ik_arrayCounter%1213];
+    ik_arrayCounter += 1;
     console.log(tokenData.hash);
     const {
       layers,
