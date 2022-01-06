@@ -1,9 +1,7 @@
 const u64  = n => BigInt.asUintN(64, n);
 const rotl = (x, k) => u64((x << k) | (x >> (64n - k)));
-const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 // var lsound = 0;
 // var usound = 0;
-var staticTime = false;
 const xoshiro256strstr = s => () => {
   const result = u64(rotl(u64(s[1] * 5n), 7n) * 9n);
   let t = u64(s[1] << 17n);
@@ -87,11 +85,8 @@ const hashToTraits = hash => {
   const R = mkRandom(hash);
   var maxPointsPerLayer = 20;
   
-  if ( isMobile )
-    maxPointsPerLayer = 5;
   var maxLayer = 12;
-  if ( isMobile )
-    maxLayer = 2;
+
   const layers = R.ri( 2, maxLayer );
   const post  = R.ri(0,100);
   const seed = R.ri(0, 10000 );
@@ -102,8 +97,7 @@ const hashToTraits = hash => {
   const size = R.ri( 100, 200 );
   
   var level = R.ri( 2, 7 );
-  if ( isMobile )
-    level = 4;
+
   const cmode = selectRandomDist(colorDist, R.r);
   const sameProb = R.ri( 0, 100);
   return {
@@ -123,15 +117,13 @@ const hashToTraits = hash => {
 };
 
 const setupCanvasThreeJs = () => {
-  const width  = window.innerWidth;
-  const height = window.innerHeight;
+  const width  = window.innerWidth / 8;
+  const height = window.innerHeight / 8;
   const body = document.querySelector('body > section:nth-child(1) > div > p');
 
   const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true  });
-  //renderer.setPixelRatio(8); // compensating for scale
-  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setPixelRatio(8); // compensating for scale
   renderer.setSize(width, height, false);
-  // renderer.setSize(1024, 1024, false);
 
   body.appendChild(renderer.domElement);
 
@@ -309,27 +301,27 @@ if ( iInt10 == 0 ){
   float h = hash11(ss+666.0) + floor(distance / colorWidth) * 0.381966011;
   return hsv2rgb( vec3(h, 0.75,0.75));
 } else if ( iInt10 == 2 ){
-  return viridis(fract( hash11(ss+666.0) + floor(distance / colorWidth)*12.8*colorWidth) );
+  return viridis(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
 } else if ( iInt10 == 3 ){
   return viridis(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
 } else if ( iInt10 == 4 ) {
-  return plasma(fract( hash11(ss+666.0) + floor(distance / colorWidth)*12.8*colorWidth) );
+  return plasma(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
 } else if ( iInt10 == 5 ){
   return plasma(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
 } else if ( iInt10 == 6 ){
-  return magma(fract( hash11(ss+666.0) + floor(distance / colorWidth)*12.8*colorWidth) );
+  return magma(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
 } else if ( iInt10 == 7 ){
   return magma(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
 } else if ( iInt10 == 8 ){
-  return inferno(fract( hash11(ss+666.0) + floor(distance / colorWidth)*12.8*colorWidth) );
+  return inferno(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
 } else if ( iInt10 == 9 ){
   return inferno(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
 } else if ( iInt10 == 10 ){
-  return turbo(fract( hash11(ss+666.0) + floor(distance / colorWidth)*12.8*colorWidth) );
+  return turbo(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
 } else if ( iInt10 == 11 ){
   return turbo(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
 } else if ( iInt10 == 12 ) {
-  return bbody(fract( hash11(ss+666.0) + floor(distance / colorWidth)*12.8*colorWidth) );
+  return bbody(fract( hash11(ss+666.0) + floor(distance / colorWidth)*0.025*colorWidth) );
 } else if ( iInt10 == 13 ){
   return bbody(fract( hash11(ss + floor(distance / colorWidth ) + 666.0 ) ) );
 } else if ( iInt10 == 14 ){
@@ -358,15 +350,14 @@ else if ( type == 2 ){
   float radiusBox = hash11( ss ) * 200. * globalSize;
   return boxDist(      translate( PP, hilbertP ), vec2(radiusBox), radiusBox * 0.1 );
 } else if ( type == 3 )
-  return triangleDist( rotate( translate(PP, hilbertP),sign * (hash11( ss ) * 360. / 180. * 3.14159 + iTime) * globalSpeed * 512. ), hash11( ss + 1234. ) * 200. * globalSize ); 
+  return triangleDist( rotate( translate(PP, hilbertP),sign * (hash11( ss ) * 360. / 180. * 3.14159 + iTime*0.25) * globalSpeed ), hash11( ss + 1234. ) * 200. * globalSize ); 
 else if ( type == 4 )
-  return hexagonDist( rotate( translate(PP, hilbertP),sign * (hash11( ss ) * 360. / 180. * 3.14159 + iTime) * globalSpeed * 512. ), hash11( ss + 1234. ) * 200. * globalSize ); 
+  return hexagonDist( rotate( translate(PP, hilbertP),sign * (hash11( ss ) * 360. / 180. * 3.14159 + iTime*0.25) * globalSpeed ), hash11( ss + 1234. ) * 200. * globalSize ); 
 else if ( type == 5 )
   return insaneDist(   translate( PP, hilbertP ), hash11( ss ) * 200. * globalSize );}
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
 vec2 uv = fragCoord / iResolution.xy;
-//vec2 P = fragCoord + vec2( 0.5 );
-vec2 P = (fragCoord)/max(iResolution.y, iResolution.x );
+vec2 P = fragCoord + vec2( 0.5 );
 int numPoints      = 1<<(iInt9<<1);
 int deltaP = int(float(numPoints) / 1.61803398874 + 0.5);
 float numPointsFloat = float(numPoints);
@@ -375,8 +366,8 @@ float gridDistance = float((1<<iInt9)-1);
 float seeed = float(iInt2);
 float seeedC = float(iInt6);
 
-float gSpeed = float(iInt7) / 100.0 / 1024.0;
-float gSize  = float(iInt8) / 100.0 / 1024.0;
+float gSpeed = float(iInt7) / 100.0;
+float gSize  = float(iInt8) / 100.0;
 
 float backgroundD;
 vec4 accumulatedCol = vec4(0.); // black background
@@ -387,10 +378,10 @@ for ( int l = 1; l<=iInt0; l++ ){
   float gs = gSize * ( 0.5 + ( 1.-ll/numLayers) * 0.5);
 
   if ( iInt1 < 50 && l == 1 ){
-    gs *= 0.1;
+    gs *= 10.;
     numPointsInLayer = max(4,numPointsInLayer / 2);}
   int curveIndex = int(hash11( seeed + ll + 33.0 ) * numPointsFloat);
-  vec2 PHC = curve(curveIndex)/gridDistance;// * iResolution.xy;
+  vec2 PHC = curve(curveIndex)/gridDistance * iResolution.xy;
   int layerType = iInt5;
   if ( iInt5==0 )
       layerType = 1+(int(hash11( seeed + ll + 34468.0 )*4.)%5);
@@ -400,24 +391,22 @@ for ( int l = 1; l<=iInt0; l++ ){
     if ( layerType < 2 || hash11( seeed + ii*ll + 4589.0 ) < float(iInt13)/100.) {
       curveIndex = ( curveIndex + deltaP ) % numPoints; 
     }
-    PHC = curve(curveIndex)/gridDistance;// * iResolution.xy;
-    d = smoothMerge( d, sceneDist( layerType, P, PHC, seeed + ii+ll + 4.0, gs, gSpeed ), float(iInt4)/1024.0 );}
+    PHC = curve(curveIndex)/gridDistance * iResolution.xy;
+    d = smoothMerge( d, sceneDist( layerType, P, PHC, seeed + ii+ll + 4.0, gs, gSpeed ), float(iInt4) );}
   if ( l == 1 )
     backgroundD = d;
   else
-    backgroundD = smoothMerge( backgroundD, d, float(iInt4)/1024.0 );
+    backgroundD = smoothMerge( backgroundD, d, float(iInt4) );
   float layerSpeed = iTime * (5.+hash11( seeedC + ll + 5.0 )*100.0 ) * gSpeed;
   float alpha = smoothstep( 0.005, 0., d );
-  vec3 layerCol = colorize( (-d-layerSpeed) * 256.0, 3.+hash11( seeedC + ll + 6.0 )*60.*gSize, seeedC + ll + 7.0 );
+  vec3 layerCol = colorize( -d-layerSpeed, 3.+hash11( seeedC + ll + 6.0 )*60.*gSize, seeedC + ll + 7.0 );
   layerCol *= alpha; 
   accumulatedCol.rgb = layerCol + accumulatedCol.rgb * ( 1.0 - alpha );
   accumulatedCol.a = max(accumulatedCol.a, alpha);
 }
-vec3 bgColor  = colorize( (backgroundD-iTime*50.*gSpeed), (10.+hash11( seeedC + 99.0 )*60.)*gSize, seeedC + 8.0 );
+vec3 bgColor  = colorize( backgroundD-iTime*50.*gSpeed, (10.+hash11( seeedC + 99.0 )*60.)*gSize, seeedC + 8.0 );
+vec2 vinCoord = ( 2.0 * fragCoord - iResolution.xy ) / min(iResolution.x, iResolution.y);
 fragColor.rgb = (accumulatedCol.rgb + bgColor * (1.-accumulatedCol.a));
-// fragColor.rgb = vec3( backgroundD );
-// fragColor.rgb = accumulatedCol.rgb;
-// fragColor.rgb = bgColor;
 fragColor.a = 1.0;}
 
 void main(){
@@ -482,7 +471,7 @@ mainImage(gl_FragColor, gl_FragCoord.xy);}
     const height = window.innerHeight;
     canvas.width = width;
     canvas.height = height;
-    renderer.setSize(width, height, false);
+    renderer.setSize(width/8, height/8, false);
   };
 
   canvas.render = () => {
@@ -499,9 +488,7 @@ mainImage(gl_FragColor, gl_FragCoord.xy);}
     const height  = canvas.height;
 
     uniforms.iResolution.value.set(width, height, 1);
-    // uniforms.iResolution.value.set(1024, 1024, 1);
-    if (!staticTime)
-      uniforms.iTime.value += clock.getDelta();
+    uniforms.iTime.value += clock.getDelta();
     var secs = currentdate.getHours() * 3600.0 + currentdate.getMinutes() * 60.0 + ( currentdate.getMilliseconds() / 1000.0 );
     uniforms.iDate.value.set( currentdate.getYear(), currentdate.getMonth(), currentdate.getDay(), secs );
 
@@ -1786,12 +1773,12 @@ const ik_hashArray = [  'a21840e3390535312bff0a539e8cd03ac47293f346b31c5ac42592d
 var ik_arrayCounter = 0;
 
 const staticRefresh = inputHash => {
-    staticTime = true;
     //tokenData.hash    = randomHash(64);
     //tokenData.hash = '0x' + inputHash;
     //tokenData.hash = '0x' +  ik_hashArray[Math.floor(Math.random() * ik_hashArray.length)];
     tokenData.hash = '0x' +  ik_hashArray[ik_arrayCounter%1213];
     ik_arrayCounter += 1;
+    console.log(tokenData.hash);
     const {
       layers,
       post,
@@ -1816,12 +1803,9 @@ const staticRefresh = inputHash => {
     tokenState.three.uniforms.level = level;
     tokenState.three.uniforms.cmode = cmode;
     tokenState.three.uniforms.sameProb = sameProb;
-    tokenState.three.uniforms.iTime.value = 0.0;
-
 }
 
 const refresh = () => {
-  staticTime = false;
   tokenData.hash    = randomHash(64);
   // tokenData.hash = '0x' + '8f3e22a6e16b94def6a08b191a45b361c0a3ee7744a3fcb8ee4ddc43036ee372'
   const {

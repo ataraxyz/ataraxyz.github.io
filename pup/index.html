@@ -50,7 +50,7 @@
                     <label>SDF Blend<span id="sdfblend"></span></label>
                     <input id="speed" type="range" min="0" max="200" value="0" step="1" oninput="onChangeSpeed(this.value);">
                     <label>Speed Boost<span id="speed"></span></label>
-                    <input id="size" type="range" min="15" max="150" value="75" step="1" oninput="onChangeSize(this.value);">
+                    <input id="size" type="range" min="50" max="150" value="100" step="1" oninput="onChangeSize(this.value);">
                     <label>Size Adjust<span id="speed"></span></label>
                 </div>
                 <!-- <p class="buttondesc">
@@ -155,7 +155,7 @@
             function keybordInput(e)
             {
                 if ( e.ctrlKey || e.keyCode == 13 )
-                    // refresh();
+                    //refresh();
                     staticRefresh('855ac65be6a367a9152d51f53012e4d34dddc136b896434986446cdd4c9acea8')
                 if ( e.keyCode == 80 )
                 {
