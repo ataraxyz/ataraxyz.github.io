@@ -101,6 +101,7 @@
         
         <script type="text/javascript">
             
+            
             // check for safari mobile forst and play only videp
             // var ua = window.navigator.userAgent;
             // var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
@@ -154,7 +155,8 @@
             function keybordInput(e)
             {
                 if ( e.ctrlKey || e.keyCode == 13 )
-                    refresh();
+                    //refresh();
+                    staticRefresh('855ac65be6a367a9152d51f53012e4d34dddc136b896434986446cdd4c9acea8')
                 if ( e.keyCode == 80 )
                 {
                     var dataCanvas = document.querySelector("body > section.section0 > div > p > canvas");
