@@ -156,7 +156,9 @@
             {
                 if ( e.ctrlKey || e.keyCode == 13 )
                     // refresh();
-                    staticRefresh('855ac65be6a367a9152d51f53012e4d34dddc136b896434986446cdd4c9acea8')
+                    staticRefresh();
+                if ( e.keyCode == 16 )
+                    movementToggle();
                 if ( e.keyCode == 80 )
                 {
                     var dataCanvas = document.querySelector("body > section.section0 > div > p > canvas");

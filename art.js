@@ -128,11 +128,9 @@ const setupCanvasThreeJs = () => {
   const body = document.querySelector('body > section:nth-child(1) > div > p');
 
   const renderer = new THREE.WebGLRenderer({ antialias: false, preserveDrawingBuffer: true  });
-  //renderer.setPixelRatio(8); // compensating for scale
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(width, height, false);
-  // renderer.setSize(1024, 1024, false);
-
+  renderer.setPixelRatio(8); // compensating for scale
+  // renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(width/8, height/8, false);
   body.appendChild(renderer.domElement);
 
   return renderer;
@@ -482,7 +480,7 @@ mainImage(gl_FragColor, gl_FragCoord.xy);}
     const height = window.innerHeight;
     canvas.width = width;
     canvas.height = height;
-    renderer.setSize(width, height, false);
+    renderer.setSize(width/8, height/8, false);
   };
 
   canvas.render = () => {
@@ -1785,11 +1783,14 @@ const ik_hashArray = [  'a21840e3390535312bff0a539e8cd03ac47293f346b31c5ac42592d
 ]
 var ik_arrayCounter = 0;
 
-const staticRefresh = inputHash => {
-    staticTime = true;
-    //tokenData.hash    = randomHash(64);
-    //tokenData.hash = '0x' + inputHash;
-    //tokenData.hash = '0x' +  ik_hashArray[Math.floor(Math.random() * ik_hashArray.length)];
+const movementToggle = () => {
+  staticTime = !staticTime;
+
+  if ( staticTime == true )
+    tokenState.three.uniforms.iTime.value = 0.0;
+}
+
+const staticRefresh = () => {
     tokenData.hash = '0x' +  ik_hashArray[ik_arrayCounter%1213];
     ik_arrayCounter += 1;
     const {
@@ -1816,8 +1817,6 @@ const staticRefresh = inputHash => {
     tokenState.three.uniforms.level = level;
     tokenState.three.uniforms.cmode = cmode;
     tokenState.three.uniforms.sameProb = sameProb;
-    tokenState.three.uniforms.iTime.value = 0.0;
-
 }
 
 const refresh = () => {
