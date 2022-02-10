@@ -15,14 +15,14 @@
   
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="description" content="ATARA presents SERENE ANIMO - A GENETICCHAIN project in multiple acts. First drop Trip in space filling curves releasing soon!">
-        <meta property="og:image" content="https://drive.google.com/file/d/1Q2D-ofxIWcHFNQJRQZ5aybXCpZqxOMef?export=download" />
-        <meta property="og:description" content="ATARA presents SERENE ANIMO - A GENETICCHAIN project in multiple acts. First drop Trip in space filling curves releasing soon!" />
+        <meta name="description" content="ATARA presents SERENE ANIMO - A GENETICCHAIN project in multiple acts. Releasing on 2/22/22!">
+        <meta property="og:description" content="ATARA presents SERENE ANIMO - A GENETICCHAIN project in multiple acts. Releasing on 2/22/22!" />
         <meta property="og:url"content="https://atara.xyz" />
         <meta property="og:title" content="A T A R A  -  procedural art" />
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>A T A R A  -  procedural art</title>
         <script src="thirdparty/three-r128.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.36/Tone.js"></script>
         <script src="boot.js"></script>
         <script src="art.js"></script>
         <script src="index.js"></script>
@@ -45,7 +45,7 @@
             <div class="collection">
                 <input type = "button" onclick = "refresh()" value = "RANDOMIZE ART" id="hidables">
                 <div class="controls">
-                    <!-- <label for="sdfblend">SDF Blend</label> -->
+                    <label for="sdfblend">SDF Blend</label>
                     <input id="sdfblend" type="range" min="0" max="100" value="50" step="1" oninput="onChangeSdfblend(this.value);">
                     <label>SDF Blend<span id="sdfblend"></span></label>
                     <input id="speed" type="range" min="0" max="200" value="0" step="1" oninput="onChangeSpeed(this.value);">
@@ -98,7 +98,6 @@
                 <br><br>
                 </div>
         </section>
-        
         <script type="text/javascript">
             
             
@@ -155,8 +154,7 @@
             function keybordInput(e)
             {
                 if ( e.ctrlKey || e.keyCode == 13 )
-                    // refresh();
-                    staticRefresh();
+                    refresh();
                 if ( e.keyCode == 16 )
                     movementToggle();
                 if ( e.keyCode == 80 )
