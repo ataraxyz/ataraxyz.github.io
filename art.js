@@ -893,6 +893,14 @@ vec3 hsv2rgb(vec3 c){
 
 vec3 pal( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d ){return a + b*cos( 6.28318*(c*t+d) );}
 
+vec3 rainbow(float t) {
+  const vec3 cola = vec3( 0.5, 0.5, 0.5 );
+  const vec3 colb = vec3( 0.5, 0.5, 0.5 );
+  const vec3 colc = vec3( 1.0, 1.0, 1.0 );
+  const vec3 cold = vec3( 0., 0.33, 0.67 );
+  return pal( t, cola, colb, colc,cold );}
+
+
 vec3 viridis(float t) {
 const vec3 c0 = vec3(0.2777, 0.0054, 0.334);
 const vec3 c1 = vec3(0.105, 1.4046, 1.3845);
@@ -904,24 +912,18 @@ const vec3 c6 = vec3(-5.4354, 4.64585, 26.3124);
 return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));}
 
 vec3 plasma(float t) {
-const vec3 c0 = vec3(0.0587, 0.0233, 0.5433);
-const vec3 c1 = vec3(2.1765, 0.2383, 0.7539);
-const vec3 c2 = vec3(-2.6894, -7.4558, 3.1107);
-const vec3 c3 = vec3(6.1303, 42.3461, -28.5188);
-const vec3 c4 = vec3(-11.1074, -82.6663, 60.1398);
-const vec3 c5 = vec3(10.023, 71.4136, -54.0721);
-const vec3 c6 = vec3(-3.6587, -22.9315, 18.1919);
-return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));}
+  const vec3 cola = vec3( 0.5, 0.5, 0.5 );
+  const vec3 colb = vec3( 0.5, 0.5, 0.5 );
+  const vec3 colc = vec3( 2., 1., 0. );
+  const vec3 cold = vec3( 0.5, 0.2, 0.25 );
+  return pal( t, cola, colb, colc,cold );}
 
 vec3 magma(float t) {
-const vec3 c0 = vec3(-0.0021, -0.0007, -0.0053);
-const vec3 c1 = vec3(0.2516, 0.6775, 2.494);
-const vec3 c2 = vec3(8.3537, -3.5777, 0.3144);
-const vec3 c3 = vec3(-27.6687, 14.2647, -13.6492);
-const vec3 c4 = vec3(52.1761, -27.9436, 12.9441);
-const vec3 c5 = vec3(-50.7685, 29.0465, 4.2341);
-const vec3 c6 = vec3(18.6557, -11.4897, -5.6019);
-return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));}
+  const vec3 cola = vec3( 0.5, 0.5, 0.5 );
+  const vec3 colb = vec3( 0.5, 0.5, 0.5 );
+  const vec3 colc = vec3( 1., 1.0, 1. );
+  const vec3 cold = vec3( 0., 0.1, 0.2 );
+  return pal( t, cola, colb, colc,cold );}
 
 vec3 inferno(float t) {
 const vec3 c0 = vec3(0.0002, 0.0016, -0.0194);
@@ -949,10 +951,6 @@ vec3 colorize( float distance, float colorWidth, float ss ){
  
   float regG = mod(floor((distance)/12.8 * colorWidth) / colorWidth, 1.0 );
   float ranG = fract( hash11(ss + floor(distance / colorWidth ) + b ) );
-  vec3 cola = vec3( 0.5, 0.5, 0.5 );
-  vec3 colb = vec3( 0.5, 0.5, 0.5 );
-  vec3 colc = vec3( 1.0, 1.0, 1.0 );
-  vec3 cold = vec3( 0.00, 0.33, 0.67 );
 if ( iI10 == 0 ){
   float colR = hash11(ss + floor(distance / colorWidth ) + 555. );
   float colG = hash11(ss + floor(distance / colorWidth ) + b );
@@ -986,9 +984,9 @@ if ( iI10 == 0 ){
 } else if ( iI10 == 13 ){
   return bbody(ranG);
 } else if ( iI10 == 14 ){
-  return pal( regG, cola, colb, colc, cold );
+  return rainbow( regG );
 } else if ( iI10 == 15 ) {
-  return pal( floor(( distance + hash11(ss + b )) / colorWidth) *  colorWidth, cola, colb, colc, cold );
+  return rainbow( floor(( distance + hash11(ss + b )) / colorWidth) *  colorWidth );
 } return vec3(0.);
 }
 
