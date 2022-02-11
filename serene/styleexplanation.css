@@ -128,11 +128,25 @@ mark
     color: black;
 }
 
+#traitList
+{
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+}
+
+#hcgif
+{
+    width: 256px;
+    height: 256px;
+}
+
 section
 {
     position: relative;
     width: 100%;
-    min-height: 100vh;
+    min-height: 50vh;
     display: flex;
     justify-content: center;
     align-items: top;

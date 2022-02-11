@@ -1060,32 +1060,6 @@ for ( int l = 1; l<=iI0; l++ ){
 vec3 bgColor  = colorize( (backgroundD-iT*50.*gSpeed), (10.+hash11( seeedC + 99. )*60.)*gSize, seeedC + 8. );
 fragColor.rgb = (accumulatedCol.rgb + bgColor * (1.-accumulatedCol.a));
 
-// fragColor.rgb = colorize( uv.x/60.,0.025, seeedC + 8. );
-// float colorWidth = 0.03;
-// float regG = floor(uv.x / 0.03) * 0.03;
-// float ranG = fract( hash11(1234. + floor(uv.x / colorWidth ) + 666. ) );
-// fragColor.rgb = viridis(regG);
-// fragColor.rgb = viridis(ranG);
-
-// fragColor.rgb = plasma(regG);
-// fragColor.rgb = plasma(ranG);
-
-// fragColor.rgb = magma(regG);
-// fragColor.rgb = magma(ranG);
-
-// fragColor.rgb = turbo(regG);
-// fragColor.rgb = turbo(ranG);
-
-// fragColor.rgb = bbody(regG);
-// fragColor.rgb = bbody(ranG);
-
-vec3 cola = vec3( 0.5, 0.5, 0.5 );
-vec3 colb = vec3( 0.5, 0.5, 0.5 );
-vec3 colc = vec3( 1.0, 1.0, 1.0 );
-vec3 cold = vec3( 0.00, 0.33, 0.67 );
-
-// fragColor.rgb = pal( ranG, cola, colb, colc, cold );
-
 fragColor.a = 1.;}
 
 void main(){
