@@ -68,7 +68,7 @@ h1{
     /* margin-bottom: 20px; */
     z-index: 5;
     color: #FFF;
-    font-size: 12vw;
+    font-size: 10vw;
     margin:auto;
     line-height:auto;
     vertical-align:middle;
@@ -178,6 +178,7 @@ section
     position: relative;
     width: 100%;
     min-height: 100vh;
+    max-height: 100%;
     
     /* display: flex; */
     text-align: center;
