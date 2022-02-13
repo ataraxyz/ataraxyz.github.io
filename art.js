@@ -743,11 +743,11 @@ const hashToTraits = hash => {
   var maxLayer = 12;
   if ( isMobile )
     maxLayer = 2;
-  const layers = R.ri( 2, maxLayer );
+  const layers = R.ri( 4, maxLayer );
   const post  = R.ri(0,100);
   const seed = R.ri(0, 10000 );
   const seedC = R.ri(0, 10000 );
-  const pointsl = 10;
+  const pointsl = R.ri( 5, maxPointsPerLayer );
   const shape = selectRandomDist(shapeDist, R.r);
   const speed = R.ri( 20, 150 );
   const size = R.ri( 100, 200 );
@@ -1238,7 +1238,7 @@ const refresh = () => {
   tokenState.three.uniforms.cmode = cmode;
   tokenState.three.uniforms.sameProb = sameProb;
   // setupSynthForCurve();
-  // console.log(hashToTraits(tokenData.hash));
+  console.log(hashToTraits(tokenData.hash));
 }
 
 const run = (tokenData, tokenState) => {
