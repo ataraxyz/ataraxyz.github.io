@@ -1057,7 +1057,11 @@ for ( int l = 1; l<=iI0; l++ ){
 }
 vec3 bgColor  = colorize( (backgroundD-iT*50.*gSpeed), (10.+hash11( seeedC + 99. )*60.)*gSize, seeedC + 8. );
 fragColor.rgb = (accumulatedCol.rgb + bgColor * (1.-accumulatedCol.a));
+float colorWidth = 34.;
+// float regG = mod(floor((uv.x) * colorWidth) / colorWidth, 1.0 );
+// float ranG = hash11(regG);
 
+// fragColor.rgb = magma(ranG);
 fragColor.a = 1.;}
 
 void main(){
