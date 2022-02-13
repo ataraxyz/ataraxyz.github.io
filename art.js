@@ -737,7 +737,7 @@ const levelDist = {
 
 const hashToTraits = hash => {
   const R = mkRandom(hash);
-  var maxPointsPerLayer = 20;
+  var maxPointsPerLayer = 15;
   if ( isMobile )
     maxPointsPerLayer = 5;
   var maxLayer = 12;
@@ -747,7 +747,8 @@ const hashToTraits = hash => {
   const post  = R.ri(0,100);
   const seed = R.ri(0, 10000 );
   const seedC = R.ri(0, 10000 );
-  const pointsl = R.ri( 5, maxPointsPerLayer );
+  // const pointsl = R.ri( 5, maxPointsPerLayer );
+  const pointsl = layers < 3?R.ri(12, maxPointsPerLayer ):R.ri(7, maxPointsPerLayer );
   const shape = selectRandomDist(shapeDist, R.r);
   const speed = R.ri( 20, 150 );
   const size = R.ri( 100, 200 );
