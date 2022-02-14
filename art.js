@@ -921,53 +921,53 @@ if ( iI10 == 0 ){
   float h = hash11(ss+b) + floor(distance / colorWidth) * 0.381966011;
   return hsv2rgb( vec3(h, 0.75,0.75));
 } else if ( iI10 == 2 ){
-  return viridis(regG);
-} else if ( iI10 == 3 ){
   return viridis(ranG);
+} else if ( iI10 == 3 ){
+  return viridis(regG);
 } else if ( iI10 == 4 ) {
-  return plasma(regG);
-} else if ( iI10 == 5 ){
   return plasma(ranG);
+} else if ( iI10 == 5 ){
+  return plasma(regG);
 } else if ( iI10 == 6 ){
-  return magma(regG);
-} else if ( iI10 == 7 ){
   return magma(ranG);
+} else if ( iI10 == 7 ){
+  return magma(regG);
 } else if ( iI10 == 8 ){
-  return inferno(regG);
-} else if ( iI10 == 9 ){
   return inferno(ranG);
+} else if ( iI10 == 9 ){
+  return inferno(regG);
 } else if ( iI10 == 10 ){
-  return turbo(regG);
-} else if ( iI10 == 11 ){
   return turbo(ranG);
+} else if ( iI10 == 11 ){
+  return turbo(regG);
 } else if ( iI10 == 12 ) {
-  return bbody(regG);
-} else if ( iI10 == 13 ){
   return bbody(ranG);
+} else if ( iI10 == 13 ){
+  return bbody(regG);
 } else if ( iI10 == 14 ){
   return rainbow( regG );
 } else if ( iI10 == 15 ) {
   return rainbow( floor(( distance + hash11(ss + b )) / colorWidth) *  colorWidth );
 } else if ( iI10 == 16 ) {
-  return vday(regG);
-} else if ( iI10 == 17 ){
   return vday(ranG);
+} else if ( iI10 == 17 ){
+  return vday(regG);
 } else if ( iI10 == 18 ) {
-  return w420(regG);
-} else if ( iI10 == 19 ){
   return w420(ranG);
+} else if ( iI10 == 19 ){
+  return w420(regG);
 } else if ( iI10 == 20 ){
   return gg(ranG);
 } else if ( iI10 == 21 ){
-  return gg(ranG);
+  return gg(regG);
 } else if ( iI10 == 22 ){
   return sympatico(ranG);
 } else if ( iI10 == 23 ){
-  return sympatico(ranG);
+  return sympatico(regG);
 } else if ( iI10 == 24 ){
   return mojo(ranG);
 } else if ( iI10 == 25 ){
-  return mojo(ranG);
+  return mojo(regG);
 } return vec3(0.);
 }
 
