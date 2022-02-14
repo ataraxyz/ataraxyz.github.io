@@ -1089,7 +1089,7 @@ float colorWidth = 34.;
 // float regG = mod(floor((uv.x) * colorWidth) / colorWidth, 1.0 );
 // float ranG = hash11(regG);
 
-// fragColor.rgb = w420(regG);
+// fragColor.rgb = vday(regG);
 fragColor.a = 1.;}
 
 void main(){
