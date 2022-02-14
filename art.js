@@ -697,47 +697,9 @@ const randomColorHex = r => {
   const blue  = rc();
   return `#${red}${green}${blue}`;
 };
-const colorDist = {
-  0: .28,
-  1: .28,
-  2: .28,
-  3: .15,
-  4: .28,
-  5: .15,
-  6: .28,
-  7: .15,
-  8: .28,
-  9: .15,
-  10: .28,
-  11: .15,
-  12: .28, 
-  13: .15,
-  14: .05,
-  15: .02,
-  16: .28,
-  17: .15,
-  18: .28,
-  19: .15,
-};
-
-const shapeDist = {
-  0: .5,
-  1: .28,
-  2: .15,
-  3: .05,
-  4: .05,
-  5: .02
-};
-
-
-const levelDist = {
-  7: .5,
-  6: .28,
-  5: .15,
-  4: .05,
-  3: .05,
-  2: .02
-};
+const colorDist = {0: .5,1: .5,2: .28,3: .13,4: .28,5: .13,6: .28,7: .13,8: .28,9: .13,10: .28,11: .13,12: .28, 13: .13,14: .05,15: .02,16: .28,17: .13,18: .28,19: .13,20: .28,21: .13,22: .28,23: .13,24: .28,25: .13};
+const shapeDist = {0: .5,1: .28,2: .15,3: .05,4: .05,5: .02};
+const levelDist = {7: .5,6: .28,5: .15,4: .05,3: .05,2: .02};
 
 const hashToTraits = hash => {
   const R = mkRandom(hash);
@@ -898,12 +860,7 @@ vec3 hsv2rgb(vec3 c){
 
 vec3 pal( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d ){return a + b*cos( 6.28318*(c*t+d) );}
 
-vec3 rainbow(float t) {
-  const vec3 cola = vec3( 0.5, 0.5, 0.5 );
-  const vec3 colb = vec3( 0.5, 0.5, 0.5 );
-  const vec3 colc = vec3( 1.0, 1.0, 1.0 );
-  const vec3 cold = vec3( 0., 0.33, 0.67 );
-  return pal( t, cola, colb, colc,cold );}
+vec3 rainbow(float t) {return pal( t, vec3( 0.5, 0.5, 0.5 ), vec3( 0.5, 0.5, 0.5 ), vec3( 1.0, 1.0, 1.0 ),vec3( 0., 0.33, 0.67 ) );}
 
 
 vec3 viridis(float t) {
@@ -916,33 +873,19 @@ const vec3 c5 = vec3(4.7763, -13.7451, -65.353);
 const vec3 c6 = vec3(-5.4354, 4.64585, 26.3124);
 return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));}
 
-vec3 plasma(float t) {
-  const vec3 cola = vec3( 0.5, 0.5, 0.5 );
-  const vec3 colb = vec3( 0.5, 0.5, 0.5 );
-  const vec3 colc = vec3( 2., 1., 0. );
-  const vec3 cold = vec3( 0.5, 0.2, 0.25 );
-  return pal( t, cola, colb, colc,cold );}
+vec3 plasma(float t) {return pal( t, vec3( 0.5, 0.5, 0.5 ), vec3( 0.5, 0.5, 0.5 ), vec3( 2., 1., 0. ),vec3( 0.5, 0.2, 0.25 ) );}
 
-vec3 magma(float t) {
-  const vec3 cola = vec3( 0.5, 0.5, 0.5 );
-  const vec3 colb = vec3( 0.5, 0.5, 0.5 );
-  const vec3 colc = vec3( 1., 1.0, 1. );
-  const vec3 cold = vec3( 0., 0.1, 0.2 );
-  return pal( t, cola, colb, colc,cold );}
+vec3 sympatico(float t) { return pal( t, vec3( 0.5, 0.5, 0.5 ), vec3( 0.5, 1.0, 0.5 ), vec3( 2., 2.0, 1.0 ),vec3( 0.20, 0.1, 0.0 ) );}
 
-vec3 w420(float t) {
-  const vec3 cola = vec3( 0.1, 1.0, 0.4 );
-  const vec3 colb = vec3( 0.4, 0.5, 0.2 );
-  const vec3 colc = vec3( 0.6, 1.0, 0.4 );
-  const vec3 cold = vec3( 0.8, 0.66, 0.2 );
-  return pal( t, cola, colb, colc,cold );}
+vec3 mojo(float t) { return pal( t, vec3( 0.5, 0.5, 0.5 ), vec3( 0.5, 0.25, 0.5 ), vec3( 0.5, 2.0, 0.5 ),vec3( 0.0, 0.5, 0.5 ) );}
 
-vec3 vday(float t) {
-  const vec3 cola = vec3( 0.66, 0.5, 0.5 );
-  const vec3 colb = vec3( 0.5, 0.66, 0.5 );
-  const vec3 colc = vec3( 1.0, 0.2, 0.66 );
-  const vec3 cold = vec3( 0., 0.53, 0.67 );
-  return pal( t, cola, colb, colc,cold );}
+vec3 magma(float t) {return pal( t, vec3( 0.5, 0.5, 0.5 ), vec3( 0.5, 0.5, 0.5 ), vec3( 1., 1.0, 1. ),vec3( 0., 0.1, 0.2 ));}
+
+vec3 w420(float t) {return pal( t, vec3( 0.1, 1.0, 0.4 ), vec3( 0.4, 0.5, 0.2 ), vec3( 0.6, 1.0, 0.4 ),vec3( 0.8, 0.66, 0.2 ) );}
+
+vec3 gg(float t){ return vec3(t);}
+
+vec3 vday(float t) {return pal( t, vec3( 0.66, 0.5, 0.5 ), vec3( 0.5, 0.66, 0.5 ), vec3( 1.0, 0.2, 0.66 ),vec3( 0., 0.53, 0.67 ) );}
 
 vec3 inferno(float t) {
 const vec3 c0 = vec3(0.0002, 0.0016, -0.0194);
@@ -967,10 +910,8 @@ return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));}
 vec3 bbody(float t){return vec3(1,1./4.,1./16.) * exp(4.*t - 1.);}
 vec3 colorize( float distance, float colorWidth, float ss ){
   float b = 666.;
- 
-  float regG = mod(floor((distance)/12.8 * colorWidth) / colorWidth, 1.0 );
+  float regG = mod(floor(abs((distance) / colorWidth)) * colorWidth, 1.0 );
   float ranG = fract( hash11(ss + floor(distance / colorWidth ) + b ) );
-  
 if ( iI10 == 0 ){
   float colR = hash11(ss + floor(distance / colorWidth ) + 555. );
   float colG = hash11(ss + floor(distance / colorWidth ) + b );
@@ -1015,8 +956,21 @@ if ( iI10 == 0 ){
   return w420(regG);
 } else if ( iI10 == 19 ){
   return w420(ranG);
+} else if ( iI10 == 20 ){
+  return gg(ranG);
+} else if ( iI10 == 21 ){
+  return gg(ranG);
+} else if ( iI10 == 22 ){
+  return sympatico(ranG);
+} else if ( iI10 == 23 ){
+  return sympatico(ranG);
+} else if ( iI10 == 24 ){
+  return mojo(ranG);
+} else if ( iI10 == 25 ){
+  return mojo(ranG);
 } return vec3(0.);
 }
+
 
 float sceneDist( int type, vec2 PP, vec2 hilbertP, float ss, float globalSize, float globalSpeed ){
 float sign = 1.0;
@@ -1084,12 +1038,11 @@ for ( int l = 1; l<=iI0; l++ ){
   accumulatedCol.a = max(accumulatedCol.a, alpha);
 }
 vec3 bgColor  = colorize( (backgroundD-iT*50.*gSpeed), (10.+hash11( seeedC + 99. )*60.)*gSize, seeedC + 8. );
-fragColor.rgb = (accumulatedCol.rgb + bgColor * (1.-accumulatedCol.a));
-float colorWidth = 34.;
+fragColor.rgb = pow((accumulatedCol.rgb + bgColor * (1.-accumulatedCol.a)),vec3(1.2));
+// float colorWidth = 34.;
 // float regG = mod(floor((uv.x) * colorWidth) / colorWidth, 1.0 );
 // float ranG = hash11(regG);
-
-// fragColor.rgb = vday(regG);
+// fragColor.rgb = mojo(ranG);
 fragColor.a = 1.;}
 
 void main(){
