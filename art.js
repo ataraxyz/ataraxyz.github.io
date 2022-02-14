@@ -698,22 +698,26 @@ const randomColorHex = r => {
   return `#${red}${green}${blue}`;
 };
 const colorDist = {
-  0: .5,
-  1: .5,
+  0: .28,
+  1: .28,
   2: .28,
   3: .15,
   4: .28,
   5: .15,
-  6: .15,
+  6: .28,
   7: .15,
   8: .28,
   9: .15,
-  10: .05,
-  11: .05,
-  12: .05, 
-  13: .05,
-  14: .02,
-  15: .02
+  10: .28,
+  11: .15,
+  12: .28, 
+  13: .15,
+  14: .05,
+  15: .02,
+  16: .28,
+  17: .15,
+  18: .28,
+  19: .15,
 };
 
 const shapeDist = {
@@ -926,6 +930,20 @@ vec3 magma(float t) {
   const vec3 cold = vec3( 0., 0.1, 0.2 );
   return pal( t, cola, colb, colc,cold );}
 
+vec3 w420(float t) {
+  const vec3 cola = vec3( 0.1, 1.0, 0.4 );
+  const vec3 colb = vec3( 0.4, 0.5, 0.2 );
+  const vec3 colc = vec3( 0.6, 1.0, 0.4 );
+  const vec3 cold = vec3( 0.8, 0.66, 0.2 );
+  return pal( t, cola, colb, colc,cold );}
+
+vec3 vday(float t) {
+  const vec3 cola = vec3( 0.66, 0.5, 0.5 );
+  const vec3 colb = vec3( 0.5, 0.66, 0.5 );
+  const vec3 colc = vec3( 1.0, 0.2, 0.66 );
+  const vec3 cold = vec3( 0., 0.53, 0.67 );
+  return pal( t, cola, colb, colc,cold );}
+
 vec3 inferno(float t) {
 const vec3 c0 = vec3(0.0002, 0.0016, -0.0194);
 const vec3 c1 = vec3(0.1065, 0.5639, 3.9327);
@@ -952,6 +970,7 @@ vec3 colorize( float distance, float colorWidth, float ss ){
  
   float regG = mod(floor((distance)/12.8 * colorWidth) / colorWidth, 1.0 );
   float ranG = fract( hash11(ss + floor(distance / colorWidth ) + b ) );
+  
 if ( iI10 == 0 ){
   float colR = hash11(ss + floor(distance / colorWidth ) + 555. );
   float colG = hash11(ss + floor(distance / colorWidth ) + b );
@@ -988,6 +1007,14 @@ if ( iI10 == 0 ){
   return rainbow( regG );
 } else if ( iI10 == 15 ) {
   return rainbow( floor(( distance + hash11(ss + b )) / colorWidth) *  colorWidth );
+} else if ( iI10 == 16 ) {
+  return vday(regG);
+} else if ( iI10 == 17 ){
+  return vday(ranG);
+} else if ( iI10 == 18 ) {
+  return w420(regG);
+} else if ( iI10 == 19 ){
+  return w420(ranG);
 } return vec3(0.);
 }
 
@@ -1062,7 +1089,7 @@ float colorWidth = 34.;
 // float regG = mod(floor((uv.x) * colorWidth) / colorWidth, 1.0 );
 // float ranG = hash11(regG);
 
-// fragColor.rgb = magma(ranG);
+// fragColor.rgb = w420(regG);
 fragColor.a = 1.;}
 
 void main(){
