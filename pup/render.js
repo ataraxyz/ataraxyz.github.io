@@ -43,21 +43,39 @@ const getDataUrlThroughCanvas = async (selector) => {
   return canvas.toDataURL();
 };
 
+function delay(time) {
+  return new Promise(function(resolve) { 
+      setTimeout(resolve, time)
+  });
+}
+
 (async () => {
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--window-size=2048,2048','--disable-gpu'],
+    args: ['--window-size=64,64','--disable-gpu'],
     defaultViewport: null
     });
   // const browser = await puppeteer.launch(/* { headless: false, defaultViewport: null } */);
   // try {
     const page = await browser.newPage();
-    await page.goto('http://127.0.0.1:5501/index.html');
+    await page.goto('http://127.0.0.1:5501/pup/index.html');
     var dataArray = [];
-    for (let i = 0; i < 5; i++) {
-      console.log('Trying to render image ' + i);
 
-      await page.keyboard.press('Control');
+    page
+    .on('console', message =>
+      console.log(`${message.type().substr(0, 3).toUpperCase()} ${message.text()}`))
+    .on('pageerror', ({ message }) => console.log(message))
+    .on('response', response =>
+      console.log(`${response.status()} ${response.url()}`))
+    .on('requestfailed', request =>
+      console.log(`${request.failure().errorText} ${request.url()}`))
+    for (let i = 0; i < 1; i++) {
+      console.log('Trying to render image ' + i);
+    
+      await delay(4000);
+      // console.log('Trying to render image wait over ' + i);
+      // console.log(tokenData.hash)
+      // await page.keyboard.press('Control');
       // page.setViewport({ width: 1024, height: 1024 });
       // console.log( 'before delay');
       // await delay( 2000 );
@@ -66,8 +84,9 @@ const getDataUrlThroughCanvas = async (selector) => {
       // const dataUrl = await page.evaluate(() => {
       //     return document.querySelector('').toDataURL();
       //   });
-      dataUrl = await page.evaluate(getDataUrlThroughCanvas, 'body > section.section0 > div > p > canvas');
+      dataUrl = await page.evaluate(getDataUrlThroughCanvas, 'body > canvas');
       const { buffer } = parseDataUrl(dataUrl);
+      console.log(dataUrl)
       dataArray.push(buffer);
       //fs.writeFileSync(`${i}_render.png`, buffer, 'base64');
     }

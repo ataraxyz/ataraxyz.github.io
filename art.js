@@ -945,9 +945,9 @@ if ( iI10 == 0 ){
 } else if ( iI10 == 13 ){
   return bbody(regG);
 } else if ( iI10 == 14 ){
-  return rainbow( regG );
-} else if ( iI10 == 15 ) {
   return rainbow( floor(( distance + hash11(ss + b )) / colorWidth) *  colorWidth );
+} else if ( iI10 == 15 ) {
+  return rainbow( regG );
 } else if ( iI10 == 16 ) {
   return vday(ranG);
 } else if ( iI10 == 17 ){
@@ -1194,6 +1194,7 @@ const refresh = () => {
   staticTime = false;
   tokenData.hash    = randomHash(64);
   // tokenData.hash = '0x' + '8f3e22a6e16b94def6a08b191a45b361c0a3ee7744a3fcb8ee4ddc43036ee372'
+  // tokenData.hash = "0x3bb5d07918782765fad287be316135c8ec36a5b2be354802dab88c47ac42e76e";
   const {
     layers,
     post,
@@ -1219,8 +1220,44 @@ const refresh = () => {
   tokenState.three.uniforms.cmode = cmode;
   tokenState.three.uniforms.sameProb = sameProb;
   // setupSynthForCurve();
-  console.log(hashToTraits(tokenData.hash));
+  var hashStr = tokenData.hash.toString();
+  // console.log(hashStr);
+  navigator.clipboard.writeText(hashStr).then(function() {
+    console.log('HASH ' + hashStr + 'Copied to Clipboard successfully');
+  }, function(err) {
+    console.log( hashStr + ' Please copy manually as auto copy to clipboard failed' )
+  });
 }
+
+const refreshConstant = ( inputHash ) => {
+  staticTime = false;
+  tokenData.hash    = inputHash;
+  const {
+    layers,
+    post,
+    seed,
+    seedC,
+    pointsl,
+    shape,
+    speed,
+    size,
+    level,
+    cmode,
+    sameProb
+  } = hashToTraits(tokenData.hash);
+  tokenState.three.uniforms.layers = layers;
+  tokenState.three.uniforms.post = post;
+  tokenState.three.uniforms.seed = seed;
+  tokenState.three.uniforms.seedC = seedC;
+  tokenState.three.uniforms.pointsl = pointsl;
+  tokenState.three.uniforms.shape = shape;
+  tokenState.three.uniforms.speed = speed;
+  tokenState.three.uniforms.size = size;
+  tokenState.three.uniforms.level = level;
+  tokenState.three.uniforms.cmode = cmode;
+  tokenState.three.uniforms.sameProb = sameProb;
+}
+
 
 const run = (tokenData, tokenState) => {
   if ( webGl2Supported ){

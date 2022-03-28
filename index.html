@@ -174,9 +174,24 @@
                     document.body.removeChild( tmpLink );  
                     
                 }
+                if ( e.keyCode == 18 )
+                {
+                    askForHash();
+                }
+
             }
 
                     
+            function askForHash()
+            {
+                let hash = prompt("PLEASE ENTER HASH", "YOUR HASH");
+                if (hash == null || hash == "") {
+                    console.error( 'No hash provided' )
+                } else {
+                    refreshConstant(hash);
+                }
+                
+            }
 
             function offset(el) {
                 var rect = el.getBoundingClientRect(),
