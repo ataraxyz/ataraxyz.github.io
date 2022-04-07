@@ -826,6 +826,7 @@ vec2 translate(vec2 p, vec2 t) {return p - t;}
 float circleDist(vec2 p, float radius){
 float result = length(p) - radius;
 return result;}
+
 float triangleDist(vec2 p, float radius){
 return max(	abs(p).x * 0.866025 + 
         p.y * 0.5, -p.y) 
@@ -972,11 +973,12 @@ if ( iI10 == 0 ){
 }
 
 
-float sceneDist( int type, vec2 PP, vec2 hilbertP, float ss, float globalSize, float globalSpeed ){
+
+float sceneDist( int type, vec2 PP, vec2 hilbertP, float ss, float globalSize, float globalSpeed )
+{
 float sign = 1.0;
 if ( hash11(ss+789456.) < 0.5 )
   sign = -1.0;
-
 if ( type == 1 )
   return circleDist(   translate( PP, hilbertP ), hash11( ss ) * 200. * globalSize );
 else if ( type == 2 ){
@@ -987,7 +989,20 @@ else if ( type == 2 ){
 else if ( type == 4 )
   return hexagonDist( rotate( translate(PP, hilbertP),sign * (hash11( ss ) * 360. / 180. * 3.14159 + iT) * globalSpeed * 512. ), hash11( ss + 1234. ) * 200. * globalSize ); 
 else if ( type == 5 )
-  return insaneDist(   translate( PP, hilbertP ), hash11( ss ) * 200. * globalSize );}
+  return insaneDist(   translate( PP, hilbertP ), hash11( ss ) * 200. * globalSize );
+}
+float sceneDistTiled( int type, vec2 PP, vec2 hilbertP, float ss, float globalSize, float globalSpeed )
+{
+  float dist  =           sceneDist( type, PP, hilbertP              , ss, globalSize, globalSpeed );
+  dist        = min(dist, sceneDist( type, PP, hilbertP + vec2(1.,0.), ss, globalSize, globalSpeed ));
+  dist        = min(dist, sceneDist( type, PP, hilbertP - vec2(1.,0.), ss, globalSize, globalSpeed ));
+  dist        = min(dist, sceneDist( type, PP, hilbertP + vec2(0.,1.), ss, globalSize, globalSpeed ));
+  dist        = min(dist, sceneDist( type, PP, hilbertP - vec2(0.,1.), ss, globalSize, globalSpeed ));
+  dist        = min(dist, sceneDist( type, PP, hilbertP + vec2(1.,1.), ss, globalSize, globalSpeed ));
+  dist        = min(dist, sceneDist( type, PP, hilbertP - vec2(1.,1.), ss, globalSize, globalSpeed ));
+  return dist;
+}
+
 void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
 vec2 uv = fragCoord / iR.xy;
 vec2 P = (fragCoord)/max(iR.y, iR.x );
@@ -1015,17 +1030,22 @@ for ( int l = 1; l<=iI0; l++ ){
     numPointsInLayer = max(4,numPointsInLayer / 2);}
   int curveIndex = int(hash11( seeed + ll + 33. ) * numPointsFloat);
   vec2 PHC = curve(curveIndex)/gridDistance;
+  
   int layerType = iI5;
   if ( iI5==0 )
       layerType = 1+(int(hash11( seeed + ll + 34468. )*4.)%5);
+  // float d = sceneDistTiled( layerType, P, PHC, seeed + ll + 4.0, gs, gSpeed );
   float d = sceneDist( layerType, P, PHC, seeed + ll + 4.0, gs, gSpeed );
   for ( int i = 1; i<numPointsInLayer; i++ ) {
     float ii = float(i);
     if ( layerType < 2 || hash11( seeed + ii*ll + 4589. ) < float(iI13)/100.) {
       curveIndex = ( curveIndex + deltaP ) % numPoints; 
     }
+    
     PHC = curve(curveIndex)/gridDistance;
+    // d = smoothMerge( d, sceneDistTiled( layerType, P, PHC, seeed + ii+ll + 4., gs, gSpeed ), float(iI4)/1024. );}
     d = smoothMerge( d, sceneDist( layerType, P, PHC, seeed + ii+ll + 4., gs, gSpeed ), float(iI4)/1024. );}
+  
   if ( l == 1 )
     backgroundD = d;
   else
@@ -1043,6 +1063,8 @@ fragColor.rgb = pow((accumulatedCol.rgb + bgColor * (1.-accumulatedCol.a)),vec3(
 // float regG = mod(floor((uv.x) * colorWidth) / colorWidth, 1.0 );
 // float ranG = hash11(regG);
 // fragColor.rgb = mojo(ranG);
+// fragColor.rg = P.xy;
+// fragColor.b = 0.;
 fragColor.a = 1.;}
 
 void main(){
@@ -1092,6 +1114,7 @@ mainImage(gl_FragColor, gl_FragCoord.xy);}
     const height = window.innerHeight;
     canvas.width = width;
     canvas.height = height;
+    console.log( window.outerWidth + "x" + window.outerHeight);
     renderer.setSize(width/8, height/8, false);
   };
 
@@ -1195,6 +1218,7 @@ const refresh = () => {
   tokenData.hash    = randomHash(64);
   // tokenData.hash = '0x' + '8f3e22a6e16b94def6a08b191a45b361c0a3ee7744a3fcb8ee4ddc43036ee372'
   // tokenData.hash = "0x3bb5d07918782765fad287be316135c8ec36a5b2be354802dab88c47ac42e76e";
+  // tokenData.hash = "0xdfe335db38a53fef80da550156d9d516edd9bcb7e3855885c3c37c222cb25dc8";
   const {
     layers,
     post,
@@ -1209,13 +1233,14 @@ const refresh = () => {
     sameProb
   } = hashToTraits(tokenData.hash);
   tokenState.three.uniforms.layers = layers;
+  // tokenState.three.uniforms.layers = 1;
   tokenState.three.uniforms.post = post;
   tokenState.three.uniforms.seed = seed;
   tokenState.three.uniforms.seedC = seedC;
   tokenState.three.uniforms.pointsl = pointsl;
   tokenState.three.uniforms.shape = shape;
   tokenState.three.uniforms.speed = speed;
-  tokenState.three.uniforms.size = size;
+  tokenState.three.uniforms.size = size+100;
   tokenState.three.uniforms.level = level;
   tokenState.three.uniforms.cmode = cmode;
   tokenState.three.uniforms.sameProb = sameProb;
