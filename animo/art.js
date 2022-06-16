@@ -1173,7 +1173,7 @@ const toggleSound = () => {
     let lastMelody = mainMelody_Proc[mainMelody_Proc.length - 1];
     Tone.Transport.loopStart = 0.0;
     Tone.Transport.loopEnd = lastMelody['time'];
-    console.log(lastMelody['time'] + ' is the last time')
+    // console.log(lastMelody['time'] + ' is the last time')
     Tone.Transport.loop = true;
     Tone.Transport.start();
   }
