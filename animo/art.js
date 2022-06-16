@@ -1,5 +1,10 @@
 // SOUND STUFF
-
+let mainMelodyPart
+let part
+let highOctaveChordPart
+let kickPart
+let snarePart
+let bassPart
 //F, G, A♭, B♭, C, D♭, and E
 // const AMinorScale = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 // const AMinorScale = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
@@ -223,9 +228,9 @@ const setupSynthForCurve = () => {
   allScales.push( ['C', 'D', 'E', 'G', 'A', 'C', 'D'] );  // CPentaScake
 
   var MainScale = allScales[Math.floor(colortype/2 + 0.5)]
-  console.log(Math.floor(colortype/2 + 0.5))
-  console.log(allScales.length)
-  console.log(MainScale)
+  // console.log(Math.floor(colortype/2 + 0.5))
+  // console.log(allScales.length)
+  // console.log(MainScale)
   var mainMelodyNotes = [ MainScale[1]+'4', MainScale[1]+'4', MainScale[3]+'4', MainScale[4]+'4', MainScale[5]+'4', MainScale[0]+'5']
 
   var bassNotes = [ 'D0', 'E0', 'F0', 'G0', 'A0', 'C0']
@@ -469,7 +474,7 @@ const setupSynthForCurve = () => {
     snareType = "pink"
   }
 
-  console.log( snareType )
+  // console.log( snareType )
   const snareDrum = new Tone.NoiseSynth({
     volume: snareVolume,
     noise: {
@@ -499,39 +504,38 @@ const setupSynthForCurve = () => {
     }
   }).toDestination();
 
-
-
+  
   // Melody
-  const mainMelodyPart = new Tone.Part(function(time, note){
+  mainMelodyPart = new Tone.Part(function(time, note){
     synth2.triggerAttackRelease(note.note, note.duration, time);
   }, mainMelody_Proc.slice(0, mainMelody_Proc.length-2)).start(0);
-  console.log( mainMelody_Proc )
+  // console.log( mainMelody_Proc )
   // Chords
-  const part = new Tone.Part(function(time, note){
+  part = new Tone.Part(function(time, note){
     mainChordSynth.triggerAttackRelease(note.note, note.duration, time);
   }, mainChords_Proc).start(0);
-  console.log( mainChords_Proc )
+  // console.log( mainChords_Proc )
   
-  const highOctaveChordPart = new Tone.Part(function(time, note){
+  highOctaveChordPart = new Tone.Part(function(time, note){
     highSynth.triggerAttackRelease(note.note, note.duration, time, 0.5 );
   }, highOctaveChords_Proc).start(0);
-  console.log( highOctaveChords_Proc )
+  // console.log( highOctaveChords_Proc )
 
   // drums
-  const kickPart = new Tone.Part(function(time){
+  kickPart = new Tone.Part(function(time){
     kickDrum.triggerAttackRelease('C1', '8n', time)
   }, kick_Proc).start(0);
-  console.log( kick_Proc )
-  const snarePart = new Tone.Part(function(time){
+  // console.log( kick_Proc )
+  snarePart = new Tone.Part(function(time){
     snareDrum.triggerAttackRelease('6n', time)
   }, snare_Proc).start(0);
-  console.log( snare_Proc )
+  // console.log( snare_Proc )
 
   // bass
-  const bassPart = new Tone.Part(function(time, note){
+  bassPart = new Tone.Part(function(time, note){
     bass.triggerAttackRelease(note.note, note.duration, time);
   }, bassline_Proc).start(0);
-  console.log( bassline_Proc )
+  // console.log( bassline_Proc )
   bass.chain(vol, Tone.Master);
   
 }
@@ -1140,14 +1144,26 @@ const refresh = () => {
   }, function(err) {
     console.log( hashStr + ' Please copy manually as auto copy to clipboard failed' )
   });
-  
+  Tone.Transport.stop();
+  if(mainMelodyPart)
+    mainMelodyPart.dispose();
+  if(part)
+    part.dispose();
+  if(highOctaveChordPart)
+    highOctaveChordPart.dispose();
+  if(kickPart)
+    kickPart.dispose();
+  if(snarePart)
+    snarePart.dispose();
+  if(bassPart)
+    bassPart.dispose();
 }
 
 const toggleSound = () => {
-  // refresh();
-  // Tone.Transport.stop();
   if ( Tone.Transport.state === 'stopped' )
   {
+    Tone.context = new AudioContext()
+    Tone.start()
     // Tone.context.close()
     setupSynthForCurve();
 
@@ -1163,12 +1179,13 @@ const toggleSound = () => {
   }
   else
   {
-    // kickPart bassPart  mainMelodyPart part highOctaveChordPart
-    // kickPart.cancel();
-    // bassPart.cancel();
-    // mainMelodyPart.cancel();
-    // part.cancel();
-    // highOctaveChordPart.cancel();
+    Tone.Transport.stop();
+    mainMelodyPart.dispose();
+    part.dispose();
+    highOctaveChordPart.dispose();
+    kickPart.dispose();
+    snarePart.dispose();
+    bassPart.dispose();
   }
 }
 

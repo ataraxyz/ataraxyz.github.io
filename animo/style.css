@@ -214,7 +214,7 @@ section
         left: 20px;
         
         color: rgb(255, 255, 255);
-        flex-flow: row-reverse; /* or 'row' and change the order of your html elements */
+        flex-flow: row-reverse; 
         align-items: center;
         z-index: 2;
         }

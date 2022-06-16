@@ -15,7 +15,7 @@
     
 }
 
-/* #bannerVideo {
+#bannerVideo {
 
     position: absolute;
     justify-content: center;
@@ -24,12 +24,8 @@
     width: 100%;
     height: 100vh;
     z-index: 99;
-  } */
-#explimg {
-    /* margin-top: 50px; */
-    margin-top: 1vh;
-    margin-bottom: 1vh;
-}
+  }
+
 #bannerVideo {
   position: absolute;
   right: 0;
