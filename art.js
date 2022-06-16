@@ -2,7 +2,7 @@
 
 //F, G, A♭, B♭, C, D♭, and E
 // const AMinorScale = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
-const AMinorScale = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+// const AMinorScale = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 const addOctaveNumbers = (scale, octaveNumber) => scale.map(note => {
   const firstOctaveNoteIndex = scale.indexOf('C') !== -1 ? scale.indexOf('C') : scale.indexOf('C#')
   const noteOctaveNumber = scale.indexOf(note) < firstOctaveNoteIndex ? octaveNumber - 1 : octaveNumber;
@@ -67,8 +67,39 @@ const constructChords = (scale, octave) => {
 
 
 
+
+const curveToCoord = (index, level ) => {
+  var resX = 0;
+  var resY = 0;
+  gridDist = (1<<level)-1; 
+  gridDist = 1.0;
+
+  for( let k=0; k<level; k++ )
+  {
+    var rX = index>>1 & 1;
+    var rY = index^(index>>1) & 1
+    if (rY==0) 
+    { 
+      if(rX==1)
+      { 
+        resX = (1<<k)-1-resX; 
+        resY = (1<<k)-1-resY; 
+      } 
+      var tmp = resY;
+      resY = resX;
+      resX = tmp;
+    }
+
+    resX += rX<<k;
+    resY += rY<<k;
+    index >>= 2; 
+  }
+  return [resX / gridDist, resY / gridDist];
+}
+
 const curvePoints = () => {
-  var numPoints      = 1<<(tokenState.three.uniforms.iI9.value<<1);
+  var level = tokenState.three.uniforms.iI9.value;
+  var numPoints      = 1<<(level<<1);
   var deltaP = numPoints / 1.61803398874 + 0.5;
   var seeed = tokenState.three.uniforms.iI2.value;
   var layers = tokenState.three.uniforms.iI0.value;
@@ -90,241 +121,37 @@ const curvePoints = () => {
       layerType = 1+(hash11( seeed + l + 34468.0 )*4.0)%5;
     
 
-    for ( let p = 1; p < numPointsInLayer; p++ )
+    for ( let p = 1; p <= numPointsInLayer; p++ )
     {
       if ( layerType < 2 || hash11( seeed + p*l + 4589.0 ) < tokenState.three.uniforms.iI13.value/100.0) 
       {
         curveIndex = ( curveIndex + deltaP ) % numPoints;
         layerResult.push( curveIndex / numPoints );
+
       }
+      // if ( l == 2 )
+      // {
+      //   var curveCoords = curveToCoord( curveIndex, level); 
+      //   console.log( curveCoords[0] + " " + curveCoords[1] );
+      // }
     }
     layerResult.sort();
     result.push(layerResult);
   }
+  // console.log('CURVE POINTS RAW: ' + result);
+  
   return result;
 }
-//['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-// const IChord = constructMajorChord(AMinorScale, 4, 'A3');
-// const VChord = constructMajorChord(AMinorScale, 4, 'E4');
-// const VIChord = constructMajorChord(AMinorScale, 3, 'F3');
-// const IVChord = constructMajorChord(AMinorScale, 3, 'D3');
-// IChord.push('A2', 'G4')
-// VChord.push('E2', 'G3')
-// VIChord.push('F2', 'E4')
-// IVChord.push('D2', 'C4')
-const IChord = constructMajorChord(AMinorScale, 4, 'C3');
-const VChord = constructMajorChord(AMinorScale, 4, 'G4');
-const VIChord = constructMajorChord(AMinorScale, 3, 'A3');
-const IVChord = constructMajorChord(AMinorScale, 3, 'F3');
-IChord.push('C2', 'C4')
-VChord.push('G2', 'G4')
-VIChord.push('A2', 'F3')
-IVChord.push('F2', 'F4')
-
-// const part = new Tone.Part(function(time, note){
-//   synth.triggerAttackRelease(note.note, note.duration, time);
-// }, mainChords).start(0);
-const IChord1 = constructMajorChord(AMinorScale, 5, 'C4');
-const VChord1 = constructMajorChord(AMinorScale, 5, 'G5');
-const VIChord1= constructMajorChord(AMinorScale, 4, 'A4');
-const IVChord1 = constructMajorChord(AMinorScale, 4, 'F4');
-// const IChord1 = constructMajorChord(AMinorScale, 5, 'A4');
-// const VChord1 = constructMajorChord(AMinorScale, 5, 'E5');
-// const VIChord1= constructMajorChord(AMinorScale, 4, 'F4');
-// const IVChord1 = constructMajorChord(AMinorScale, 4, 'D4');
-
-IChord1.push('A3', 'G5')
-VChord1.push('E3', 'D5')
-VIChord1.push('F3', 'E5')
-IVChord1.push('D3', 'C5')
-
-
-// console.log(IChord);
-// console.log(VChord);
-// console.log(VIChord);
-// console.log(IVChord);
 
 
 
+var vol = new Tone.Volume();
+vol.volume = -12;    
+var dist = new Tone.Distortion(0.5).toDestination();
+// var pitchShift = new Tone.PitchShift();
+var wah = new Tone.AutoWah(0, 6, -30);//.toDestination();
+// dist.distortion = 0.8;
 
-const mainChords = [
-  {'time': 0, 'note': IChord, 'duration': '2n.'},
-  {'time': '0:3', 'note': VChord, 'duration': '4n'},
-  {'time': '1:0', 'note': VIChord, 'duration': '2n.'},
-  {'time': '1:3', 'note': VChord, 'duration': '4n'},
-  {'time': '2:0', 'note': IVChord, 'duration': '2n.'},
-  {'time': '2:3', 'note': VChord, 'duration': '4n'},
-  {'time': '3:0', 'note': VIChord, 'duration': '2n'},
-  {'time': '3:2', 'note': VChord, 'duration': '4n'},
-  {'time': '3:3', 'note': IVChord, 'duration': '4n'},
-  {'time': '4:0', 'note': IChord, 'duration': '2n.'},
-  {'time': '4:3', 'note': VChord, 'duration': '4n'},
-  {'time': '5:0', 'note': VIChord, 'duration': '2n.'},
-  {'time': '5:3', 'note': VChord, 'duration': '4n'},
-  {'time': '6:0', 'note': IVChord, 'duration': '2n.'},
-  {'time': '6:3', 'note': VChord, 'duration': '4n'},
-  {'time': '7:0', 'note': VIChord, 'duration': '2n'},
-  {'time': '7:2', 'note': VChord, 'duration': '4n'},
-  {'time': '7:3', 'note': IVChord, 'duration': '4n'},
-];
-
-
-
-const highOctaveChords = [
-  {'time': 0, 'note': IChord1, 'duration': '2n.'},
-  {'time': '0:3', 'note': VChord1, 'duration': '4n'},
-  {'time': '1:0', 'note': VIChord1, 'duration': '2n.'},
-  {'time': '1:3', 'note': VChord1, 'duration': '4n'},
-  {'time': '2:0', 'note': IVChord1, 'duration': '2n.'},
-  {'time': '2:3', 'note': VChord1, 'duration': '4n'},
-  {'time': '3:0', 'note': VIChord1, 'duration': '2n'},
-  {'time': '3:2', 'note': VChord1, 'duration': '4n'},
-  {'time': '3:3', 'note': IVChord1, 'duration': '4n'},
-  {'time': '4:0', 'note': IChord1, 'duration': '2n.'},
-  {'time': '4:3', 'note': VChord1, 'duration': '4n'},
-  {'time': '5:0', 'note': VIChord1, 'duration': '2n.'},
-  {'time': '5:3', 'note': VChord1, 'duration': '4n'},
-  {'time': '6:0', 'note': IVChord1, 'duration': '2n.'},
-  {'time': '6:3', 'note': VChord1, 'duration': '4n'},
-  {'time': '7:0', 'note': VIChord1, 'duration': '2n'},
-  {'time': '7:2', 'note': VChord1, 'duration': '4n'},
-  {'time': '7:3', 'note': IVChord1, 'duration': '4n'},
-];
-
-
-
-// const highOctaveChordPart = new Tone.Part(function(time, note){
-//   highSynth.triggerAttackRelease(note.note, note.duration, time, 0.5);
-// }, highOctaveChords).start(0);
-
-
-// const mainMelody = [
-//   {'time': 0, 'note': 'G4', 'duration': '8n'},
-//   {'time': '0:0:2', 'note': 'F4', 'duration': '8n'},
-//   {'time': '0:1', 'note': 'D4', 'duration': '8n.'},
-//   {'time': '0:2', 'note': 'D4', 'duration': '8n'},
-//   {'time': '0:2:2', 'note': 'F4', 'duration': '8n.'},
-//   {'time': '0:3', 'note': 'G4', 'duration': '8n'},
-//   {'time': '0:3:2', 'note': 'A4', 'duration': '2n'},
-//   {'time': '2:0', 'note': 'A4', 'duration': '8n'},
-//   {'time': '2:0:2', 'note': 'G4', 'duration': '8n'},
-//   {'time': '2:1', 'note': 'F4', 'duration': '8n'},
-//   {'time': '2:2', 'note': 'A4', 'duration': '8n'},
-//   {'time': '2:2:2', 'note': 'G4', 'duration': '8n'},
-//   {'time': '2:3', 'note': 'E4', 'duration': '8n'},
-//   {'time': '2:3:2', 'note': 'F4', 'duration': '2n'},
-//   {'time': '4:0', 'note': 'G4', 'duration': '8n'},
-//   {'time': '4:0:2', 'note': 'F4', 'duration': '8n'},
-//   {'time': '4:1', 'note': 'D4', 'duration': '8n'},
-//   {'time': '4:2', 'note': 'F4', 'duration': '8n'},
-//   {'time': '4:2:2', 'note': 'A4', 'duration': '8n'},
-//   {'time': '4:3', 'note': 'G4', 'duration': '8n'},
-//   {'time': '4:3:2', 'note': 'A4', 'duration': '2n'},
-//   {'time': '5:2:2', 'note': 'G4', 'duration': '8n'},
-//   {'time': '5:3', 'note': 'A4', 'duration': '8n'},
-//   {'time': '5:3:2', 'note': 'B4', 'duration': '8n'},
-//   {'time': '6:0', 'note': 'C5', 'duration': '8n'},
-//   {'time': '6:1', 'note': 'B4', 'duration': '8n'},
-//   {'time': '6:1:2', 'note': 'A4', 'duration': '8n'},
-//   {'time': '6:2', 'note': 'B4', 'duration': '8n'},
-//   {'time': '6:2:2', 'note': 'A4', 'duration': '8n'},
-//   {'time': '6:3', 'note': 'G4', 'duration': '8n'},
-//   {'time': '6:3:2', 'note': 'A4', 'duration': '1n'},
-// ];
-
-
-// const synth2 = new Tone.Synth({
-//   oscillator : {
-//     volume: 5,
-//     count: 3,
-//     spread: 40,
-// 		type : "fatsawtooth"
-// 	}
-// }).toDestination();
-
-// const mainMelodyPart = new Tone.Part(function(time, note){
-//   synth2.triggerAttackRelease(note.note, note.duration, time);
-// }, mainMelody).start(0);
-
-
-const lowPass = new Tone.Filter({
-  frequency: 8000,
-}).toDestination();
-
-const snareDrum = new Tone.NoiseSynth({
-  noise: {
-    type: 'white',
-    playbackRate: 3,
-  },
-  envelope: {
-    attack: 0.001,
-    decay: 0.10,
-    sustain: 0.07,
-    release: 0.02,
-  },
-}).connect(lowPass);
-
-const snares = [
-  { time: '0:2' },
-  { time: '1:2' },
-  { time: '2:2' },
-  { time: '3:2' },
-  { time: '4:2' },
-  { time: '5:2' },
-  { time: '6:2' },
-  { time: '7:2' },
-]
-
-const snarePart = new Tone.Part(function(time){
-  snareDrum.triggerAttackRelease('4n', time)
-}, snares).start(0);
-
-
-const kickDrum = new Tone.MembraneSynth({
-  volume: 6
-}).toDestination();
-
-const kicks = [
-  { time: '0:0' },
-  { time: '0:3:2' },
-  { time: '1:1' },
-  { time: '2:0' },
-  { time: '2:0' },
-  { time: '2:1:2' },
-  { time: '2:3:2' },
-  { time: '3:0:2' },
-  { time: '3:1:' },
-  { time: '4:0' },
-  { time: '4:3:2' },
-  { time: '5:1' },
-  { time: '6:0' },
-  { time: '6:1:2' },
-  { time: '6:3:2' },
-  { time: '7:0:2' },
-  { time: '7:1:' },
-];
-
-const kickPart = new Tone.Part(function(time){
-  kickDrum.triggerAttackRelease('C1', '8n', time)
-}, kicks).start(0);
-
-
-const bassline = [
-  {'time': 0, 'note': 'A0', 'duration': '2n'},
-  {'time': '0:3', 'note': 'F0', 'duration': '2n.'},
-  {'time': '1:3', 'note': 'D0', 'duration': '2n.'},
-  {'time': '2:3', 'note': 'F0', 'duration': '1:1'},
-];
-
-const bass = new Tone.Synth({
-  oscillator : {
-		type : "triangle"
-	}
-}).toDestination();
-
-// const bassPart = new Tone.Part(function(time, note){
-//   bass.triggerAttackRelease(note.note, note.duration, time);
-// }, bassline).start(0);
 
 const setupSynthForCurve = () => {
   
@@ -333,22 +160,122 @@ const setupSynthForCurve = () => {
   var allTones = 7*9;
   var allBars = 32*4;
 
-
+  var bassVolume = -20;
+  var kickVolume = -16;
+  var snareVolume = -20;
+  var chrord1Volume = -20;
+  var chrord2Volume = -20;
+  var melodyVolume = -20;
   
 
   // var layerSize = allCurvePoints[0].length;
   var counter = 0;
 
-  Tone.Transport.bpm.value = Math.max( 85, (tokenState.three.uniforms.iI7.value+tokenState.speed)*0.5 );
+  Tone.Transport.bpm.value =  Math.max( 85, (tokenState.three.uniforms.iI7.value+tokenState.speed)*0.25 );
 
   const now = Tone.now();
   mainMelody_Proc = [];
   mainChords_Proc = [];
   highOctaveChords_Proc = [];
+  bassline_Proc = [];
+  kick_Proc = [];
+  snare_Proc = [];
 
+  var curveBeat = [];
+  var curveSnare = [];
+
+  var synthType = "fatsawtooth";
+  var shape = tokenState.three.uniforms.iI5.value;
+  var colortype = tokenState.three.uniforms.iI10.value;
+  var randomColorMode = colortype % 2 == 0;
+
+  // even: ranG
+  // odd:  regG
+  
+  // 0 1 random
+  // 2 3 viridis
+  // 4 5 plasma
+  // 6 7 magma
+  // 8 9 inferno
+  // 10 11 turbo
+  // 12 13 bbody
+  // 14 15 rainbow
+  // 16 17 vday
+  // 18 19 w420
+  // 20 21 gg
+  // 22 23 sympatico
+  // 24 25 mojo
+
+
+  var allScales = [];
+  allScales.push( ['C', 'D', 'E', 'F', 'G', 'A', 'B'] );  // CMajorScale
+  allScales.push( ['C', 'D', 'E', 'G', 'A', 'C', 'D'] );  // CPentaScake
+  allScales.push( ['D', 'E', 'F#', 'G', 'A', 'B', 'C#'] ); // DMajorScale
+  allScales.push( ['E', 'F#', 'G#', 'A', 'B', 'C#', 'D#'] ); // EMajorScale
+  allScales.push( ['F', 'G', 'A', 'B#', 'C', 'D', 'E'] ); // FMajorScale
+  allScales.push( ['G', 'A', 'B', 'C', 'D', 'E', 'F#'] ); // GMajorScale
+  allScales.push( ['A', 'B', 'C#', 'D', 'E', 'F#', 'G#'] ); // AMajorScale
+  allScales.push( ['B', 'C#', 'D#', 'E', 'F#', 'G#', 'A#'] ); // BMajorScale
+  allScales.push( ['A', 'B', 'C', 'D', 'E', 'F', 'G'] ); // AMinorScale
+  allScales.push( ['C', 'D', 'E', 'F', 'G', 'A', 'B'] ); // CMinorScale
+  allScales.push( ['A', 'B', 'C#', 'E', 'F#', 'A', 'B'] );  // APentaScale
+  allScales.push( ['C', 'D', 'E', 'F', 'G', 'A', 'B'] );  // CMajorScale
+  allScales.push( ['C', 'D', 'E', 'G', 'A', 'C', 'D'] );  // CPentaScake
+
+  var MainScale = allScales[Math.floor(colortype/2 + 0.5)]
+  console.log(Math.floor(colortype/2 + 0.5))
+  console.log(allScales.length)
+  console.log(MainScale)
+  var mainMelodyNotes = [ MainScale[1]+'4', MainScale[1]+'4', MainScale[3]+'4', MainScale[4]+'4', MainScale[5]+'4', MainScale[0]+'5']
+
+  var bassNotes = [ 'D0', 'E0', 'F0', 'G0', 'A0', 'C0']
+
+  const IChord = constructMajorChord(MainScale, 3, MainScale[0]+'3');
+  const VChord = constructMajorChord(MainScale, 4, MainScale[4]+'4');
+  const VIChord = constructMajorChord(MainScale, 3, MainScale[5]+'3');
+  const IVChord = constructMajorChord(MainScale, 3, MainScale[3]+'3');
+  IChord.push(MainScale[0]+'2', MainScale[0]+'4')
+  VChord.push(MainScale[4]+'2', MainScale[4]+'4')
+  VIChord.push(MainScale[5]+'2', MainScale[3]+'3')
+  IVChord.push(MainScale[3]+'2', MainScale[3]+'4')
+
+  const IChord1 = constructMajorChord(MainScale, 4, MainScale[0]+'4');
+  const VChord1 = constructMajorChord(MainScale, 5, MainScale[4]+'5');
+  const VIChord1= constructMajorChord(MainScale, 4, MainScale[5]+'4');
+  const IVChord1 = constructMajorChord(MainScale, 4, MainScale[0]+'4');
+  // const IChord1 = constructMajorChord(AMinorScale, 5, 'A4');
+  // const VChord1 = constructMajorChord(AMinorScale, 5, 'E5');
+  // const VIChord1= constructMajorChord(AMinorScale, 4, 'F4');
+  // const IVChord1 = constructMajorChord(AMinorScale, 4, 'D4');
+
+  // IChord1.push('A3', 'G5')
+  // VChord1.push('E3', 'D5')
+  // VIChord1.push('F3', 'E5')
+  // IVChord1.push('D3', 'C5')
   var chords = [IChord,IVChord,VChord,VIChord];
   var chordsHigh = [IChord1,IVChord1,VChord1,VIChord1];
-  var mainMelodyNotes = [ 'D4', 'E4', 'F4', 'G4', 'A4', 'C5']
+  
+  if ( shape == 1 )
+  {
+    synthType = "fatsine";
+    snareVolume = -32;
+  }
+  else if ( shape == 2 )
+    synthType = "fatsquare4";
+  else if ( shape == 3 )
+    synthType = "fattriangle";
+  else if ( shape == 4 )
+    synthType = "sawtooth";
+  else if ( shape == 5 )
+    synthType = "fmsawtooth";
+
+  
+
+  
+
+  var level = tokenState.three.uniforms.iI9.value;
+  var numPoints      = 1<<(level<<1);
+
   
   var noteCounter = 0;
   for( let l = 0; l < allCurvePoints.length; l++ )
@@ -356,30 +283,36 @@ const setupSynthForCurve = () => {
     var lastCurveValue = 0.0;
     for( let i = 0; i < allCurvePoints[l].length; i++ )
     {
-      var delta = allCurvePoints[l][i] - lastCurveValue;
-      var takt = Math.floor(allCurvePoints[l][i] * 6)
-      var note = Math.floor(( allCurvePoints[l][i] * 4 * 6 ) % 4 );
+      var currentCuvePoint = allCurvePoints[l][i];
+      var delta = currentCuvePoint - lastCurveValue;
+      var takt = Math.floor(currentCuvePoint * 6)
+      var note = Math.floor(( currentCuvePoint * 4 * 6 ) % 4 );
       var bar = takt.toString() + ":" + note.toString();
       const randomChord = Math.floor(Math.random() * chords.length);
       const randomChordHigh = Math.floor(Math.random() * chordsHigh.length);
       const randomNote = Math.floor(Math.random() * mainMelodyNotes.length);
+      curveIndex = currentCuvePoint*numPoints;
+      var curveCoords = curveToCoord( curveIndex, level); 
+      curveBeat.push( curveCoords[0] );
+      curveSnare.push( curveCoords[1] );
+      
       if( delta > 0.0 ){
-
         if ( l == 0 ){
-          // var len = (1 + Math.floor( delta*10.0 )).toString() + "n";
+          var len = (1 + Math.floor( delta*10.0 )).toString() + "n";
           var len = "2n";
           if ( delta > 0.2 ) len = "4n"
-          mainChords_Proc.push({'time': bar, 'note': chords[randomChord], 'duration': len})
+            mainChords_Proc.push({'time': bar, 'note': chords[randomChord], 'duration': len})
+          
         }
         else if ( l == 1 ){
-          // var len = (1 + Math.floor( delta*10.0 )).toString() + "n";
+          var len = (1 + Math.floor( delta*10.0 )).toString() + "n";
           var len = "2n";
           if ( delta > 0.2 ) len = "4n"
           
           highOctaveChords_Proc.push({'time': bar, 'note': chordsHigh[randomChordHigh], 'duration': len})
 
         }
-        else
+        else // if ( l == 2 )
         {
           var len = '8n';
 
@@ -399,232 +332,208 @@ const setupSynthForCurve = () => {
             var notebar = notetakt.toString() + ":" + notenote.toString();
             mainMelody_Proc.push({'time': notebar, 'note':mainMelodyNotes[randomNote], 'duration': len})
           }
+          // var notebar = notetakt.toString() + ":" + notenote.toString();
+          // mainMelody_Proc.push({'time': notebar, 'note':mainMelodyNotes[randomNote], 'duration': len})
+          
+          if ( Math.random() < 0.5 )
+          {
+            bassline_Proc.push({'time': notebar, 'note':bassNotes[randomNote], 'duration': len})
+          }
           noteCounter += 1
-
         }
       }
-      lastCurveValue = allCurvePoints[l][i]
+      lastCurveValue = currentCuvePoint;
     }
     
+    
   }
-  // console.log(mainMelody_Proc)
-
+  var curveBeatSorted = curveBeat.filter((item, index) => curveBeat.indexOf(item) === index && item < 256);
+  curveBeatSorted.sort(function(a, b) {
+    return a - b;
+  });
   
+  var curveSnareSorted = curveSnare.filter((item, index) => curveSnare.indexOf(item) === index && item < 256);
+  curveSnareSorted.sort(function(a, b) {
+    return a - b;
+  });
 
-  //allCurvePoints.length
-  // for ( let i = 0; i < 1; i++ ) // layers
-  // {
-  //   var currentlayer = allCurvePoints[i];
-  //   var layercounter = 0.0;
-  //   var lastToneDist = 0.0;
-  //   for ( let j = 0; j < currentlayer.length; j++ )
-  //   {
-  //     var toneIndex = currentlayer[j] * allTones;
-  //     var barIndex = currentlayer[j] * allBars;
-  //     var bar = Math.floor(barIndex / 32 );
-  //     var quarter = 1+Math.floor( barIndex % 4 );
-      
-  //     var octave = Math.floor(toneIndex / 9);
-  //     var noteIndex = Math.floor(toneIndex % 7);
-  //     var deltaDist = Math.abs(currentlayer[j]-lastToneDist);
-  //     layercounter += deltaDist;
 
-  //     // synth.triggerAttackRelease(tones[noteIndex] + octave, "8n", now+layercounter);
-  //     var noteTiming = Math.floor( layercounter * 8.0 );
-  //     // console.log(noteTiming);
-  //     mainMelody_Proc.push( {'DEBUG':currentlayer[j],  'time': bar + ':'+ quarter, 'note': tones[noteIndex] + octave, 'duration': 1+Math.floor(Math.random()*5)+'n'} );
+  var lastVal  = 0;
+  var kickCounter = 0
+  var subKickCoutner = 0
+  var accentKickCoutner = 0
 
-  //     counter += 1;
-      
-  //     lastToneDist = currentlayer[j];
-  //   }
-  // }
-  // console.log( mainMelody_Proc );
+  for( let i = 0; i < curveBeatSorted.length; i++ )
+  {
+    curVal = curveBeatSorted[i];
 
-  // const mainChords = [
-  //   {'time': 0, 'note': IChord, 'duration': '2n.'},
-  //   {'time': '0:3', 'note': VChord, 'duration': '4n'},
-  //   {'time': '1:0', 'note': VIChord, 'duration': '2n.'},
-  //   {'time': '1:3', 'note': VChord, 'duration': '4n'},
-  //   {'time': '2:0', 'note': IVChord, 'duration': '2n.'},
-  //   {'time': '2:3', 'note': VChord, 'duration': '4n'},
-  //   {'time': '3:0', 'note': VIChord, 'duration': '2n'},
-  //   {'time': '3:2', 'note': VChord, 'duration': '4n'},
-  //   {'time': '3:3', 'note': IVChord, 'duration': '4n'},
-  //   {'time': '4:0', 'note': IChord, 'duration': '2n.'},
-  //   {'time': '4:3', 'note': VChord, 'duration': '4n'},
-  //   {'time': '5:0', 'note': VIChord, 'duration': '2n.'},
-  //   {'time': '5:3', 'note': VChord, 'duration': '4n'},
-  //   {'time': '6:0', 'note': IVChord, 'duration': '2n.'},
-  //   {'time': '6:3', 'note': VChord, 'duration': '4n'},
-  //   {'time': '7:0', 'note': VIChord, 'duration': '2n'},
-  //   {'time': '7:2', 'note': VChord, 'duration': '4n'},
-  //   {'time': '7:3', 'note': IVChord, 'duration': '4n'},
-  // ];
-  
+    var delta = curVal - lastVal;
 
-  // const mainMelody = [
-  //   {'time': 0, 'note': 'G4', 'duration': '8n'},
-  //   {'time': '0:0:2', 'note': 'F4', 'duration': '8n'},
-  //   {'time': '0:1', 'note': 'D4', 'duration': '8n.'},
-  //   {'time': '0:2', 'note': 'D4', 'duration': '8n'},
-  //   {'time': '0:2:2', 'note': 'F4', 'duration': '8n.'},
-  //   {'time': '0:3', 'note': 'G4', 'duration': '8n'},
-  //   {'time': '0:3:2', 'note': 'A4', 'duration': '2n'},
-  //   {'time': '2:0', 'note': 'A4', 'duration': '8n'},
-  //   {'time': '2:0:2', 'note': 'G4', 'duration': '8n'},
-  //   {'time': '2:1', 'note': 'F4', 'duration': '8n'},
-  //   {'time': '2:2', 'note': 'A4', 'duration': '8n'},
-  //   {'time': '2:2:2', 'note': 'G4', 'duration': '8n'},
-  //   {'time': '2:3', 'note': 'E4', 'duration': '8n'},
-  //   {'time': '2:3:2', 'note': 'F4', 'duration': '2n'},
-  //   {'time': '4:0', 'note': 'G4', 'duration': '8n'},
-  //   {'time': '4:0:2', 'note': 'F4', 'duration': '8n'},
-  //   {'time': '4:1', 'note': 'D4', 'duration': '8n'},
-  //   {'time': '4:2', 'note': 'F4', 'duration': '8n'},
-  //   {'time': '4:2:2', 'note': 'A4', 'duration': '8n'},
-  //   {'time': '4:3', 'note': 'G4', 'duration': '8n'},
-  //   {'time': '4:3:2', 'note': 'A4', 'duration': '2n'},
-  //   {'time': '5:2:2', 'note': 'G4', 'duration': '8n'},
-  //   {'time': '5:3', 'note': 'A4', 'duration': '8n'},
-  //   {'time': '5:3:2', 'note': 'B4', 'duration': '8n'},
-  //   {'time': '6:0', 'note': 'C5', 'duration': '8n'},
-  //   {'time': '6:1', 'note': 'B4', 'duration': '8n'},
-  //   {'time': '6:1:2', 'note': 'A4', 'duration': '8n'},
-  //   {'time': '6:2', 'note': 'B4', 'duration': '8n'},
-  //   {'time': '6:2:2', 'note': 'A4', 'duration': '8n'},
-  //   {'time': '6:3', 'note': 'G4', 'duration': '8n'},
-  //   {'time': '6:3:2', 'note': 'A4', 'duration': '1n'},
-  // ];
+    if ( delta > 3 )
+    {
+      kickCounter++;
+      subKickCoutner = 0;
+      accentKickCoutner = 0;
+    }
+    else
+    {
+      subKickCoutner++;
+      if ( subKickCoutner % 4 == 0)
+      {
+        accentKickCoutner++;
+      }
+    }
+    kick_Proc.push( {'time': kickCounter+':'+subKickCoutner+':'+accentKickCoutner} )
+    lastVal = curVal;
+  }
+
+  var snareCounter = 0
+  var subSnareCoutner = 0
+  var accentSnareCoutner = 0
+
+  for( let i = 0; i < curveSnareSorted.length; i++ )
+  {
+    curVal = curveSnareSorted[i];
+
+    var delta = curVal - lastVal;
+
+    if ( delta > 3 )
+    {
+      snareCounter++;
+      subSnareCoutner = 0;
+      accentSnareCoutner = 0;
+    }
+    else
+    {
+      subSnareCoutner++;
+      if ( subSnareCoutner % 4 == 0)
+      {
+        accentSnareCoutner++;
+      }
+    }
+    snare_Proc.push( {'time': snareCounter+':'+subSnareCoutner+':'+accentSnareCoutner} )
+    lastVal = curVal;
+  }
+
+  const synth2 = new Tone.Synth({
+    oscillator : {
+      volume: melodyVolume,
+      count: 3,
+      spread: 40,
+      type : synthType
+    }
+  });
+  if ( randomColorMode && shape != 1 )
+    synth2.chain(dist, vol, Tone.Master);
+  else
+    synth2.chain(vol, Tone.Master);
+  // synth2.chain(dist, Tone.Master);
+  // synth2.connect(dist);
   
   
-  // const synth2 = new Tone.Synth({
-  //   oscillator : {
-  //     volume: 5,
-  //     count: 4,
-  //     spread: 40,
-  //     type : "fatsawtooth"
-  //   }
-  // }).toDestination();
-  
-  // const mainMelodyPart = new Tone.Part(function(time, note){
-  //   synth2.triggerAttackRelease(note.note, note.duration, time);
-  // }, mainMelody_Proc).start(0);
-  // synth.dispose();
-  // synth = new Tone.PolySynth(Tone.Synth, {
-  //   volume: -5,
-  //   count: 8,
-  //   oscillator : {
-  //     type : "sawtooth"
-  //   }
-  // }).toDestination();
-  const dist = new Tone.Distortion(0.8).toDestination();
-
   const mainChordSynth = new Tone.PolySynth(Tone.Synth, {
+    volume: chrord1Volume,
     oscillator : {
       count: 6,
       spread: 80,
-      type : "fatsawtooth"
+      type : synthType
     }
-  // }).connect(dist);
-  }).toDestination();
+  });
+  // if ( randomColorMode )
+  //   mainChordSynth.connect(dist);
+  mainChordSynth.chain(dist, vol, Tone.Master);
+  // mainChordSynth.chain(wah, vol, Tone.Master);
   
   const highSynth  = new Tone.PolySynth(Tone.Synth, {
-    volume: -16,
+    volume: chrord2Volume,
     count: 6,
     spread: 80,
     oscillator : {
-      type : "fatsawtooth"
+      type : synthType
     }
-  // }).connect(dist);
-  }).toDestination();
+  });
+  if ( randomColorMode )
+    highSynth.connect(dist);
+  
+  highSynth.chain(vol, Tone.Master);
 
-  //MembraneSynth
-  //sawtooth vs fatsawtooth
-  const synth2 = new Tone.Synth({
+
+
+  const lowPass = new Tone.Filter({
+    frequency: 8000,
+  }).toDestination();
+  
+  snareType = "white"
+  if ( randomColorMode )
+  {
+    snareType = "pink"
+  }
+
+  console.log( snareType )
+  const snareDrum = new Tone.NoiseSynth({
+    volume: snareVolume,
+    noise: {
+      type: snareType,
+      playbackRate: 3,
+    },
+    envelope: {
+      attack: 0.001,
+      decay: 0.40,
+      sustain: 0.07,
+      release: 0.02,
+    },
+  }).connect(lowPass);
+
+  snareDrum.chain(vol, Tone.Master);
+  
+  
+  const kickDrum = new Tone.MembraneSynth({
+    volume: kickVolume,
+  }).toDestination();
+  kickDrum.chain(vol, Tone.Master);
+
+  const bass = new Tone.Synth({
+    volume: bassVolume,
     oscillator : {
-      volume: -0,
-      count: 3,
-      spread: 40,
-      type : "fatsawtooth"
+      type : "triangle"
     }
-  // }).connect(dist);
   }).toDestination();
 
 
 
+  // Melody
   const mainMelodyPart = new Tone.Part(function(time, note){
     synth2.triggerAttackRelease(note.note, note.duration, time);
-  }, mainMelody_Proc).start(0);
-
+  }, mainMelody_Proc.slice(0, mainMelody_Proc.length-2)).start(0);
+  console.log( mainMelody_Proc )
+  // Chords
   const part = new Tone.Part(function(time, note){
     mainChordSynth.triggerAttackRelease(note.note, note.duration, time);
   }, mainChords_Proc).start(0);
-
+  console.log( mainChords_Proc )
+  
   const highOctaveChordPart = new Tone.Part(function(time, note){
-    highSynth.triggerAttackRelease(note.note, note.duration, time, 0.5);
+    highSynth.triggerAttackRelease(note.note, note.duration, time, 0.5 );
   }, highOctaveChords_Proc).start(0);
+  console.log( highOctaveChords_Proc )
 
+  // drums
+  const kickPart = new Tone.Part(function(time){
+    kickDrum.triggerAttackRelease('C1', '8n', time)
+  }, kick_Proc).start(0);
+  console.log( kick_Proc )
+  const snarePart = new Tone.Part(function(time){
+    snareDrum.triggerAttackRelease('6n', time)
+  }, snare_Proc).start(0);
+  console.log( snare_Proc )
+
+  // bass
+  const bassPart = new Tone.Part(function(time, note){
+    bass.triggerAttackRelease(note.note, note.duration, time);
+  }, bassline_Proc).start(0);
+  console.log( bassline_Proc )
+  bass.chain(vol, Tone.Master);
   
-  if (Tone.Transport.state !== 'started') {
-    // Tone.Transport.loopStart = 0.0;
-    // Tone.Transport.loopEnd = 15.4;
-    // Tone.Transport.loop = true;
-    Tone.Transport.start();
-  } else {
-    Tone.Transport.stop();
-    // Tone.Transport.dispose();
-  }
-
-  
-  // var allCurvePoints = curvePoints();
-  // var tones = ['C','D','E','F','G','A','B']
-  // var toneMode = tokenState.three.uniforms.iI10.value;
-  // if ( toneMode == 0 || toneMode == 1)
-  //   tones = ['C#','A#','F#','G#','C#','A#','F#']
-  // if ( toneMode == 2 || toneMode == 3)
-  //   tones = ['C','G','A','F','C','G','A']
-  // if ( toneMode == 4 || toneMode == 5)
-  //   tones = ['G','A','F','C','G','A','F']
-  // if ( toneMode == 6 || toneMode == 7)
-  //   tones = ['A','F','C','G','A','F','C']
-  // if ( toneMode == 8 || toneMode == 9)
-  //   tones = ['F','C','G','A','F','C','G']
-  // if ( toneMode == 10 || toneMode == 11)
-  //   tones = ['B#','G','D','A','B#','G','D']
-  // if ( toneMode == 12 || toneMode == 13)
-  //   tones = ['D#','B','F#','C#','D#','B','F#']
-  // if ( toneMode == 14 || toneMode == 15)
-  //   tones = ['B','G#','E','F#','B','G#','E']
-  // var allTones = 7*9;
-  // const synth = new Tone.PolySynth(Tone.Synth, {
-  //   oscillator : {
-  //     type : "sawtooth"
-  //   }
-  // }).toDestination();
-
-  // const now = Tone.now();
-
-  // var layerSize = allCurvePoints[0].length;
-  // var counter = 0;
-  // for ( let i = 0; i < allCurvePoints.length; i++ ) // layers
-  // {
-  //   var currentlayer = allCurvePoints[i];
-  //   var layercounter = 0.0;
-  //   var lastToneDist = 0.0;
-  //   for ( let j = 0; j < currentlayer.length; j++ )
-  //   {
-  //     var toneIndex = currentlayer[j] * allTones;
-  //     var octave = Math.floor(toneIndex / 9);
-  //     var noteIndex = Math.floor(toneIndex % 7);
-
-  //     synth.triggerAttackRelease(tones[noteIndex] + octave, "8n", now+layercounter);
-
-  //     counter += 1;
-  //     layercounter += Math.abs(currentlayer[j]-lastToneDist);
-  //     lastToneDist = currentlayer[j];
-  //   }
-  // }
 }
 
 // SOUND END
@@ -1059,12 +968,16 @@ for ( int l = 1; l<=iI0; l++ ){
 }
 vec3 bgColor  = colorize( (backgroundD-iT*50.*gSpeed), (10.+hash11( seeedC + 99. )*60.)*gSize, seeedC + 8. );
 fragColor.rgb = pow((accumulatedCol.rgb + bgColor * (1.-accumulatedCol.a)),vec3(1.2));
+// fragColor.rgb = vec3(abs(backgroundD)*4.);
+
 // float colorWidth = 34.;
 // float regG = mod(floor((uv.x) * colorWidth) / colorWidth, 1.0 );
 // float ranG = hash11(regG);
 // fragColor.rgb = mojo(ranG);
 // fragColor.rg = P.xy;
 // fragColor.b = 0.;
+// fragColor.rgb = vec3(ranG);
+
 fragColor.a = 1.;}
 
 void main(){
@@ -1114,7 +1027,7 @@ mainImage(gl_FragColor, gl_FragCoord.xy);}
     const height = window.innerHeight;
     canvas.width = width;
     canvas.height = height;
-    console.log( window.outerWidth + "x" + window.outerHeight);
+    // console.log( window.outerWidth + "x" + window.outerHeight);
     renderer.setSize(width/8, height/8, false);
   };
 
@@ -1150,44 +1063,11 @@ mainImage(gl_FragColor, gl_FragCoord.xy);}
     uniforms.iI10.value = state.three.uniforms.cmode;
     uniforms.iI13.value = state.three.uniforms.sameProb;
 
-    Tone.Transport.bpm.value = Math.max( 85, (tokenState.three.uniforms.iI7.value+tokenState.speed)*1.0 );
-
-    /*
-    const data = state.three.analyser.getAverageFrequency();
-    const dataArray = state.three.analyser.getFrequencyData();
-    var lowerHalfArray = dataArray.slice(0, (dataArray.length/2) - 1);
-    var upperHalfArray = dataArray.slice((dataArray.length/2) - 1, dataArray.length - 1);
-    var lowerMax = -1;
-    var lowerAvg = 0;
-    for( var i = 0; i<lowerHalfArray.length; i++ )
-    {
-      if ( lowerHalfArray[i] > lowerMax )
-        lowerMax = lowerHalfArray[i];
-
-      lowerAvg += lowerHalfArray[i];
-    }
-    var upperMax = -1;
-    var upperAvg = 0;
-    for( var i = 0; i<upperHalfArray.length; i++ )
-    {
-      if ( upperHalfArray[i] > upperMax )
-        upperMax = upperHalfArray[i];
-        
-        upperAvg += upperHalfArray[i];
-    }
-    if( ( lowerMax / 255.0 * 100 ) > 98.0 )
-      lsound += 0.1;
-    else
-       lsound -= 10;
-    lsound = Math.max(0,lsound );
-
-    if( ( upperMax / 255.0 * 100 ) > 70.0 )
-      usound += 1;
-    else
-      usound -= 10;
-      usound = Math.max(0,usound );
-    */
-    
+    Tone.Transport.bpm.value = Math.max( 85, (tokenState.three.uniforms.iI7.value+tokenState.speed)*0.25 );
+    vol.volume.value = -10 + state.size / 5;
+    //pitchShift.pitch = -0.1 + state.sdfblend/500.0;
+    wah.baseFrequency = state.sdfblend/2.0;
+    // wah.wah
   };
 
   canvas.loop = () => {
@@ -1218,7 +1098,8 @@ const refresh = () => {
   tokenData.hash    = randomHash(64);
   // tokenData.hash = '0x' + '8f3e22a6e16b94def6a08b191a45b361c0a3ee7744a3fcb8ee4ddc43036ee372'
   // tokenData.hash = "0x3bb5d07918782765fad287be316135c8ec36a5b2be354802dab88c47ac42e76e";
-  // tokenData.hash = "0xdfe335db38a53fef80da550156d9d516edd9bcb7e3855885c3c37c222cb25dc8";
+  // tokenData.hash = "0xa9c87d70dc2180aadc6432b31ad46e9d95b08d3d3dda19f2076fce3e40b31532";
+  // tokenData.hash = "0xd22019469a09145e8034e17ff5b93d00e825b39d516cbc8ffecc6445b58113f0";
   const {
     layers,
     post,
@@ -1233,18 +1114,21 @@ const refresh = () => {
     sameProb
   } = hashToTraits(tokenData.hash);
   tokenState.three.uniforms.layers = layers;
-  // tokenState.three.uniforms.layers = 1;
+  // 
+  // tokenState.three.uniforms.layers = 3;
   tokenState.three.uniforms.post = post;
   tokenState.three.uniforms.seed = seed;
   tokenState.three.uniforms.seedC = seedC;
   tokenState.three.uniforms.pointsl = pointsl;
+  // tokenState.three.uniforms.pointsl = 4;
+  
   tokenState.three.uniforms.shape = shape;
   tokenState.three.uniforms.speed = speed;
-  tokenState.three.uniforms.size = size+100;
+  tokenState.three.uniforms.size = size;
   tokenState.three.uniforms.level = level;
   tokenState.three.uniforms.cmode = cmode;
   tokenState.three.uniforms.sameProb = sameProb;
-  // setupSynthForCurve();
+  
   var hashStr = tokenData.hash.toString();
   // console.log(hashStr);
   navigator.clipboard.writeText(hashStr).then(function() {
@@ -1252,6 +1136,36 @@ const refresh = () => {
   }, function(err) {
     console.log( hashStr + ' Please copy manually as auto copy to clipboard failed' )
   });
+  
+}
+
+const toggleSound = () => {
+  // refresh();
+  // Tone.Transport.stop();
+  if ( Tone.Transport.state === 'stopped' )
+  {
+    // Tone.context.close()
+    setupSynthForCurve();
+
+
+    // Tone.context = new AudioContext();
+    // Tone.start();
+    let lastMelody = mainMelody_Proc[mainMelody_Proc.length - 1];
+    Tone.Transport.loopStart = 0.0;
+    Tone.Transport.loopEnd = lastMelody['time'];
+    console.log(lastMelody['time'] + ' is the last time')
+    Tone.Transport.loop = true;
+    Tone.Transport.start();
+  }
+  else
+  {
+    // kickPart bassPart  mainMelodyPart part highOctaveChordPart
+    // kickPart.cancel();
+    // bassPart.cancel();
+    // mainMelodyPart.cancel();
+    // part.cancel();
+    // highOctaveChordPart.cancel();
+  }
 }
 
 const refreshConstant = ( inputHash ) => {

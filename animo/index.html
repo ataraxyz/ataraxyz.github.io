@@ -1,0 +1,350 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-15390985-3"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-1012123378"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-1012123378');
+            gtag('config', 'UA-15390985-3');
+            gtag('event', 'conversion', {'send_to': 'AW-1012123378/YWXgCMXn6ocDEPKNz-ID'});
+        </script>
+  
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="ATARA presents SERENE ANIMO - A GENETICCHAIN project in multiple acts. Releasing on 2/22/22!">
+        <meta property="og:description" content="ATARA presents SERENE ANIMO - A GENETICCHAIN project in multiple acts. Releasing on 2/22/22!" />
+        <meta property="og:url"content="https://atara.xyz" />
+        <meta property="og:title" content="A T A R A  -  procedural art" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>A T A R A  -  procedural art</title>
+        <script src="../thirdparty/three-r128.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.36/Tone.js"></script>
+        <script src="boot.js"></script>
+        <script src="art.js"></script>
+        <script src="index.js"></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <section class="section0">
+            <!-- <div class="banner">
+                <div class="content">
+                    <h1>SERENE ANIMO<br>a <a href="https://geneticchain.io/"><mark>GENETICCHAIN</mark></a> project<br>by ATARA</h1>
+                    <p><i>Seren Animo</i> is a series of collections that ATARA is creating on the GENETICCHAIN.io platform. Here is a description and roadmap for the upcoming NFT drops.</p>
+                </div>
+            </div> -->
+            <video poster="video_poster.png" muted="true" autoplay="autoplay" playsinline loop preload="auto" id="bannerVideo">
+                <source src="../asset/atara_gc_bg_fast.webm" type="video/webm" media="all and (max-width:600px)">
+                <source src="../asset/atara_gc_bg_fast.mp4" type="video/mp4" media="all and (max-width:600px)">
+                <source src="../asset/atara_gc_bg_full.webm" type="video/webm">
+                <source src="../asset/atara_gc_bg_full.mp4" type="video/mp4">
+            </video>
+            <div class="collection">
+                <input type = "button" onclick = "refresh()" value = "RANDOMIZE ART" id="hidables" class = "refrBtn">
+                <input type = "button" onclick = "toggleSound()" value = "Toggle Sound" id="hidables" class = "sndBtn">
+                <div class="controls">
+                    <label for="sdfblend">SDF Blend</label>
+                    <input id="sdfblend" type="range" min="0" max="100" value="50" step="1" oninput="onChangeSdfblend(this.value);">
+                    <label>SDF Blend<span id="sdfblend"></span></label>
+                    <input id="speed" type="range" min="0" max="200" value="0" step="1" oninput="onChangeSpeed(this.value);">
+                    <label>Speed Boost<span id="speed"></span></label>
+                    <input id="size" type="range" min="15" max="150" value="75" step="1" oninput="onChangeSize(this.value);">
+                    <label>Size Adjust<span id="speed"></span></label>
+                </div>
+                <!-- <p class="buttondesc">
+                    <mark>CLICK</mark> for a new random example artpiece from the collection.
+                </p> -->
+                <p>
+
+                </p>
+            </div>
+            <a class="ca3-scroll-down-link ca3-scroll-down-arrow" data-ca3_iconfont="ETmodules" data-ca3_icon=""></a>    
+            
+        </section>
+        <section class="section1">
+            <div class="content">
+                <h2 id="title">SERENE ANIMO<br>Trip into space filling curves<br>by <mark>ATARA</mark><br><br></h2>
+                <p>The first collection in the series dives deep into the ideas of space and its ambivalence for human existence. Atara and Geneticchain are bringing a unique collection to life that will feature bold shapes and color and subtle differences between art pieces, inspiring collectors to ponder the deeper meanings of being human. Creating a trance-like state by looking and getting lost in the art allows enthusiasts and casual cosmonauts of more profound levels of the human experience to assemble. It is forming a community and getting to the childlike state of wonder needed to grasp the concepts of the human condition in the multiverse.<br>The basis for the collection is the work of German mathematician David Hilbert. His discovery of his type of space-filling curves in 1891 inspired Atara to explore its unique, fractal properties. With a Hausdorf dimension of precisely two, this piecewise linear curve fills all of the space in any dimension if subdivided long enough. Curves like this reflect the eternal search for truth in the universe. Every spectrum, the one-dimensional range of sound, the two-dimensional canvas of a picture, and the three-dimensional extents of a sculpture are all taken by the one formula, the one curve, to fill them all with life.<br>Anchored on the Hilbert curve as a concept, Atara defines different distance fields to represent the curves best in this medium of procedural art. From there, a hallucinatory play on colors connects the human psyche and the mathematical concepts, creating a trip solely induced by the idea of space itself.<br><br><br></p>
+                <!-- <img src="../asset/185_render_crop.png" /> -->
+            </div>
+        </section>
+        <section class="section2">
+            <div class="content">
+                
+                <h2>THE CURVES</h2>
+                <img id="hcgif" src="../asset/HC.gif"/>
+                <p>The basis for the collection is the work of German mathematician David Hilbert. His discovery of his space-filling curves in 1891 inspired me to explore its unique, fractal properties. With a Hausdorf dimension of precisely two, this piecewise linear curve fills all of the space in any dimension if subdivided long enough. Curves like this reflect the eternal search for truth in the universe. Every spectrum, the one-dimensional range of sound, the two-dimensional canvas of a picture, and the three-dimensional extents of a sculpture are all taken by the one formula, the one curve, to fill them all with life.<br>Anchored on the Hilbert curve as a concept, I define different distance fields to represent the curves best in this medium of procedural art. From there, a hallucinatory play on colors connects the human psyche and the mathematical concepts, creating a trip solely induced by the idea of space itself.<br><br><br></p>
+            </div>
+        </section>
+        
+        <section class="section3">
+            <div class="content">
+                <h4>TRAITS</h4>
+                <p>The collection has nine different traits generated by the artworks hash. Those attributes are either a single number or a logical set of parameters that create a distinct look. Each piece contains a specif set of layers that build up the unique artwork. Each layer uses the same Hilbert curve as a base and then grows signed distance shapes on those positions. Each figure will then be blended and colorized with a specific set of rules.<br><br></p>
+                <strong><p id="traitlayer"><br>Layers</p></strong>
+                <p>The number of layers stacked up on top of each other; number between <mark>2</mark> and <mark>12</mark>.<br><br></p>
+                <img id="explimg" src="../asset/layers.png" />
+                <i><p id="traitList"><mark>Low / Medium / High</mark><br><br></p></i>
+                <strong><p id="traitlayer"><br>Background</p></strong>
+                <p>The far background can be either <mark>flowing</mark> or <mark>chill</mark>.<br><br></p>
+                <strong><p id="traitlayer"><br>Points</p></strong>
+                <p>The number points that can spawn shapes per layer; number between <mark>7</mark> and <mark>15</mark>.<br><br></p>
+                <strong><p id="traitlayer"><br>Shapes</p></strong>
+                <p>This can be one of the most common shapes, circle, triangle, box and hexagon; or a mix of all of them. As an ultra rare traits a special glitch effect shape is also possible.<br><br></p>
+                <img id="explimg" src="../asset/shapes.png" />
+                <i><p id="traitList"><mark>Circle / Box / Triangle / Hexagon / Mixed / Glitch</mark><br><br></p></i>
+                <strong><p id="traitlayer"><br>Speed</p></strong>
+                <p>This is the speed of the animation in the collection.<br><br></p>
+                <strong><p id="traitlayer"><br>Size</p></strong>
+                <p>The base size for all shapes for the artpiece.<br><br></p>
+                <strong><p id="traitlayer"><br>Hilbert</p></strong>
+                <p>The level of teh Hilbert Curve. The curve degree is expressed as a number between <mark>2</mark> and <mark>7</mark>.<br><br></p>
+                <strong><p id="traitlayer"><br>Stacking</p></strong>
+                <p>Probability of shapes stacking on top of each other and creating unique new shapes. Can be either <mark>high</mark> or <mark>low</mark>.<br><br></p>
+                <strong><p id="traitlayer"><br>Color</p></strong>
+                <p>The color themes avaialabe for the collection to choose from.<br><br><br></p>
+                <img id="explimg" src="../asset/hash.png" />
+                <i><p id="traitList"><mark>Hash Random / Golden</mark><br><br></p></i>
+                <img id="explimg" src="../asset/viridis.png" />
+                <i><p id="traitList"><mark>Viridis Regular / Random</mark><br><br></p></i>
+                <img id="explimg" src="../asset/plasma.png" />
+                <i><p id="traitList"><mark>Plasma Regular / Random</mark><br><br></p></i>
+                <img id="explimg" src="../asset/magma.png" />
+                <i><p id="traitList"><mark>Magma Regular / Random</mark><br><br></p></i>
+                <img id="explimg" src="../asset/inferno.png" />
+                <i><p id="traitList"><mark>Inferno Regular / Random</mark><br><br></p></i>
+                <img id="explimg" src="../asset/turbo.png" />
+                <i><p id="traitList"><mark>Turbo Regular / Random</mark><br><br></p></i>
+                <img id="explimg" src="../asset/vday.png" />
+                <i><p id="traitList"><mark>Vday Regular / Random</mark><br><br></p></i>
+                <img id="explimg" src="../asset/w420.png" />
+                <i><p id="traitList"><mark>W420 Regular / Random</mark><br><br></p></i>
+                <img id="explimg" src="../asset/gg.png" />
+                <i><p id="traitList"><mark>GG Regular / Random</mark><br><br></p></i>
+                <img id="explimg" src="../asset/sympatico.png" />
+                <i><p id="traitList"><mark>Sympatico Regular / Random</mark><br><br></p></i>
+                <img id="explimg" src="../asset/mojo.png" />
+                <i><p id="traitList"><mark>Mojo Regular / Random</mark><br><br></p></i>
+                <img id="explimg" src="../asset/bbody.png" />
+                <i><p id="traitList"><mark>Blackbody Regular / Random</mark><br><br></p></i>
+                <img id="explimg" src="../asset/rbow.png" />
+                <i><p id="traitList"><mark>Rainbow Regular / Random</mark><br><br></p></i> 
+            </div>
+        </section>
+        <section class="section4">
+            <div class="content">
+                <h5>SOUNDWAVES</h5>
+                <p>I am currently developing a procedural sound mapping engine for the Serene Animo art pieces to provide the collectors with a unique treat. This sound engine will be released after the mint, allowing holders of any work to <mark>LISTEN</mark> to their art.<br>The sound is created by using the traits in a meaningful way, but the Hilbert curves are used again. The length of the curves is mapped to a 5 octave sound spectrum. As the main curve points were decided on golden ratio cuts, the soundscapes stemming from the collection are naturally soothing and harmonic—mathematical principles of beauty work in many domains, spacial, color, and harmonic music composition.<br>This completes my whole body and mind approach to mathematic beauty, expressed in one-of-a-kind procedural art pieces that can shine and heal your fast-paced life. Try the experimental feature by hitting <mark>TOGGLE SOUND</mark> above.
+                    <br><br><br></p>
+                    <!-- <iframe src="https://streamable.com/e/jutb9j?autoplay=0" width="512" height="512" frameborder="0" allowfullscreen allow="autoplay"></iframe> -->
+                    <!-- <i><p id="traitList"><mark>Early Sound Sample</mark><br><br></p></i> -->
+                <br><br><br>
+                <p><a href="https://twitter.com/atara_xyz" target="_blank"><mark>TWITTER</mark></a></p>
+                <p><br></p>
+                <p><a href="https://www.instagram.com/atara_xyz/" target="_blank"><mark>INSTAGRAM</mark></a></p>
+                <p><br></p>
+                <p><a href="https://foundation.app/@atara" target="_blank"><mark>FOUNDATION</mark></a></p>
+                <p><br></p>
+                <p><a href="https://coral-vr.com/" target="_blank"><mark>CORAL VR EXPERIENCE</mark></a></p>
+                <p><br></p>
+                <p><a href="https://docs.google.com/document/d/1zgMBNEetXOaoR1umeMu0g0GEghdgqdTp0pvs3mHaaXo/edit" target="_blank"><mark>RESUME</mark></a></p>
+                <p><br></p>
+                <p><a href="https://atara.xyz/gc_full/" target="_blank"><mark>I SERENE ANIMO - Fullscreen collection preview</mark></a></p>
+                <br><br>
+                </div>
+        </section>
+        <!-- <section class="section1">
+            <div class="content">
+                
+                <h2>SERENE ANIMO - Trip in space-filling curves.</h2>
+                <p>The first collection in the series dives deep into the ideas of space and its ambivalence for human existence. Atara and Geneticchain are bringing a unique collection to life that will feature bold shapes and color and subtle differences between art pieces, inspiring collectors to ponder the deeper meanings of being human. Creating a trance-like state by looking and getting lost in the art allows enthusiasts and casual cosmonauts of more profound levels of the human experience to assemble. It is forming a community and getting to the childlike state of wonder needed to grasp the concepts of the human condition in the multiverse.<br>The basis for the collection is the work of German mathematician David Hilbert. His discovery of his type of space-filling curves in 1891 inspired Atara to explore its unique, fractal properties. With a Hausdorf dimension of precisely two, this piecewise linear curve fills all of the space in any dimension if subdivided long enough. Curves like this reflect the eternal search for truth in the universe. Every spectrum, the one-dimensional range of sound, the two-dimensional canvas of a picture, and the three-dimensional extents of a sculpture are all taken by the one formula, the one curve, to fill them all with life.<br>Anchored on the Hilbert curve as a concept, Atara defines different distance fields to represent the curves best in this medium of procedural art. From there, a hallucinatory play on colors connects the human psyche and the mathematical concepts, creating a trip solely induced by the idea of space itself.</p>
+            </div>
+        </section>
+        <section class="section2">
+            <div class="content">
+                <p><a href="https://twitter.com/atara_xyz" target="_blank"><mark>TWITTER</mark></a></p>
+                <p><br></p>
+                <p><a href="https://www.instagram.com/atara_xyz/" target="_blank"><mark>INSTAGRAM</mark></a></p>
+                <p><br></p>
+                <p><a href="https://foundation.app/@atara" target="_blank"><mark>FOUNDATION</mark></a></p>
+                <p><br></p>
+                <p><a href="https://coral-vr.com/" target="_blank"><mark>CORAL VR EXPERIENCE</mark></a></p>
+                <p><br></p>
+                <p><a href="https://docs.google.com/document/d/1zgMBNEetXOaoR1umeMu0g0GEghdgqdTp0pvs3mHaaXo/edit" target="_blank"><mark>RESUME</mark></a></p>
+                <p><br></p>
+                <p><a href="https://atara.xyz/serene/" target="_blank"><mark>Detailed description of the colelctions traits and intents.</mark></a></p>
+                <p><br></p>
+                <p><a href="https://atara.xyz/gc_full/" target="_blank"><mark>I SERENE ANIMO - Fullscreen collection preview</mark></a></p>
+                <br><br>
+                </div>
+        </section> -->
+        <script type="text/javascript">
+            
+            
+            // check for safari mobile forst and play only videp
+            // var ua = window.navigator.userAgent;
+            // var iOS = !!ua.match(/iPad/i) || !!ua.match(/iPhone/i);
+            // var webkit = !!ua.match(/WebKit/i);
+            // var iOSSafari = iOS && webkit && !ua.match(/CriOS/i);
+            var videoElement = document.querySelector('#bannerVideo');
+            var webGl2Supported = document.createElement('canvas').getContext('webgl2');
+            
+            if (webGl2Supported) {
+                videoElement.parentNode.removeChild(videoElement);
+                let b0 = document.querySelector('body > section.section0 > div > .refrBtn');
+                let b1 = document.querySelector('body > section.section0 > div > .sndBtn');
+                let c0 = document.querySelector('body > section.section0 > div > div');
+                
+                var intervallTimer = setInterval(myTimer, 10);
+                function myTimer() {
+                    if ( idleTime < 1.0) {
+                        idleTime = idleTime + 0.01;
+                        var fadeValue = Math.max( 0.0, Math.min( 1.0, 1.0 - idleTime ) );
+                        b0.style.opacity = fadeValue;
+                        b1.style.opacity = fadeValue;
+                        c0.style.opacity = fadeValue;
+                    }
+                    else { 
+                        b0.style.opacity = 0.0;
+                        b1.style.opacity = 0.0;
+                        c0.style.opacity = 0.0;
+                    }
+                }
+            } else {
+                var buttonElement = document.querySelector( 'body > section.section0 > div > .refrBtn' );
+                buttonElement.parentNode.removeChild( buttonElement );
+                buttonElement = document.querySelector( 'body > section.section0 > div > .sndBtn' );
+                buttonElement.parentNode.removeChild( buttonElement );
+                window.onload = function() { 
+                    videoElement.prop( 'muted', true).play();
+                };
+ 
+            }
+            let s0 = document.querySelector('body > section.section0');
+            let s1 = document.querySelector('body > section.section1');
+            let s2 = document.querySelector('body > section.section2');
+            let s3 = document.querySelector('body > section.section3');
+            let s4 = document.querySelector('body > section.section4');
+
+            
+
+            var idleTime = -2.5;
+            window.addEventListener('mousemove', e => {idleTime = -2.5;});
+            window.addEventListener('mousedown', e => {idleTime = -2.5;});
+            window.addEventListener('mouseup', e => {idleTime = -2.5;});
+            window.addEventListener('touchmove', e => {idleTime = -2.5;});
+            window.addEventListener('touchstart', e => {idleTime = -2.5;});
+            window.onkeydown = keybordInput;         
+
+            function keybordInput(e)
+            {
+                if ( e.ctrlKey || e.keyCode == 13 )
+                    refresh();
+                if ( e.keyCode == 16 )
+                    movementToggle();
+                if ( e.keyCode == 80 )
+                {
+                    var dataCanvas = document.querySelector("body > section.section0 > div > p > canvas");
+                    var image = dataCanvas.toDataURL();  
+                    // create temporary link  
+                    var tmpLink = document.createElement( 'a' );  
+                    tmpLink.download = tokenData.hash + '_image.png'; // set the name of the download file 
+                    tmpLink.href = image;  
+                
+                    // temporarily add link to body and initiate the download  
+                    document.body.appendChild( tmpLink );  
+                    tmpLink.click();  
+                    document.body.removeChild( tmpLink );  
+                    
+                }
+                if ( e.keyCode == 18 )
+                {
+                    askForHash();
+                }
+
+            }
+
+                    
+            function askForHash()
+            {
+                let hash = prompt("PLEASE ENTER HASH", "YOUR HASH");
+                if (hash == null || hash == "") {
+                    console.error( 'No hash provided' )
+                } else {
+                    refreshConstant(hash);
+                }
+                
+            }
+
+            function offset(el) {
+                // console.log(el)
+                var rect = el.getBoundingClientRect()
+                scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
+                scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                return { top: rect.top + scrollTop, left: rect.left + scrollLeft }
+            }
+            window.addEventListener( 'scroll', function(){
+                idleTime = -2.5;
+                
+                s0Offet = offset(s0);
+                s1Offet = offset(s1);
+                s2Offet = offset(s2);
+                s3Offet = offset(s3);
+                s4Offet = offset(s4);
+
+                let s0Value         =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s0Offet.top ) / ( s0.offsetHeight  / 1.0 ) ) );
+                let s0ValueText     =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s0Offet.top ) / ( s0.offsetHeight  / 12.0 ) ) );
+                tokenState.fadeout  = (1.0-s0Value) * 100;
+                // tokenState.textfade = s0ValueText * 100;
+                s0.style.opacity = s0Value;
+
+                let s1Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s1Offet.top ) / ( s1.offsetHeight  / 1.0 ) ) );
+                if ( s0Value > 0.1 ){
+                    s1Value = 1.0 - s0Value;
+                }
+                s1.style.opacity = s1Value;
+
+                let s2Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s2Offet.top ) / ( s2.offsetHeight  / 1.0 ) ) );
+                if ( s1Value > 0.1 ){
+                    s2Value = 1.0 - s1Value;
+                }
+                s2.style.opacity = s2Value;
+
+                let s3Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s3Offet.top ) / ( s3.offsetHeight  / 1.0 ) ) );
+                if ( s2Value > 0.1 ){
+                    s3Value = 1.0 - s2Value;
+                }
+                s3.style.opacity = s3Value;
+
+                
+                let s4Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s4Offet.top ) / ( s4.offsetHeight  / 1.0 ) ) );
+                if ( s3Value > 0.1 ){
+                    s4Value = 1.0 - s3Value;
+                }
+                s4.style.opacity = s4Value;
+            });
+            
+            // window.onbeforeunload = function () {
+            //     window.scrollTop(0);
+            // };
+            window.onorientationchange = function() { 
+                window.location.reload(); 
+            };
+
+            function resize()
+            {
+                var heights = window.innerHeight;
+                document.querySelector("body > section.section0").style.height = heights + "px";
+            }
+            resize();
+            window.onresize = function() {
+                resize();
+            };
+
+            
+        </script>
+    </body>
+</html>
