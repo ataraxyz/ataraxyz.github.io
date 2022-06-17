@@ -178,6 +178,10 @@
             let s1 = document.querySelector('body > section.section1');
             let s2 = document.querySelector('body > section.section2');
             let s3 = document.querySelector('body > section.section3');
+            let s4 = document.querySelector('body > section.section4');
+            let s5 = document.querySelector('body > section.section5');
+            let s6 = document.querySelector('body > section.section6');
+
 
             
 
@@ -241,6 +245,9 @@
                 s1Offet = offset(s1);
                 s2Offet = offset(s2);
                 s3Offet = offset(s3);
+                s4Offet = offset(s4);
+                s5Offet = offset(s5);
+                s6Offet = offset(s6);
 
                 let s0Value         =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s0Offet.top ) / ( s0.offsetHeight  / 1.0 ) ) );
                 let s0ValueText     =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s0Offet.top ) / ( s0.offsetHeight  / 12.0 ) ) );
@@ -265,6 +272,24 @@
                     s3Value = 1.0 - s2Value;
                 }
                 s3.style.opacity = s3Value;
+
+                let s4Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s4Offet.top ) / ( s4.offsetHeight  / 1.0 ) ) );
+                if ( s3Value > 0.1 ){
+                    s4Value = 1.0 - s3Value;
+                }
+                s4.style.opacity = s4Value;
+
+                let s5Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s5Offet.top ) / ( s5.offsetHeight  / 1.0 ) ) );
+                if ( s4Value > 0.1 ){
+                    s5Value = 1.0 - s4Value;
+                }
+                s5.style.opacity = s5Value;
+
+                let s6Value =  Math.max( 0.0, Math.min(1.0, 1 - ( window.scrollY - s6Offet.top ) / ( s6.offsetHeight  / 1.0 ) ) );
+                if ( s5Value > 0.1 ){
+                    s6Value = 1.0 - s5Value;
+                }
+                s6.style.opacity = s6Value;
             });
             
             // window.onbeforeunload = function () {
