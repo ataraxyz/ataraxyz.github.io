@@ -24,7 +24,7 @@ body
     min-height: 100vh;
     /* mobile viewport bug fix */
     min-height: -webkit-fill-available;
-    
+    /* cursor: url(/asset/ATARA_LOGO_cur.png), auto; */
 }
 html {
     height: -webkit-fill-available;
@@ -107,6 +107,7 @@ mark
     color: black;
 }
 
+
 section
 {
     position: relative;
@@ -121,7 +122,46 @@ section
     padding-right: 10px;
 }
 
+.collection
+{
+    position: absolute;
+    top: 1vh;
+}
+.content-banner
+{
+    top: 20vh;
+    position: relative;
+}
+.img_awards
+{
+    position: relative;
+    top:4vh;
+    right:1vh;
+    /* display: flex; */
+    /* justify-content: center; */
+    /* align-items: center; */
+    max-width:25vw;
+    margin: auto;
+    /* max-height:95px; */
+    width: auto;
+    height: auto;
+}
 
+#s_img {
+    /* position: relative; */
+    /* display: block; */
+    justify-content: center;
+    align-items: center;
+    min-width:100%;
+    /* display: flex; */
+    /* max-height:400px; */
+    width: 100%;
+    height: auto;
+    margin-top: 5%;
+    /* right:-10%; */
+    /* top: 800% */
+    /* bottom: 10%; */
+  }
 @media screen and (max-width:320px) 
 {
     .controls {
@@ -173,13 +213,7 @@ section
     {
         position: relative;
         color: #fff;
-        font-size: 8vw;
-    }
-    section h4
-    {
-        position: relative;
-        color: #fff;
-        font-size: 8vw;
+        font-size: 10vw;
     }
     section img
     {
@@ -187,18 +221,6 @@ section
         margin-left: auto;
         margin-right: auto;
         width: 50%;
-    }
-    section h5
-    {
-        position: relative;
-        color: #fff;
-        font-size: 8vw;
-    }
-    section h5
-    {
-        position: relative;
-        color: #fff;
-        font-size: 8vw;
     }
     section p
     {
@@ -254,15 +276,9 @@ section
     {
         position: relative;
         color: #fff;
-        font-size: 8vw;
+        font-size: 10vw;
     }
     section h3
-    {
-        position: relative;
-        color: #fff;
-        font-size: 8vw;
-    }
-    section h4
     {
         position: relative;
         color: #fff;
@@ -281,19 +297,6 @@ section
         margin-left: auto;
         margin-right: auto;
         width: 100%;
-    }
-    
-    section h5
-    {
-        position: relative;
-        color: #fff;
-        font-size: 8vw;
-    }
-    section h5
-    {
-        position: relative;
-        color: #fff;
-        font-size: 8vw;
     }
     section p
     {
@@ -362,15 +365,9 @@ section
     {
         position: relative;
         color: #fff;
-        font-size: 3em;
+        font-size: 5em;
     }
     section h3
-    {
-        position: relative;
-        color: #fff;
-        font-size: 3em;
-    }
-    section h4
     {
         position: relative;
         color: #fff;
@@ -382,18 +379,6 @@ section
         margin-left: auto;
         margin-right: auto;
         width: 50%;
-    }
-    section h5
-    {
-        position: relative;
-        color: #fff;
-        font-size: 3em;
-    }
-    section h5
-    {
-        position: relative;
-        color: #fff;
-        font-size: 3em;
     }
     section p
     {
