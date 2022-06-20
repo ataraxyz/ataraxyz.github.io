@@ -178,17 +178,14 @@ const hashToTraits = hash => {
   const color = randomColorHex(R.r)
 
   const seed = R.ri(0, 10000 );
-
-  const colorMode = R.ri(0, 25 );
-  const wireframe = R.ri(0, 100 );
-
-  // const orbitProb = R.ri(0, 30 );
-  // const twinProb = R.ri(0, 20 );
-  // const insideProb = R.ri(0, 20 );
-  // const shapesForLayer = R.ri( 1, 4);
-  // const layers = R.ri( 2,8 );
-  // // const size = R.ri( 50,200 )
-  // const size = R.ri( 0,100 )
+  
+  const orbitProb = R.ri(0, 30 );
+  const twinProb = R.ri(0, 20 );
+  const insideProb = R.ri(0, 20 );
+  const shapesForLayer = R.ri( 1, 4);
+  const layers = R.ri( 2,8 );
+  // const size = R.ri( 50,200 )
+  const size = R.ri( 0,100 )
 
   // const layers = 1
 
@@ -196,8 +193,12 @@ const hashToTraits = hash => {
     shape,
     color,
     seed,
-    colorMode,
-    wireframe
+    orbitProb,
+    twinProb,
+    insideProb,
+    shapesForLayer,
+    layers,
+    size
   };
 
 };
@@ -280,7 +281,7 @@ function randomVecInXZ()
 }
 
 
-function branch( len, maxlen, parentMatrix, vertices, parentVertexIds, normals, faces, vColors, uvs, branchingSpread, gen )
+function branch( len, maxlen, parentMatrix, vertices, parentVertexIds, normals, faces, vColors, branchingSpread, gen )
 {
   if( len > maxlen )
   {
@@ -375,12 +376,6 @@ function branch( len, maxlen, parentMatrix, vertices, parentVertexIds, normals, 
       normals.push( n2.x, n2.y, n2.z )
       normals.push( n3.x, n3.y, n3.z )
       normals.push( n4.x, n4.y, n4.z )
-
-      uvs.push( gen, 0)
-      uvs.push( gen, 0.25)
-      uvs.push( gen, 0.5)
-      uvs.push( gen, 0.75)
-
       // vColors.push( color('red'), color('red'), color('red'),color('red') )
       // faces.push( parentVertexIds[0], vertexIds[0], vertexIds[1] )
       for( let i = 0; i < vertexIds.length; i++ )
@@ -406,11 +401,11 @@ function branch( len, maxlen, parentMatrix, vertices, parentVertexIds, normals, 
       // faces.push( [parentVertexIds[2], vertexIds[1], vertexIds[2] ] )
 
       // branch( blength * random(0.7, 0.95 ), maxLen, combinedMat, vertices, vertexIds, faces)
-      branch( len * 0.9, maxlen, localMat, vertices, vertexIds, normals, faces, vColors, uvs, branchingSpread, gen+1 )
+      branch( len * 0.9, maxlen, localMat, vertices, vertexIds, normals, faces, vColors, branchingSpread, gen+1)
       
       if( gen > 1 && THREE.MathUtils.randFloat(0.0, 1.0 ) < 0.666)
       {
-        branch( len * 0.9, maxlen, localMat, vertices, vertexIds, normals, faces, vColors, uvs, branchingSpread, gen+1 )
+        branch( len * 0.9, maxlen, localMat, vertices, vertexIds, normals, faces, vColors, branchingSpread, gen+1)
       }
 
     }
@@ -468,226 +463,17 @@ function branch( len, maxlen, parentMatrix, vertices, parentVertexIds, normals, 
   // pop()
 }
 
+function createTree()
+{
+  tokenData.hash    = randomHash(64);
 
-
-//-----------------------------------------------------------------------------
-const doArt = (renderer, hash, state) => {
   const {
     shape,
     color,
-    seed,
-    colorMode
-  } = hashToTraits(hash);
-  state.colorMode = colorMode;
-  const canvas = document.querySelector('canvas');
+    size
+  } = hashToTraits(tokenData.hash);
 
-  var vertexShader = `
-  uniform float iT;
-
-  varying vec2 vUv;
-  void main()
-  {
-    vUv = uv;
-    vec3 P_local = position;
-
-    // float offsetX = sin(iT*vUv.r)*1.*vUv.r;
-    // float offsetY = cos(iT*vUv.r)*1.*vUv.r;
-    // P_local.x += offsetX;
-    // P_local.y += offsetY;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4( P_local, 1. );
-  }
-  `
-  var fragmentShader =`
-  uniform float iT;
-  uniform vec3 iV1;
-  uniform float iV2;
-
-  varying vec2 vUv;
-
-  float pulse( float time, float freq )
-  {
-    const float pi = 3.14159;
-    //const float freq = 10; // in Hz
-    return 0.5 * sin(2. * pi * freq * time );
-  }
-
-  float hash11(float p){
-    p = fract(p * .1031);
-    p *= p + 33.33;
-    p *= p + p;
-    return fract(p);}  
-  
-  float hash12(vec2 p){
-  vec3 p3  = fract(vec3(p.xyx) * .1031);
-  p3 += dot(p3, p3.yzx + 33.33);
-  return fract((p3.x + p3.y) * p3.z);}
-
-  vec3 hsv2rgb(vec3 c){
-    vec4 K = vec4(1., 2. / 3., 1. / 3., 3.);
-    vec3 p = abs(fract(c.xxx + K.xyz) * 6. - K.www);
-    return c.z * mix(K.xxx, clamp(p - K.xxx, 0., 1.), c.y);}
-  
-  
-  vec3 pal( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d ){return a + b*cos( 6.28318*(c*t+d) );}
-  
-  vec3 rainbow(float t) {return pal( t, vec3( 0.5, 0.5, 0.5 ), vec3( 0.5, 0.5, 0.5 ), vec3( 1.0, 1.0, 1.0 ),vec3( 0., 0.33, 0.67 ) );}
-  
-  
-  vec3 viridis(float t) {
-  const vec3 c0 = vec3(0.2777, 0.0054, 0.334);
-  const vec3 c1 = vec3(0.105, 1.4046, 1.3845);
-  const vec3 c2 = vec3(-0.3308, 0.2148, 0.095);
-  const vec3 c3 = vec3(-4.6342, -5.7991, -19.3324);
-  const vec3 c4 = vec3(6.2282, 14.1799, 56.6905);
-  const vec3 c5 = vec3(4.7763, -13.7451, -65.353);
-  const vec3 c6 = vec3(-5.4354, 4.64585, 26.3124);
-  return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));}
-  
-  vec3 plasma(float t) {return pal( t, vec3( 0.5, 0.5, 0.5 ), vec3( 0.5, 0.5, 0.5 ), vec3( 2., 1., 0. ),vec3( 0.5, 0.2, 0.25 ) );}
-  
-  vec3 sympatico(float t) { return pal( t, vec3( 0.5, 0.5, 0.5 ), vec3( 0.5, 1.0, 0.5 ), vec3( 2., 2.0, 1.0 ),vec3( 0.20, 0.1, 0.0 ) );}
-  
-  vec3 mojo(float t) { return pal( t, vec3( 0.5, 0.5, 0.5 ), vec3( 0.5, 0.25, 0.5 ), vec3( 0.5, 2.0, 0.5 ),vec3( 0.0, 0.5, 0.5 ) );}
-  
-  vec3 magma(float t) {return pal( t, vec3( 0.5, 0.5, 0.5 ), vec3( 0.5, 0.5, 0.5 ), vec3( 1., 1.0, 1. ),vec3( 0., 0.1, 0.2 ));}
-  
-  vec3 w420(float t) {return pal( t, vec3( 0.1, 1.0, 0.4 ), vec3( 0.4, 0.5, 0.2 ), vec3( 0.6, 1.0, 0.4 ),vec3( 0.8, 0.66, 0.2 ) );}
-  
-  vec3 gg(float t){ return vec3(t);}
-  
-  vec3 vday(float t) {return pal( t, vec3( 0.66, 0.5, 0.5 ), vec3( 0.5, 0.66, 0.5 ), vec3( 1.0, 0.2, 0.66 ),vec3( 0., 0.53, 0.67 ) );}
-  
-  vec3 inferno(float t) {
-  const vec3 c0 = vec3(0.0002, 0.0016, -0.0194);
-  const vec3 c1 = vec3(0.1065, 0.5639, 3.9327);
-  const vec3 c2 = vec3(11.6024, -3.9728, -15.9423);
-  const vec3 c3 = vec3(-41.7039, 17.4363, 44.3541);
-  const vec3 c4 = vec3(77.1629, -33.4023, -81.8073);
-  const vec3 c5 = vec3(-71.3194, 32.626, 73.2095);
-  const vec3 c6 = vec3(25.1311, -12.2426, -23.0703);
-  return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));}
-  
-  vec3 turbo(float t) {
-  const vec3 c0 = vec3(0.114, 0.0628, 0.2248);
-  const vec3 c1 = vec3(6.7164, 3.1822, 7.5715);
-  const vec3 c2 = vec3(-66.094, -4.9279, -10.0943);
-  const vec3 c3 = vec3(228.766, 25.0498, -91.5410);
-  const vec3 c4 = vec3(-334.8351, -69.3174, 288.5858);
-  const vec3 c5 = vec3(218.7637, 67.5215, -305.2045);
-  const vec3 c6 = vec3(-52.889, -21.5452, 110.5174);
-  return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));}
-  
-  vec3 bbody(float t){return vec3(1,1./4.,1./16.) * exp(4.*t - 1.);}
-  vec3 colorize( float distance, float colorWidth, float ss, int colorTrait){
-    float b = 666.;
-    float regG = mod(floor(abs((distance) / colorWidth)) * colorWidth, 1.0 );
-    float ranG = fract( hash11(ss + floor(distance / colorWidth ) + b ) );
-  if ( colorTrait == 0 ){
-    float colR = hash11(ss + floor(distance / colorWidth ) + 555. );
-    float colG = hash11(ss + floor(distance / colorWidth ) + b );
-    float colB = hash11(ss + floor(distance / colorWidth ) + 777. );
-    return vec3( colR, colG, colB );
-  } else if ( colorTrait == 1 ) {
-    float h = hash11(ss+b) + floor(distance / colorWidth) * 0.381966011;
-    return hsv2rgb( vec3(h, 0.75,0.75));
-  } else if ( colorTrait == 2 ){
-    return viridis(ranG);
-  } else if ( colorTrait == 3 ){
-    return viridis(regG);
-  } else if ( colorTrait == 4 ) {
-    return plasma(ranG);
-  } else if ( colorTrait == 5 ){
-    return plasma(regG);
-  } else if ( colorTrait == 6 ){
-    return magma(ranG);
-  } else if ( colorTrait == 7 ){
-    return magma(regG);
-  } else if ( colorTrait == 8 ){
-    return inferno(ranG);
-  } else if ( colorTrait == 9 ){
-    return inferno(regG);
-  } else if ( colorTrait == 10 ){
-    return turbo(ranG);
-  } else if ( colorTrait == 11 ){
-    return turbo(regG);
-  } else if ( colorTrait == 12 ) {
-    return bbody(ranG);
-  } else if ( colorTrait == 13 ){
-    return bbody(regG);
-  } else if ( colorTrait == 14 ){
-    return rainbow( floor(( distance + hash11(ss + b )) / colorWidth) *  colorWidth );
-  } else if ( colorTrait == 15 ) {
-    return rainbow( regG );
-  } else if ( colorTrait == 16 ) {
-    return vday(ranG);
-  } else if ( colorTrait == 17 ){
-    return vday(regG);
-  } else if ( colorTrait == 18 ) {
-    return w420(ranG);
-  } else if ( colorTrait == 19 ){
-    return w420(regG);
-  } else if ( colorTrait == 20 ){
-    return gg(ranG);
-  } else if ( colorTrait == 21 ){
-    return gg(regG);
-  } else if ( colorTrait == 22 ){
-    return sympatico(ranG);
-  } else if ( colorTrait == 23 ){
-    return sympatico(regG);
-  } else if ( colorTrait == 24 ){
-    return mojo(ranG);
-  } else if ( colorTrait == 25 ){
-    return mojo(regG);
-  } return vec3(0.);
-  }
-  
-
-void main(){
-  // float dd = sin( vUv.r * 3.1415 + iT  );
-
-  float dd = pulse( vUv.r - iT, 0.01);
-  float roots = 1.-(vUv.r*vUv.r);
-  vec3 pulseCol = colorize( dd, 0.04, 12345., int(iV2) );
-  vec3 col = vec3(vUv.g * dd);
-
-  gl_FragColor.rgb = (0.5 + vUv.g * 0.5 ) * pulseCol * roots;
-  // gl_FragColor.rgb = vec3();
-  // gl_FragColor.b = 0.;
-
-  gl_FragColor.a = 1.;}
-`
-
-  const uniforms = {
-    iT: { value: 0 },
-    iV1: { value: 0 },
-    iV2: { value: 0 },
-
-  }
-
-  const clock = new THREE.Clock();
-
-  // function createTree()
-  createTree = () =>
-  {
-    tokenData.hash    = randomHash(64);
-
-    
-    const {
-      shape,
-      color,
-      seed,
-      colorMode,
-      wireframe
-    } = hashToTraits(tokenData.hash);
-    
-    state.colorMode = colorMode;
-    // const material = new THREE.MeshLambertMaterial({ color: color });
-    const material = new THREE.ShaderMaterial( {
-      vertexShader: vertexShader,
-      fragmentShader: fragmentShader,
-      uniforms: uniforms,
-  });
-  material.wireframe = wireframe > 50;
+  const material = new THREE.MeshLambertMaterial({ color: color });
   const geometry = new THREE.BufferGeometry();
     // var quad_vertices =
     // [
@@ -723,13 +509,14 @@ void main(){
     // [
     // 0, 2, 1, 0, 3, 2
     // ];
+    
 
     let vertices = []
     let faces = []
     let vColors = []
     let normals = []
     let uvs = []
-
+       
     parentMatrix = new THREE.Matrix4()
     parentMatrix.identity()
 
@@ -763,28 +550,9 @@ void main(){
     normals.push( basen2.x, basen2.y, basen2.z )
     normals.push( basen3.x, basen3.y, basen3.z )
     normals.push( basen4.x, basen4.y, basen4.z )
-
-    uvs.push( 0, 0)
-    uvs.push( 0, 0.25)
-    uvs.push( 0, 0.5)
-    uvs.push( 0, 0.75)
-
     parentVertexIds = [ 0, 1, 2, 3 ]
     // faces.push( 0, 1, 2, 3 )
-    branch( randLen, randWidth, parentMatrix, vertices, parentVertexIds, normals, faces, vColors, uvs, 0.8, 1 )
-    
-    // let maxUv = Math.max( ...uvs )
-    let maxUv = 0;
-    for ( let i = 0; i < uvs.length; i+=2)
-    {
-      maxUv = Math.max( uvs[i], maxUv )
-    }
-    for ( let i = 0; i < uvs.length; i+=2 )
-    {
-      uvs[i] = uvs[i] / maxUv
-    }
-
-    // console.log(uvs)
+    branch( randLen, randWidth, parentMatrix, vertices, parentVertexIds, normals, faces, vColors, 0.8, 0 )
     // console.log(vertices)
     // console.log(normals)
     // console.log(faces)
@@ -798,10 +566,8 @@ void main(){
         'uv',
         new THREE.BufferAttribute(new Float32Array(uvs), 2));
     geometry.setIndex( new THREE.BufferAttribute( new Uint32Array( faces ), 1 ) );
-    // console.log(geometry)
-
+    
     const mesh = new THREE.Mesh(geometry, material);
-    state.three.mesh = mesh;
     // setup scene
     for (let i = tokenState.three.scene.children.length - 1; i >= 0; i--) {
       if(tokenState.three.scene.children[i].type === "Mesh")
@@ -809,6 +575,18 @@ void main(){
     }
     tokenState.three.scene.add(mesh);
 }
+
+//-----------------------------------------------------------------------------
+const doArt = (renderer, hash, state) => {
+  const {
+    shape,
+    color,
+    size
+  } = hashToTraits(hash);
+ 
+
+  const canvas = document.querySelector('canvas');
+
   // initialize scene
   canvas.initialize = () => {
     const ratio    = window.innerWidth / window.innerHeight;
@@ -818,7 +596,6 @@ void main(){
     const directLight = new THREE.DirectionalLight( 0xa0a0a0, 0.5 );
 
     
-    // scene.background = new THREE.Color(0xffffff)
     // const material = new THREE.MeshBasicMaterial({ color: color });
     // material.side = THREE.DoubleSide;
     // material.wireframe = true;
@@ -841,8 +618,7 @@ void main(){
       scene: scene,
       camera: camera,
       mesh: null,
-      controls: controls,
-      uniforms: uniforms,
+      controls: controls
     };
 
     createTree()
@@ -858,12 +634,11 @@ void main(){
   canvas.update = () => {
     const mesh = state.three.mesh;
     // mesh.rotation.x += 0.02;
-    mesh.rotation.y += 0.01;
+    // mesh.rotation.y += 0.01;
     // mesh.scale.x     = state.width;
     // mesh.scale.y     = 1;
     state.three.controls.update();
-    uniforms.iT.value += clock.getDelta();
-    uniforms.iV2.value = state.colorMode;
+
   };
 
   // render/update loop
@@ -886,7 +661,7 @@ void main(){
  * Main entry function.
  */
 const run = (tokenData, tokenState) => {
-  const renderer = setupCanvasThreeJs()
+  const renderer = setupCanvasThreeJs();
   doArt(renderer, tokenData.hash, tokenState);
   
 };

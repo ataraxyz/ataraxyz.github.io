@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>A Genetic Chain Project</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- third party libs
+           uncomment out the third party library you wish to use.
+           there should be an example of referencing the library and
+           setting up the canvas in the art.js file. -->
+    <!--
+    <script src="thirdparty/three-r128.min.js"></script>
+  -->
+  <script src="../thirdparty/p5-v1.4.0.min.js"></script>
+
+    <!-- js/styles -->
+    <script src="boot.js"></script>
+    <script src="art.js"></script>
+    <script src="index.js"></script>
+    <link rel="stylesheet" type="text/css" href="index.css">
+S
+  </head>
+  <body class="body-ct">
+    <section class="section0">
+
+
+      <div class="collection">
+        <input type = "button" onclick = "refresh()" value = "|m0re-aRt|" id="hidables" class = "refrBtn">
+        <div class="controls">
+          
+          <label for="speed">Speed</label>
+          <input id="speed" type="range" min="0" max="100" value="25" step="1"
+            oninput="onChangeSpeed(this.value);">
+          <label for="size">Size</label>
+          <input id="size" type="range" min="50" max="150" value="100" step="1"
+            oninput="onChangeSize(this.value);">
+          <label for="alpha">Alpha</label>
+            <input id="alpha" type="range" min="0" max="256" value="128" step="1"
+              oninput="onChangeAlpha(this.value);">
+        </div>
+       
+        
+        <p>
+
+        </p>
+      </div>
+
+        
+   </section>
+    <section class="section1">
+      <div class="content">
+          <h2 id="title"><mark>SACRA SANATIO</mark></h2>
+          <h3> Healing sacred geometry<br><br></h3>
+          <p>Having explored the beauty and healing power of shapes, sounds and colors in the <mark>ANIMO</mark> project Atara is now taking the next step by adding geometry, explored by many cultures and people. Destilling the line to its simple form, expanding outwards in different cirlcles of shaoes reoresents a deep connection with nature and its imhabitants. Using the symbols that have united many people over centuries, combiing them with a mathematical model once again brings peave and serenity to the viewer. Reflecting on the connectedness with nature and the universal language of mathematics keeps surrounding this piece with a special auro of healing and hope. so desperately needed right now.<br>This project is still evolving. Traits coming soon.<br><br><br></p>
+          <!-- <img src="../asset/185_render_crop.png" /> -->
+      </div>
+  </section>
+ </body>
+</html>
