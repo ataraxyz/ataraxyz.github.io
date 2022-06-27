@@ -856,13 +856,14 @@ void main(){
 
   // update
   canvas.update = () => {
+    let dt = clock.getDelta();
     const mesh = state.three.mesh;
     // mesh.rotation.x += 0.02;
-    mesh.rotation.y += 0.01;
+    mesh.rotation.y += dt*0.5;
     // mesh.scale.x     = state.width;
     // mesh.scale.y     = 1;
     state.three.controls.update();
-    uniforms.iT.value += clock.getDelta();
+    uniforms.iT.value += dt;
     uniforms.iV2.value = state.colorMode;
   };
 

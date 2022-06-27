@@ -195,29 +195,29 @@
 
             function keybordInput(e)
             {
-                if ( e.ctrlKey || e.keyCode == 13 )
-                    refresh();
-                if ( e.keyCode == 16 )
-                    movementToggle();
-                if ( e.keyCode == 80 )
-                {
-                    var dataCanvas = document.querySelector("body > section.section0 > div > p > canvas");
-                    var image = dataCanvas.toDataURL();  
-                    // create temporary link  
-                    var tmpLink = document.createElement( 'a' );  
-                    tmpLink.download = tokenData.hash + '_image.png'; // set the name of the download file 
-                    tmpLink.href = image;  
+                // if ( e.ctrlKey || e.keyCode == 13 )
+                //     refresh();
+                // if ( e.keyCode == 16 )
+                //     movementToggle();
+                // if ( e.keyCode == 80 )
+                // {
+                //     var dataCanvas = document.querySelector("body > section.section0 > div > p > canvas");
+                //     var image = dataCanvas.toDataURL();  
+                //     // create temporary link  
+                //     var tmpLink = document.createElement( 'a' );  
+                //     tmpLink.download = tokenData.hash + '_image.png'; // set the name of the download file 
+                //     tmpLink.href = image;  
                 
-                    // temporarily add link to body and initiate the download  
-                    document.body.appendChild( tmpLink );  
-                    tmpLink.click();  
-                    document.body.removeChild( tmpLink );  
+                //     // temporarily add link to body and initiate the download  
+                //     document.body.appendChild( tmpLink );  
+                //     tmpLink.click();  
+                //     document.body.removeChild( tmpLink );  
                     
-                }
-                if ( e.keyCode == 18 )
-                {
-                    askForHash();
-                }
+                // }
+                // if ( e.keyCode == 18 )
+                // {
+                //     askForHash();
+                // }
 
             }
 
