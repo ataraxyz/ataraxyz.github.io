@@ -194,7 +194,7 @@ const hashToTraits = hash => {
   
   const wireframe = R.ri(0, 100 );
 
-  // const orbitProb = R.ri(0, 30 );
+  // const orbitProb = R.ri(0, 30 );z
   // const twinProb = R.ri(0, 20 );
   // const insideProb = R.ri(0, 20 );
   // const shapesForLayer = R.ri( 1, 4);
@@ -553,8 +553,7 @@ const doArt = (renderer, hash, state) => {
   const uniforms = {
     iT: { value: 0 },
     iV1: { value: 0 },
-    iV2: { value: 0 },
-
+    iV2: { value: 0 }
   }
 
   const clock = new THREE.Clock();
@@ -697,6 +696,7 @@ const doArt = (renderer, hash, state) => {
     // let vColors = []
     let normals = []
     let uvs = []
+    let ids = []    
 
 
     let cnumCrystals = THREE.MathUtils.randInt(cnumCrystalsRange.x, cnumCrystalsRange.y );
@@ -720,6 +720,7 @@ const doArt = (renderer, hash, state) => {
         let ringZ = Math.cos(crystalId*ringAngle) * 300.0
         parentMatrix.makeTranslation( clusterCenter.x+ringX, clusterCenter.y, clusterCenter.z + ringZ )
       }
+      let crystalOffsetId = THREE.MathUtils.randInt( 0, 123456 );
       // parentMatrix.makeTranslation(THREE.MathUtils.randFloat( 10.0, 100.0 ), 0.0, THREE.MathUtils.randFloat( 10.0, 100.0 ) )
       
       
@@ -758,6 +759,9 @@ const doArt = (renderer, hash, state) => {
         normals.push( p0.x, p0.y, p0.z )
         normals.push( p0.x, p0.y, p0.z )
 
+        ids.push(crystalOffsetId)
+        ids.push(crystalOffsetId)
+
         if ( ctower )
         {
           uvs.push( 1, i/(csides-1))
@@ -785,12 +789,14 @@ const doArt = (renderer, hash, state) => {
       vertices.push( ptip.x, ptip.y, ptip.z )
       ptip.normalize()
       normals.push( ptip.x, ptip.y, ptip.z )
+      ids.push(crystalOffsetId)
       uvs.push( 0.0, 0.5)
 
       let pbottom = new THREE.Vector3( 0.0, 0.0, 0.0 ).applyMatrix4(localMatRot).applyMatrix4(parentMatrix)
       vertices.push( pbottom.x, pbottom.y, pbottom.z )
       pbottom.normalize()
       normals.push( pbottom.x, pbottom.y, pbottom.z )
+      ids.push(crystalOffsetId)
       uvs.push( 1.0, 0.5)
 
 
@@ -822,6 +828,9 @@ const doArt = (renderer, hash, state) => {
     geometry.setAttribute(
         'uv',
         new THREE.BufferAttribute(new Float32Array(uvs), 2));
+    geometry.setAttribute(
+          'customId',
+          new THREE.BufferAttribute(new Float32Array(ids), 1));
     geometry.setIndex( new THREE.BufferAttribute( new Uint32Array( faces ), 1 ) );
     
     return geometry
@@ -929,6 +938,8 @@ const doArt = (renderer, hash, state) => {
       let ctowerheightRange = new THREE.Vector2( 0.2, 1.0);
       let irragularityRange = new THREE.Vector2( 0.0, 0.4);
       let cnumCrystalsRange = new THREE.Vector2(5,10);
+
+      
 
       allMeshes.push( GroundCrystalMaterial(uniforms, createCrystalsCluster(  posVec, 
                                                                               cheightRange, 

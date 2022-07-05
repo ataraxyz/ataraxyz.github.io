@@ -203,6 +203,45 @@
     `
   }
 
+  function vertexShaderWithId() {
+    return `
+      uniform float iT;
+  
+      varying vec2 vUv;
+      varying vec3 vPos;
+  
+      varying vec3 vNN; 
+      varying vec3 vEye;
+      varying float vCustomId;
+      attribute float customId;
+  
+      void main()
+      {
+        vUv = uv;
+        vec3 P_local = position;
+  
+        // float offsetX = sin(iT*vUv.r)*1.*vUv.r;
+        // float offsetY = cos(iT*vUv.r)*1.*vUv.r;
+        // P_local.x += offsetX;
+        // P_local.y += offsetY;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4( P_local, 1. );
+        vPos = (modelMatrix * vec4( P_local, 1. )).xyz;
+        mat4 LM = modelMatrix;
+        LM[2][3] = 0.0;
+        LM[3][0] = 0.0;
+        LM[3][1] = 0.0;
+        LM[3][2] = 0.0;
+        // vec4 GN = LM * vec4(normal.xyz, 1.0);
+        vNN = (projectionMatrix * modelViewMatrix* vec4(normal, 0.0)).xyz;
+        vEye = (viewMatrix * vec4(cameraPosition, 1.0)).xyz - (projectionMatrix * modelViewMatrix * vec4(position, 1.0)).xyz;
+        vEye = normalize(vEye);
+        vCustomId = customId;
+        // gl_Position = vec4( uv.xy * 2.0 - 1.0, 0.5, 1.0);
+  
+      }
+      `
+    }
+
   function fragmentShaderGround(){
     return fragHelperCode() + `
     uniform float iT;
@@ -300,19 +339,21 @@
     uniform float iT;
     uniform vec3 iV1;
     uniform float iV2;
+    
 
     varying vec2 vUv;
     varying vec3 vPos;
     varying vec3 vNN; 
     varying vec3 vEye;
+    varying float vCustomId;
 
   void main(){
     // float dd = sin( vUv.r * 3.1415 + iT  );
 
     // float normDist = length(vPos.xz)/350.0;
     // float dd = pulse( normDist - iT*0.25, 0.01);
-    float distAtten = distAttenuation( vPos );
-    float dd = pulse( vUv.r - iT*0.15, 0.05);
+    float distAtten = distAttenuation( vPos*1.0 );
+    float dd = pulse(vCustomId + vUv.r + iT*0.75, 0.15);
     float roots = 1.-(vUv.r*vUv.r);
     vec3 pulseCol = colorize( dd, 0.01, 12345., int(iV2) );
     // vec3 pulseCol = colorize( dd, 0.001, 12345., 13 );
@@ -323,6 +364,9 @@
     gl_FragColor.rgb = pulseCol * roots*roots * distAtten;
     // gl_FragColor.rgb = vec3(length(vPos)/350.0);
     // gl_FragColor.rgb = vec3(edge*0.1);
+    // gl_FragColor.rgb = vec3(mod(dd,1.0));
+    // gl_FragColor.rgb = vec3(vCustomId/123456.0);
+    // gl_FragColor.rgb = vec3(edge);
     // gl_FragColor.rgb = vEye;
     // gl_FragColor.b = 0.;
     // gl_FragColor.rgb = vec3( vUv.r, vUv.g, 0.0 );
@@ -442,7 +486,7 @@ function BGTreeMaterial(uniforms, geo ) {
 
 function GroundCrystalMaterial(uniforms, geo ) {
   let mat = new THREE.ShaderMaterial( {
-    vertexShader: vertexShader(),
+    vertexShader: vertexShaderWithId(),
     fragmentShader: fragmentShaderGroundCrystals(),
     uniforms: uniforms,
   });
