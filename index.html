@@ -22,11 +22,13 @@
         <meta property="og:image" content="/asset/__PROFILE_Med.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>A T A R A  |NFT|VFX|WEB3|METAVERSE|"</title>
-        <script src="thirdparty/three-r128.min.js"></script>
+        <script src="thirdparty/three-r141.min.js"></script>
         <script src="thirdparty/OrbitControls.js"></script>
+        <script src="thirdparty/three-noise.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.36/Tone.js"></script>
         <script src="/animo/boot.js"></script>
         <!-- <script src="/animo/art.js"></script> -->
+        <script src="shaders.js"></script>
         <script src="art.js"></script>
         <script src="index.js"></script>
         <link rel="stylesheet" href="style.css">
@@ -46,7 +48,9 @@
                 <source src="/asset/atara_gc_bg_full.mp4" type="video/mp4">
             </video> -->
             <div class="collection">
-                <input type = "button" onclick = "createTree()" value = "|r3-g3n|" id="hidables" class = "refrBtn">
+                <!-- <input type = "button" onclick = "createTree()" value = "|r3-g3n|" id="hidables" class = "refrBtn"> -->
+                <input type = "button" onclick = "sceneAssembly()" value = "|r3-g3n|" id="hidables" class = "refrBtn">
+                
                 <!-- <input type = "button" onclick = "toggleSound()" value = "Toggle Sound" id="hidables" class = "sndBtn"> -->
                 <!-- <div class="controls">
                     <label for="sdfblend">SDF Blend</label>

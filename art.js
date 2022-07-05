@@ -9,6 +9,17 @@
 
 const u64  = n => BigInt.asUintN(64, n);
 const rotl = (x, k) => u64((x << k) | (x >> (64n - k)));
+const { Perlin, FBM } = THREE_Noise;
+const perlin = new Perlin(Math.random())
+const fbm = new FBM({
+  seed: Math.random(),
+  scale: 0.06,
+  octaves: 6,
+  persistance: 0.5,
+  lacunarity: 2,
+  redistribution: 1,
+  height: 0,
+});
 
 /**
  * xoshiro is a variation of the shift-register generator, using rotations in
@@ -164,7 +175,7 @@ const shapeDist = {
 //-----------------------------------------------------------------------------
 // main
 //-----------------------------------------------------------------------------
-
+let noiseTex
 const hashToTraits = hash => {
 
   // setup random fns
@@ -179,7 +190,8 @@ const hashToTraits = hash => {
 
   const seed = R.ri(0, 10000 );
 
-  const colorMode = R.ri(0, 25 );
+  const colorMode = R.ri(2, 25 );
+  
   const wireframe = R.ri(0, 100 );
 
   // const orbitProb = R.ri(0, 30 );
@@ -216,6 +228,29 @@ const hashToTraits = hash => {
 /**
  * Example of setting up a canvas with three.js.
  */
+ generateNoise = function(opacity,canvas) {
+  var
+  x, y,
+  number,
+ 
+  opacity = opacity || .2;
+  ctx = canvas.getContext('2d');
+  let size = 0.001
+  for ( x = 0; x < canvas.width; x++ ) {
+     for ( y = 0; y < canvas.height; y++ ) {
+        // number = Math.floor( Math.random() * 60 );
+        
+        const pos = new THREE.Vector2(x, y);
+        let n = fbm.get2(pos)
+        n = n * 0.5 + 0.5;
+        // n*= 2.0
+        ctx.fillStyle = "rgba(" + n + "," + n + "," + n + "," + opacity + ")";
+        ctx.fillRect(x, y, 1, 1);
+     }
+  }
+}
+
+
  const setupCanvasThreeJs = () => {
 
   const width  = window.innerWidth;
@@ -228,6 +263,18 @@ const hashToTraits = hash => {
   renderer.setPixelRatio(scale);
   renderer.setSize(width, height/1.5);
   body.appendChild(renderer.domElement);
+
+  var canvas = document.createElement("canvas");
+
+  // canvas.width = 400;
+  // canvas.height = 400;
+
+
+  // generateNoise(1, canvas);
+
+
+  // noiseTex = new THREE.Texture(canvas);
+  // noiseTex.needsUpdate = true;
 
   return renderer;
 
@@ -264,7 +311,7 @@ function randomVecInCone( refVec, threshold )
 
 function randomVecInXZ()
 {
-  while( true )
+  // while( true )
   {
     let randX = THREE.MathUtils.randFloat( -1.0, 1.0)
     // let randY = THREE.MathUtils.randFloat( -1.0, 1.0)
@@ -278,6 +325,28 @@ function randomVecInXZ()
     
   }
 }
+
+function randomVecInXYZ(hemispherical = false)
+{
+  // while( true )
+  {
+    let ynegRange = -1.0;
+    if ( hemispherical )
+      ynegRange = 0.7
+
+    let randX = THREE.MathUtils.randFloat( -1.0, 1.0)
+    let randY = THREE.MathUtils.randFloat( ynegRange, 1.0)
+    let randZ = THREE.MathUtils.randFloat( -1.0, 1.0)
+    let result = new THREE.Vector3( randX, randY, randZ );
+
+    result.normalize()
+    // if ( result.dot( refVec) > threshold )
+    return result
+    // let dirvecNorm = p5.Vector.random3D()// * 100.0
+    
+  }
+}
+
 
 
 function branch( len, maxlen, parentMatrix, vertices, parentVertexIds, normals, faces, vColors, uvs, branchingSpread, gen )
@@ -481,182 +550,6 @@ const doArt = (renderer, hash, state) => {
   state.colorMode = colorMode;
   const canvas = document.querySelector('canvas');
 
-  var vertexShader = `
-  uniform float iT;
-
-  varying vec2 vUv;
-  void main()
-  {
-    vUv = uv;
-    vec3 P_local = position;
-
-    // float offsetX = sin(iT*vUv.r)*1.*vUv.r;
-    // float offsetY = cos(iT*vUv.r)*1.*vUv.r;
-    // P_local.x += offsetX;
-    // P_local.y += offsetY;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4( P_local, 1. );
-  }
-  `
-  var fragmentShader =`
-  uniform float iT;
-  uniform vec3 iV1;
-  uniform float iV2;
-
-  varying vec2 vUv;
-
-  float pulse( float time, float freq )
-  {
-    const float pi = 3.14159;
-    //const float freq = 10; // in Hz
-    return 0.5 * sin(2. * pi * freq * time );
-  }
-
-  float hash11(float p){
-    p = fract(p * .1031);
-    p *= p + 33.33;
-    p *= p + p;
-    return fract(p);}  
-  
-  float hash12(vec2 p){
-  vec3 p3  = fract(vec3(p.xyx) * .1031);
-  p3 += dot(p3, p3.yzx + 33.33);
-  return fract((p3.x + p3.y) * p3.z);}
-
-  vec3 hsv2rgb(vec3 c){
-    vec4 K = vec4(1., 2. / 3., 1. / 3., 3.);
-    vec3 p = abs(fract(c.xxx + K.xyz) * 6. - K.www);
-    return c.z * mix(K.xxx, clamp(p - K.xxx, 0., 1.), c.y);}
-  
-  
-  vec3 pal( in float t, in vec3 a, in vec3 b, in vec3 c, in vec3 d ){return a + b*cos( 6.28318*(c*t+d) );}
-  
-  vec3 rainbow(float t) {return pal( t, vec3( 0.5, 0.5, 0.5 ), vec3( 0.5, 0.5, 0.5 ), vec3( 1.0, 1.0, 1.0 ),vec3( 0., 0.33, 0.67 ) );}
-  
-  
-  vec3 viridis(float t) {
-  const vec3 c0 = vec3(0.2777, 0.0054, 0.334);
-  const vec3 c1 = vec3(0.105, 1.4046, 1.3845);
-  const vec3 c2 = vec3(-0.3308, 0.2148, 0.095);
-  const vec3 c3 = vec3(-4.6342, -5.7991, -19.3324);
-  const vec3 c4 = vec3(6.2282, 14.1799, 56.6905);
-  const vec3 c5 = vec3(4.7763, -13.7451, -65.353);
-  const vec3 c6 = vec3(-5.4354, 4.64585, 26.3124);
-  return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));}
-  
-  vec3 plasma(float t) {return pal( t, vec3( 0.5, 0.5, 0.5 ), vec3( 0.5, 0.5, 0.5 ), vec3( 2., 1., 0. ),vec3( 0.5, 0.2, 0.25 ) );}
-  
-  vec3 sympatico(float t) { return pal( t, vec3( 0.5, 0.5, 0.5 ), vec3( 0.5, 1.0, 0.5 ), vec3( 2., 2.0, 1.0 ),vec3( 0.20, 0.1, 0.0 ) );}
-  
-  vec3 mojo(float t) { return pal( t, vec3( 0.5, 0.5, 0.5 ), vec3( 0.5, 0.25, 0.5 ), vec3( 0.5, 2.0, 0.5 ),vec3( 0.0, 0.5, 0.5 ) );}
-  
-  vec3 magma(float t) {return pal( t, vec3( 0.5, 0.5, 0.5 ), vec3( 0.5, 0.5, 0.5 ), vec3( 1., 1.0, 1. ),vec3( 0., 0.1, 0.2 ));}
-  
-  vec3 w420(float t) {return pal( t, vec3( 0.1, 1.0, 0.4 ), vec3( 0.4, 0.5, 0.2 ), vec3( 0.6, 1.0, 0.4 ),vec3( 0.8, 0.66, 0.2 ) );}
-  
-  vec3 gg(float t){ return vec3(t);}
-  
-  vec3 vday(float t) {return pal( t, vec3( 0.66, 0.5, 0.5 ), vec3( 0.5, 0.66, 0.5 ), vec3( 1.0, 0.2, 0.66 ),vec3( 0., 0.53, 0.67 ) );}
-  
-  vec3 inferno(float t) {
-  const vec3 c0 = vec3(0.0002, 0.0016, -0.0194);
-  const vec3 c1 = vec3(0.1065, 0.5639, 3.9327);
-  const vec3 c2 = vec3(11.6024, -3.9728, -15.9423);
-  const vec3 c3 = vec3(-41.7039, 17.4363, 44.3541);
-  const vec3 c4 = vec3(77.1629, -33.4023, -81.8073);
-  const vec3 c5 = vec3(-71.3194, 32.626, 73.2095);
-  const vec3 c6 = vec3(25.1311, -12.2426, -23.0703);
-  return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));}
-  
-  vec3 turbo(float t) {
-  const vec3 c0 = vec3(0.114, 0.0628, 0.2248);
-  const vec3 c1 = vec3(6.7164, 3.1822, 7.5715);
-  const vec3 c2 = vec3(-66.094, -4.9279, -10.0943);
-  const vec3 c3 = vec3(228.766, 25.0498, -91.5410);
-  const vec3 c4 = vec3(-334.8351, -69.3174, 288.5858);
-  const vec3 c5 = vec3(218.7637, 67.5215, -305.2045);
-  const vec3 c6 = vec3(-52.889, -21.5452, 110.5174);
-  return c0+t*(c1+t*(c2+t*(c3+t*(c4+t*(c5+t*c6)))));}
-  
-  vec3 bbody(float t){return vec3(1,1./4.,1./16.) * exp(4.*t - 1.);}
-  vec3 colorize( float distance, float colorWidth, float ss, int colorTrait){
-    float b = 666.;
-    float regG = mod(floor(abs((distance) / colorWidth)) * colorWidth, 1.0 );
-    float ranG = fract( hash11(ss + floor(distance / colorWidth ) + b ) );
-  if ( colorTrait == 0 ){
-    float colR = hash11(ss + floor(distance / colorWidth ) + 555. );
-    float colG = hash11(ss + floor(distance / colorWidth ) + b );
-    float colB = hash11(ss + floor(distance / colorWidth ) + 777. );
-    return vec3( colR, colG, colB );
-  } else if ( colorTrait == 1 ) {
-    float h = hash11(ss+b) + floor(distance / colorWidth) * 0.381966011;
-    return hsv2rgb( vec3(h, 0.75,0.75));
-  } else if ( colorTrait == 2 ){
-    return viridis(ranG);
-  } else if ( colorTrait == 3 ){
-    return viridis(regG);
-  } else if ( colorTrait == 4 ) {
-    return plasma(ranG);
-  } else if ( colorTrait == 5 ){
-    return plasma(regG);
-  } else if ( colorTrait == 6 ){
-    return magma(ranG);
-  } else if ( colorTrait == 7 ){
-    return magma(regG);
-  } else if ( colorTrait == 8 ){
-    return inferno(ranG);
-  } else if ( colorTrait == 9 ){
-    return inferno(regG);
-  } else if ( colorTrait == 10 ){
-    return turbo(ranG);
-  } else if ( colorTrait == 11 ){
-    return turbo(regG);
-  } else if ( colorTrait == 12 ) {
-    return bbody(ranG);
-  } else if ( colorTrait == 13 ){
-    return bbody(regG);
-  } else if ( colorTrait == 14 ){
-    return rainbow( floor(( distance + hash11(ss + b )) / colorWidth) *  colorWidth );
-  } else if ( colorTrait == 15 ) {
-    return rainbow( regG );
-  } else if ( colorTrait == 16 ) {
-    return vday(ranG);
-  } else if ( colorTrait == 17 ){
-    return vday(regG);
-  } else if ( colorTrait == 18 ) {
-    return w420(ranG);
-  } else if ( colorTrait == 19 ){
-    return w420(regG);
-  } else if ( colorTrait == 20 ){
-    return gg(ranG);
-  } else if ( colorTrait == 21 ){
-    return gg(regG);
-  } else if ( colorTrait == 22 ){
-    return sympatico(ranG);
-  } else if ( colorTrait == 23 ){
-    return sympatico(regG);
-  } else if ( colorTrait == 24 ){
-    return mojo(ranG);
-  } else if ( colorTrait == 25 ){
-    return mojo(regG);
-  } return vec3(0.);
-  }
-  
-
-void main(){
-  // float dd = sin( vUv.r * 3.1415 + iT  );
-
-  float dd = pulse( vUv.r - iT, 0.01);
-  float roots = 1.-(vUv.r*vUv.r);
-  vec3 pulseCol = colorize( dd, 0.04, 12345., int(iV2) );
-  vec3 col = vec3(vUv.g * dd);
-
-  gl_FragColor.rgb = (0.5 + vUv.g * 0.5 ) * pulseCol * roots;
-  // gl_FragColor.rgb = vec3();
-  // gl_FragColor.b = 0.;
-
-  gl_FragColor.a = 1.;}
-`
-
   const uniforms = {
     iT: { value: 0 },
     iV1: { value: 0 },
@@ -666,8 +559,22 @@ void main(){
 
   const clock = new THREE.Clock();
 
-  // function createTree()
-  createTree = () =>
+  cleanScene = () => {
+    state.three.meshes = [];
+    for (let i = tokenState.three.scene.children.length - 1; i >= 0; i--) {
+      if(tokenState.three.scene.children[i].type === "Mesh")
+        tokenState.three.scene.remove(tokenState.three.scene.children[i]);
+    }
+  }
+
+  AddMeshesToState = (meshes) => {
+    for( let i = 0; i < meshes.length; i++ ){
+      state.three.meshes.push( meshes[i] );
+      tokenState.three.scene.add(meshes[i]);
+    }
+  }
+
+  createTree = ( treePos, startlength, maxlength ) =>
   {
     tokenData.hash    = randomHash(64);
 
@@ -679,51 +586,10 @@ void main(){
       colorMode,
       wireframe
     } = hashToTraits(tokenData.hash);
+    console.log(colorMode)
     
     state.colorMode = colorMode;
-    // const material = new THREE.MeshLambertMaterial({ color: color });
-    const material = new THREE.ShaderMaterial( {
-      vertexShader: vertexShader,
-      fragmentShader: fragmentShader,
-      uniforms: uniforms,
-  });
-  material.wireframe = wireframe > 50;
-  const geometry = new THREE.BufferGeometry();
-    // var quad_vertices =
-    // [
-    // -30.0,  30.0, 0.0,
-    // 30.0,  30.0, 0.0,
-    // 30.0, -30.0, 0.0,
-    // -30.0, -30.0, 0.0
-    // ];
-    // let upVec = new THREE.Vector3(1.0, 0.0, 0.0)
-    // parentMatrixPos = new THREE.Matrix4()
-    // parentMatrixRot = new THREE.Matrix4()
-    // let mydir1 = new THREE.Vector3(40.0, 40.0, 40.0)
-    // parentMatrixRot.lookAt( new THREE.Vector3(0.0, 0.0, 0.0), mydir1,upVec  )
-    // parentMatrixPos.makeTranslation(mydir1.x, mydir1.y, mydir1.z )
-    // parentMatrixPos.multiply(parentMatrixRot)
-    // 
-    // let localMatrix = new THREE.Matrix4()
-    // let mydir2 = new THREE.Vector3(-20.0, 20.0, 10)
-    // localMatrix.makeTranslation(mydir2.x, mydir2.y, mydir2.z )
-    // parentMatrix.multiply( localMatrix )
-    // let qp1 = new THREE.Vector3(-30.0,  30.0, 0.0).applyMatrix4( parentMatrixPos )
-    // let qp2 = new THREE.Vector3( 30.0,  30.0, 0.0 ).applyMatrix4( parentMatrixPos )
-    // let qp3 = new THREE.Vector3( 30.0, -30.0, 0.0 ).applyMatrix4( parentMatrixPos )
-    // let qp4 = new THREE.Vector3( -30.0, -30.0, 0.0 ).applyMatrix4( parentMatrixPos )
-    // var quad_vertices =
-    // [
-    //   qp1.x,  qp1.y, qp1.z,
-    //   qp2.x,  qp2.y, qp2.z,
-    //   qp3.x,  qp3.y, qp3.z,
-    //   qp4.x,  qp4.y, qp4.z
-    // ];
-    // var quad_indices =
-    // [
-    // 0, 2, 1, 0, 3, 2
-    // ];
-
+    const geometry = new THREE.BufferGeometry();
     let vertices = []
     let faces = []
     let vColors = []
@@ -732,12 +598,13 @@ void main(){
 
     parentMatrix = new THREE.Matrix4()
     parentMatrix.identity()
+    parentMatrix.makeTranslation( treePos.x, treePos.y, treePos.z )
 
-    let randLen = THREE.MathUtils.randFloat( 12.0, 15.0)
+    // let randLen = THREE.MathUtils.randFloat( 12.0, 15.0)
     // let randLen = 10
     // let randWidth = 1
     let baseSize = 2
-    let randWidth = randLen/10.0
+    // let randWidth = randLen/10.0
     // let randWidth = Math.random(randLen/10, randLen/10)
 
     let baseCenter = new THREE.Vector3( 0,0,0)
@@ -771,7 +638,7 @@ void main(){
 
     parentVertexIds = [ 0, 1, 2, 3 ]
     // faces.push( 0, 1, 2, 3 )
-    branch( randLen, randWidth, parentMatrix, vertices, parentVertexIds, normals, faces, vColors, uvs, 0.8, 1 )
+    branch( startlength, maxlength, parentMatrix, vertices, parentVertexIds, normals, faces, vColors, uvs, 0.8, 1 )
     
     // let maxUv = Math.max( ...uvs )
     let maxUv = 0;
@@ -784,10 +651,6 @@ void main(){
       uvs[i] = uvs[i] / maxUv
     }
 
-    // console.log(uvs)
-    // console.log(vertices)
-    // console.log(normals)
-    // console.log(faces)
     geometry.setAttribute(
         'position',
         new THREE.BufferAttribute(new Float32Array(vertices), 3));
@@ -799,17 +662,316 @@ void main(){
         new THREE.BufferAttribute(new Float32Array(uvs), 2));
     geometry.setIndex( new THREE.BufferAttribute( new Uint32Array( faces ), 1 ) );
     // console.log(geometry)
+    return geometry
+    
+  }
 
-    const mesh = new THREE.Mesh(geometry, material);
-    state.three.mesh = mesh;
-    // setup scene
-    for (let i = tokenState.three.scene.children.length - 1; i >= 0; i--) {
-      if(tokenState.three.scene.children[i].type === "Mesh")
-        tokenState.three.scene.remove(tokenState.three.scene.children[i]);
+
+  createCrystalsCluster = ( clusterCenter, 
+                            cheightRange, 
+                            cwidthRange, 
+                            csidesRange, 
+                            ctowerRange, 
+                            ctowerheightRange, 
+                            irragularityRange, 
+                            cnumCrystalsRange, 
+                            isRing ) =>
+  {
+    tokenData.hash    = randomHash(64);
+
+    
+    const {
+      shape,
+      color,
+      seed,
+      colorMode,
+      wireframe
+    } = hashToTraits(tokenData.hash);
+
+    
+    
+    state.colorMode = colorMode;
+    const geometry = new THREE.BufferGeometry();
+    let vertices = []
+    let faces = []
+    // let vColors = []
+    let normals = []
+    let uvs = []
+
+
+    let cnumCrystals = THREE.MathUtils.randInt(cnumCrystalsRange.x, cnumCrystalsRange.y );
+    let startId = 0
+    let ringAngle = Math.PI * 2.0 / cnumCrystals
+    for( let crystalId = 0; crystalId < cnumCrystals; crystalId++ )
+    {
+      let cheight = THREE.MathUtils.randFloat( cheightRange.x, cheightRange.y);
+      let cwidth = THREE.MathUtils.randFloat( cwidthRange.x, cwidthRange.y);
+      let csides =  THREE.MathUtils.randInt( csidesRange.x, csidesRange.y);
+      let ctower = THREE.MathUtils.randFloat( 0.0, 1.0 ) > ctowerRange;
+      let ctowerheight = THREE.MathUtils.randFloat( ctowerheightRange.x, ctowerheightRange.y);
+      let irragularity =  THREE.MathUtils.randFloat( irragularityRange.x, irragularityRange.y);
+      
+      parentMatrix = new THREE.Matrix4()
+      parentMatrix.identity()
+      parentMatrix.makeTranslation( clusterCenter.x, clusterCenter.y, clusterCenter.z )
+      if ( isRing )
+      {
+        let ringX = Math.sin(crystalId*ringAngle) * 300.0
+        let ringZ = Math.cos(crystalId*ringAngle) * 300.0
+        parentMatrix.makeTranslation( clusterCenter.x+ringX, clusterCenter.y, clusterCenter.z + ringZ )
+      }
+      // parentMatrix.makeTranslation(THREE.MathUtils.randFloat( 10.0, 100.0 ), 0.0, THREE.MathUtils.randFloat( 10.0, 100.0 ) )
+      
+      
+      
+      let rotVec = randomVecInXYZ(true);
+      let localMatRot = new THREE.Matrix4();
+      localMatRot.makeRotationAxis(rotVec, THREE.MathUtils.randFloat(-5.0, 5.0 ))
+      if ( isRing )
+      {
+        let ringX = Math.sin(crystalId*ringAngle) * 300.0
+        let ringZ = Math.cos(crystalId*ringAngle) * 300.0
+        parentMatrix.makeTranslation( clusterCenter.x+ringX, clusterCenter.y, clusterCenter.z + ringZ )
+
+        localMatRot.makeRotationAxis(new THREE.Vector3( 0.0, 1.0, 0.0 ), THREE.MathUtils.randFloat(-3.14159, 3.14159 ))
+      }
+      let cangle = Math.PI * 2.0  / csides
+      for ( let i = 0; i<csides; i++ )
+      {
+        let currangle = cangle * i
+        let xx = Math.sin( currangle )
+        let zz = Math.cos( currangle )
+
+        let offsetVec = randomVecInXYZ().setLength(irragularity)
+
+        let p0 = new THREE.Vector3( xx * cwidth, 0.0,     zz * cwidth ).add(offsetVec)
+        p0.applyMatrix4(localMatRot).applyMatrix4(parentMatrix)
+
+        let p1 = new THREE.Vector3( xx * cwidth, cheight, zz * cwidth ).add(offsetVec)
+        p1.applyMatrix4(localMatRot).applyMatrix4(parentMatrix)
+
+        vertices.push( p0.x, p0.y, p0.z )
+        vertices.push( p1.x, p1.y, p1.z )
+
+        p0.normalize()
+
+        normals.push( p0.x, p0.y, p0.z )
+        normals.push( p0.x, p0.y, p0.z )
+
+        if ( ctower )
+        {
+          uvs.push( 1, i/(csides-1))
+          uvs.push( 1.0-(cheight/(cheight+ctowerheight)), i/(csides-1))
+        }
+        else
+        {
+          uvs.push( 1, i/(csides-1))
+          uvs.push( 0.0, i/(csides-1))
+        }
+
+        let curId0 = i*2;
+        let curId1 = i*2+1;
+        let curId2 = (curId0+2) % (csides * 2);
+        let curId3 = (curId1+2) % (csides * 2);
+
+        faces.push( startId + curId0, startId + curId2, startId + curId1 )
+        faces.push( startId + curId1, startId + curId2, startId + curId3 )
+      }
+
+      let tipHeight = cheight
+      if ( ctower )
+        tipHeight = cheight+ctowerheight
+      let ptip = new THREE.Vector3( 0.0, tipHeight, 0.0 ).applyMatrix4(localMatRot).applyMatrix4(parentMatrix)
+      vertices.push( ptip.x, ptip.y, ptip.z )
+      ptip.normalize()
+      normals.push( ptip.x, ptip.y, ptip.z )
+      uvs.push( 0.0, 0.5)
+
+      let pbottom = new THREE.Vector3( 0.0, 0.0, 0.0 ).applyMatrix4(localMatRot).applyMatrix4(parentMatrix)
+      vertices.push( pbottom.x, pbottom.y, pbottom.z )
+      pbottom.normalize()
+      normals.push( pbottom.x, pbottom.y, pbottom.z )
+      uvs.push( 1.0, 0.5)
+
+
+      let tipId = csides*2
+      for ( let i = 0; i<csides; i++ )
+      {
+        let currid = i * 2 + 1
+        let nextId = ( currid + 2 ) % (csides * 2)
+        faces.push( startId + currid, startId + nextId, startId + tipId )
+      }
+      let bottomIdId = csides*2+1
+      for ( let i = 0; i<csides; i++ )
+      {
+        let currid = i * 2
+        let nextId = ( currid + 2 ) % (csides * 2)
+        faces.push( startId + nextId, startId + currid, startId + bottomIdId )
+      }
+
+      startId += csides*2+2
     }
-    tokenState.three.scene.add(mesh);
-}
-  // initialize scene
+
+    
+    geometry.setAttribute(
+        'position',
+        new THREE.BufferAttribute(new Float32Array(vertices), 3));
+    geometry.setAttribute(
+        'normal',
+        new THREE.BufferAttribute(new Float32Array(normals), 3));
+    geometry.setAttribute(
+        'uv',
+        new THREE.BufferAttribute(new Float32Array(uvs), 2));
+    geometry.setIndex( new THREE.BufferAttribute( new Uint32Array( faces ), 1 ) );
+    
+    return geometry
+  }
+
+ 
+
+  createDisk = ( centerPos, radius, segments ) =>
+  {
+    tokenData.hash    = randomHash(64);
+
+
+    const {
+    shape,
+    color,
+    seed,
+    colorMode,
+    wireframe
+    } = hashToTraits(tokenData.hash);
+
+    const geometry = new THREE.BufferGeometry();
+    let vertices = []
+    let faces = []
+    // let vColors = []
+    let normals = []
+    let uvs = []
+
+    let ringAngle = Math.PI * 2.0 / segments
+    for ( let i = 0; i < segments; i++ )
+    {
+      let currangle = ringAngle * i
+      let xx = Math.sin( currangle )
+      let zz = Math.cos( currangle )
+
+      let pp = new THREE.Vector3( xx * radius, 0.0,     zz * radius ).add(centerPos)
+
+      vertices.push( pp.x, pp.y, pp.z )
+
+      normals.push( 0.0, 1.0, 0.0 )
+
+      uvs.push( 0, i/(segments-1))
+    
+
+      let curId0 = i;
+      let curId1 = (curId0+1) % (segments);
+      
+
+      faces.push( segments, curId0, curId1 )
+    }
+
+    vertices.push( centerPos.x, centerPos.y, centerPos.z )
+    normals.push( 0.0, 1.0, 0.0 )
+    uvs.push( 1.0, 0.5)
+
+    geometry.setAttribute(
+    'position',
+    new THREE.BufferAttribute(new Float32Array(vertices), 3));
+    geometry.setAttribute(
+    'normal',
+    new THREE.BufferAttribute(new Float32Array(normals), 3));
+    geometry.setAttribute(
+    'uv',
+    new THREE.BufferAttribute(new Float32Array(uvs), 2));
+    geometry.setIndex( new THREE.BufferAttribute( new Uint32Array( faces ), 1 ) );
+    return geometry
+  }
+
+  
+
+  sceneAssembly = () =>
+  {
+    cleanScene()
+    let allMeshes = []
+    let mainStartLength = THREE.MathUtils.randFloat( 12.0, 15.0);
+    // MAIN TREE
+    allMeshes.push( MainTreeMaterial(uniforms, createTree(new THREE.Vector3( 0.0, 0.0, 0.0 ), mainStartLength, mainStartLength/10.0 )) )
+    //  MAIN TREE SHADOW
+    allMeshes.push( FakeShadowDiskMaterial(uniforms, createDisk( new THREE.Vector3(0.0, 0.01, 0.0), 10.0, 20 ) ) )
+    
+    
+    // BGFORREST
+    let forrestTreeAmount = 60
+    let angle = Math.PI*4.0 / forrestTreeAmount
+    for ( let i = 0; i < forrestTreeAmount; i++ )
+    {
+      // let posVec = randomVecInXZ();
+      let posVec = new THREE.Vector3( Math.sin(i*angle), 0.0, Math.cos(i*angle) )
+      posVec.setLength( THREE.MathUtils.randFloat( 150.0, 250.0 ) )
+      allMeshes.push( BGTreeMaterial(uniforms, createTree(posVec, 15.0, 5.0 ) ) )
+      allMeshes.push( FakeShadowDiskMaterial(uniforms, createDisk( new THREE.Vector3(posVec.x, posVec.y+0.1, posVec.z), 20.0, 20 ) ) )
+    }
+
+    let groundCrystalAmnount = 500
+    let groundCrystalRadMin = 10.0
+    let groundCrystalRadMax = 200.0
+    for( let i = 0; i < groundCrystalAmnount; i++ )
+    {
+      let posVec = randomVecInXZ();
+      posVec.setLength( THREE.MathUtils.randFloat( groundCrystalRadMin, groundCrystalRadMax ) )
+
+      let cheightRange = new THREE.Vector2( 2.0, 8.0);
+      let cwidthRange = new THREE.Vector2( 0.4, 1.0);
+      let csidesRange = new THREE.Vector2( 4,8);
+      let ctowerRange = 0.25;
+      let ctowerheightRange = new THREE.Vector2( 0.2, 1.0);
+      let irragularityRange = new THREE.Vector2( 0.0, 0.4);
+      let cnumCrystalsRange = new THREE.Vector2(5,10);
+
+      allMeshes.push( GroundCrystalMaterial(uniforms, createCrystalsCluster(  posVec, 
+                                                                              cheightRange, 
+                                                                              cwidthRange, 
+                                                                              csidesRange, 
+                                                                              ctowerRange, 
+                                                                              ctowerheightRange, 
+                                                                              irragularityRange, 
+                                                                              cnumCrystalsRange, 
+                                                                              false )
+      ) )
+
+      allMeshes.push( FakeShadowDiskMaterial(uniforms, createDisk( new THREE.Vector3(posVec.x, posVec.y+THREE.MathUtils.randFloat(0.05, 0.2), posVec.z), 5.0, 20 ) ) )
+      
+    }
+    let ring_cheight = new THREE.Vector2( 40.0, 120.0);
+    let ring_cwidth = new THREE.Vector2( 10.0, 30.0);
+    let ring_csides =  new THREE.Vector2( 4,8);
+    let ring_ctower = 0.5;
+    let ring_ctowerheight = new THREE.Vector2( 10, 40);
+    let ring_irragularity =  new THREE.Vector2( 10.0, 20.0);
+    let ring_cnumCrystals = new THREE.Vector2( 80, 100 );
+    allMeshes.push( WallCrystalMaterial(uniforms, createCrystalsCluster(  new THREE.Vector3( 0.0, 0.0, 0.0 ), 
+                                                                          ring_cheight, 
+                                                                          ring_cwidth, 
+                                                                          ring_csides, 
+                                                                          ring_ctower, 
+                                                                          ring_ctowerheight, 
+                                                                          ring_irragularity, 
+                                                                          ring_cnumCrystals, 
+                                                                          true )
+      ) )
+    
+        
+    allMeshes.push( FloorMaterial(uniforms, createDisk( new THREE.Vector3(), 320.0, 10 ) ) )
+    
+
+
+    // const material = new THREE.MeshLambertMaterial({ color: color });
+    
+    AddMeshesToState(allMeshes)
+  }
+
   canvas.initialize = () => {
     const ratio    = window.innerWidth / window.innerHeight;
     const scene    = new THREE.Scene();
@@ -817,6 +979,25 @@ void main(){
     const light    = new THREE.AmbientLight(0xa0a0a0);
     const directLight = new THREE.DirectionalLight( 0xa0a0a0, 0.5 );
 
+    // const loader = new THREE.CubeTextureLoader();
+    // const texture = loader
+    //     .load([
+    //         '/asset/env/posx.jpg',
+    //         '/asset/env/negx.jpg',
+    //         '/asset/env/posy.jpg',
+    //         '/asset/env/negy.jpg',
+    //         '/asset/env/posz.jpg',
+    //         '/asset/env/negz.jpg'
+    //     ]);
+        // .load([
+        //     '/asset/env/px.jpg',
+        //     '/asset/env/nx.jpg',
+        //     '/asset/env/py.jpg',
+        //     '/asset/env/ny.jpg',
+        //     '/asset/env/pz.jpg',
+        //     '/asset/env/nz.jpg'
+        // ]);
+    // scene.background = texture;
     
     // scene.background = new THREE.Color(0xffffff)
     // const material = new THREE.MeshBasicMaterial({ color: color });
@@ -844,8 +1025,7 @@ void main(){
       controls: controls,
       uniforms: uniforms,
     };
-
-    createTree()
+    sceneAssembly()
   };
 
   // render scene
@@ -857,11 +1037,16 @@ void main(){
   // update
   canvas.update = () => {
     let dt = clock.getDelta();
-    const mesh = state.three.mesh;
-    // mesh.rotation.x += 0.02;
-    mesh.rotation.y += dt*0.5;
-    // mesh.scale.x     = state.width;
-    // mesh.scale.y     = 1;
+    // const mesh = state.three.mesh;
+    const meshes = state.three.meshes;
+
+    for ( let i = 0; i < meshes.length; i++ )
+    {
+      // mesh.rotation.x += 0.02;
+      meshes[i].rotation.y += dt*0.1;
+      // mesh.scale.x     = state.width;
+      // mesh.scale.y     = 1;
+    }
     state.three.controls.update();
     uniforms.iT.value += dt;
     uniforms.iV2.value = state.colorMode;
@@ -899,3 +1084,4 @@ const run = (tokenData, tokenState) => {
 window.onload = () => {
   run(tokenData, tokenState);
 };
+
