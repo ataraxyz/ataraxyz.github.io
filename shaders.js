@@ -1,6 +1,72 @@
 
+  function vertHelperCode(){
+    return `
+    // More concise, self contained version of IQ's original 3D noise function.
+    float noise3D(in vec3 p){
+        
+        // Just some random figures, analogous to stride. You can change this, if you want.
+      const vec3 s = vec3(113, 157, 1);
+      
+      vec3 ip = floor(p); // Unique unit cell ID.
+        
+        // Setting up the stride vector for randomization and interpolation, kind of. 
+        // All kinds of shortcuts are taken here. Refer to IQ's original formula.
+        vec4 h = vec4(0., s.yz, s.y + s.z) + dot(ip, s);
+        
+      p -= ip; // Cell's fractional component.
+      
+        // A bit of cubic smoothing, to give the noise that rounded look.
+        p = p*p*(3. - 2.*p);
+        
+        // Standard 3D noise stuff. Retrieving 8 random scalar values for each cube corner,
+        // then interpolating along X. There are countless ways to randomize, but this is
+        // the way most are familar with: fract(sin(x)*largeNumber).
+        h = mix(fract(sin(h)*43758.5453), fract(sin(h + s.x)*43758.5453), p.x);
+      
+        // Interpolating along Y.
+        h.xy = mix(h.xz, h.yw, p.y);
+        
+        // Interpolating along Z, and returning the 3D noise value.
+        float n = mix(h.x, h.y, p.z); // Range: [0, 1].
+      
+        return n;//abs(n - .5)*2.;
+    }
+
+    // Simple fBm to produce some clouds.
+    float fbm(in vec3 p){
+        
+        // Four layers of 3D noise.
+        //p /= 1.5;
+        //p -= vec3(0, 0, iTime*1.);
+        return 0.5333*noise3D( p ) + 0.2667*noise3D( p*2.02 ) + 0.1333*noise3D( p*4.03 ) + 0.0667*noise3D( p*8.03 );
+
+    }
+    `
+  }
+    
   function fragHelperCode(){
     return `
+    #define PI 3.1415926535897
+    const vec2 v60 = vec2( cos(PI/3.0), sin(PI/3.0));
+    const vec2 vm60 = vec2(cos(-PI/3.0), sin(-PI/3.0));
+    const mat2 rot60 = mat2(v60.x,-v60.y,v60.y,v60.x);
+    const mat2 rotm60 = mat2(vm60.x,-vm60.y,vm60.y,vm60.x);    
+
+    float triangleGrid(vec2 p, float stepSize,float vertexSize,float lineSize) 
+    {
+        // equilateral triangle grid
+        vec2 fullStep= vec2( stepSize , stepSize*v60.y);
+        vec2 halfStep=fullStep/2.0;
+        vec2 grid = floor(p/fullStep);
+        vec2 offset = vec2( (mod(grid.y,2.0)==1.0) ? halfStep.x : 0. , 0.);
+        // tiling
+        vec2 uv = mod(p+offset,fullStep)-halfStep;
+        float d2=dot(uv,uv);
+        return vertexSize/d2 + // vertices 
+          max( abs(lineSize/(uv*rotm60).y), // lines -60deg
+              max ( abs(lineSize/(uv*rot60).y), // lines 60deg
+                    abs(lineSize/(uv.y)) )); // h lines
+    }
     
     float map(float value, float inMin, float inMax, float outMin, float outMax) {
       return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
@@ -18,19 +84,64 @@
       return outMin + (outMax - outMin) * (value - inMin) / (inMax - inMin);
     }
 
-    float distAttenuation( vec3 pWorld )
+    // More concise, self contained version of IQ's original 3D noise function.
+    float noise3D(in vec3 p){
+        
+        // Just some random figures, analogous to stride. You can change this, if you want.
+      const vec3 s = vec3(113, 157, 1);
+      
+      vec3 ip = floor(p); // Unique unit cell ID.
+        
+        // Setting up the stride vector for randomization and interpolation, kind of. 
+        // All kinds of shortcuts are taken here. Refer to IQ's original formula.
+        vec4 h = vec4(0., s.yz, s.y + s.z) + dot(ip, s);
+        
+      p -= ip; // Cell's fractional component.
+      
+        // A bit of cubic smoothing, to give the noise that rounded look.
+        p = p*p*(3. - 2.*p);
+        
+        // Standard 3D noise stuff. Retrieving 8 random scalar values for each cube corner,
+        // then interpolating along X. There are countless ways to randomize, but this is
+        // the way most are familar with: fract(sin(x)*largeNumber).
+        h = mix(fract(sin(h)*43758.5453), fract(sin(h + s.x)*43758.5453), p.x);
+      
+        // Interpolating along Y.
+        h.xy = mix(h.xz, h.yw, p.y);
+        
+        // Interpolating along Z, and returning the 3D noise value.
+        float n = mix(h.x, h.y, p.z); // Range: [0, 1].
+      
+        return n;//abs(n - .5)*2.;
+    }
+
+    // Simple fBm to produce some clouds.
+    float fbm(in vec3 p){
+        
+        // Four layers of 3D noise.
+        //p /= 1.5;
+        //p -= vec3(0, 0, iTime*1.);
+        return 0.5333*noise3D( p ) + 0.2667*noise3D( p*2.02 ) + 0.1333*noise3D( p*4.03 ) + 0.0667*noise3D( p*8.03 );
+
+    }
+
+    float distAttenuation( vec3 pWorld, float maxDist )
     {
       float dist = length(pWorld.xz);
-      // float atten = 0.1+(1.0 - smoothstep( 0.0, 100.0, dist )) * 0.9;
-      float atten = map( dist, 0.0, 300.0, 1.0, 0.01 );
+      float atten = map( dist, 0.0, maxDist, 1.0, 0.01 );
       return atten;
+    }
+
+    float getCameraDepth( vec3 pCam, float maxDist )
+    {
+      return 1.0 - map( pCam.z, 0.5, maxDist, 0.0, 1.0 );
     }
 
     float pulse( float time, float freq )
     {
       const float pi = 3.14159;
       //const float freq = 10; // in Hz
-      return 0.5 * sin(2. * pi * freq * time );
+      return  (sin(2. * pi * freq * time ) + 1.0 ) * 0.5;
     }
 
     float hash11(float p){
@@ -166,16 +277,62 @@
     } return vec3(0.);
     }`
   }
+  
+  function vertexShaderMainTree() {
+    return vertHelperCode()+`
+      uniform float iT;
+  
+      varying vec2 vUv;
+      varying vec3 vPos;
+      varying vec3 vPosCamera;
+  
+      varying vec3 vNN; 
+      varying vec3 vEye;
+  
+      void main()
+      {
+        
+        vUv = uv;
+        vec3 P_local = position;
+  
+        // float offsetX = sin(iT)*1.0*vUv.r;
+        // float offsetY = cos(iT)*1.0*vUv.r;
+
+        float noiseX = fbm( P_local * 0.1 + iT * 0.025 );
+        float noiseZ = fbm( P_local * 0.1 + iT * 0.025 + vec3(666.0) );
+
+        P_local.x += noiseX * 20.0;
+        P_local.z += noiseZ * 20.0;
+
+        P_local = mix( P_local, position.xyz, 1.0-vUv.r );
+        gl_Position = projectionMatrix * modelViewMatrix * vec4( P_local, 1. );
+        vPos = (modelMatrix * vec4( P_local, 1. )).xyz;
+        
+        vPosCamera = (projectionMatrix * modelViewMatrix * vec4(position,1.0 )).xyz;
+
+        vNN = (projectionMatrix * modelViewMatrix* vec4(normal, 0.0)).xyz;
+        vEye = (viewMatrix * vec4(cameraPosition, 1.0)).xyz - (projectionMatrix * modelViewMatrix * vec4(position, 1.0)).xyz;
+        vEye = normalize(vEye);
+        // gl_Position = vec4( uv.xy * 2.0 - 1.0, 0.5, 1.0);
+  
+      }
+      `
+  }
 
   function vertexShader() {
-  return `
+  return vertHelperCode()+`
     uniform float iT;
 
     varying vec2 vUv;
     varying vec3 vPos;
+    varying vec3 vPosCamera;
+    varying vec3 vPosWorld;
 
     varying vec3 vNN; 
     varying vec3 vEye;
+
+    varying float vCustomId;
+    attribute float customId;
 
     void main()
     {
@@ -188,15 +345,12 @@
       // P_local.y += offsetY;
       gl_Position = projectionMatrix * modelViewMatrix * vec4( P_local, 1. );
       vPos = (modelMatrix * vec4( P_local, 1. )).xyz;
-      mat4 LM = modelMatrix;
-      LM[2][3] = 0.0;
-      LM[3][0] = 0.0;
-      LM[3][1] = 0.0;
-      LM[3][2] = 0.0;
-      // vec4 GN = LM * vec4(normal.xyz, 1.0);
+      vPosCamera = (projectionMatrix * modelViewMatrix * vec4(position,1.0 )).xyz;
+      vPosWorld = (modelMatrix * vec4(position, 1.0)).xyz;
       vNN = (projectionMatrix * modelViewMatrix* vec4(normal, 0.0)).xyz;
       vEye = (viewMatrix * vec4(cameraPosition, 1.0)).xyz - (projectionMatrix * modelViewMatrix * vec4(position, 1.0)).xyz;
       vEye = normalize(vEye);
+      vCustomId = customId;
       // gl_Position = vec4( uv.xy * 2.0 - 1.0, 0.5, 1.0);
 
     }
@@ -209,6 +363,7 @@
   
       varying vec2 vUv;
       varying vec3 vPos;
+      varying vec3 vPosCamera;
   
       varying vec3 vNN; 
       varying vec3 vEye;
@@ -220,18 +375,11 @@
         vUv = uv;
         vec3 P_local = position;
   
-        // float offsetX = sin(iT*vUv.r)*1.*vUv.r;
-        // float offsetY = cos(iT*vUv.r)*1.*vUv.r;
-        // P_local.x += offsetX;
-        // P_local.y += offsetY;
         gl_Position = projectionMatrix * modelViewMatrix * vec4( P_local, 1. );
+        
         vPos = (modelMatrix * vec4( P_local, 1. )).xyz;
-        mat4 LM = modelMatrix;
-        LM[2][3] = 0.0;
-        LM[3][0] = 0.0;
-        LM[3][1] = 0.0;
-        LM[3][2] = 0.0;
-        // vec4 GN = LM * vec4(normal.xyz, 1.0);
+        vPosCamera = (projectionMatrix * modelViewMatrix * vec4(position,1.0 )).xyz;
+
         vNN = (projectionMatrix * modelViewMatrix* vec4(normal, 0.0)).xyz;
         vEye = (viewMatrix * vec4(cameraPosition, 1.0)).xyz - (projectionMatrix * modelViewMatrix * vec4(position, 1.0)).xyz;
         vEye = normalize(vEye);
@@ -242,6 +390,52 @@
       `
     }
 
+  function fragmentShaderSphere(){
+    return fragHelperCode() + `
+    uniform float iT;
+    uniform vec3 iV1;
+    uniform float iV2;
+
+    varying vec2 vUv;
+    varying vec3 vPos;
+    varying vec3 vPosCamera;
+    varying vec3 vPosWorld;
+    
+    uniform sampler2D ctex;
+    uniform sampler2D ttex;
+    
+
+  void main(){
+    float offset[3] = float[](0.0, 1.3846153846, 3.2307692308);
+    float weight[3] = float[](0.2270270270, 0.3162162162, 0.0702702703);
+    
+    float depth = getCameraDepth( vPosCamera, 1000.0 );
+    float grid = clamp(triangleGrid(vUv,0.06,0.000001,0.0001),0.0, 1.0 );
+    vec2 centerUv = vUv * 2.0 -1.0;
+    float uvDist = length( centerUv );
+
+    float nn = fbm(vPosWorld*0.0025);
+    float dd = pulse( nn+(iT*0.05), 1.0);
+    vec3 pulseCol = colorize(dd, 0.01, 12345., int(iV2) );
+    // vec3 pulseCol = colorize(nn, 0.01, 12345., int(iV2) );
+    vec3 col = vec3(vUv.g * dd);
+    uint seed = 0x578437adU;
+
+
+
+    // float distAtten = distAttenuation( vPos, 500.0 );
+    float heightAtten = smoothstep( 50.0, 500.0, vPosWorld.y );
+    vec3 shade = pulseCol*heightAtten * depth;
+    gl_FragColor.rgb = shade;//mix( shade, shade*0.2, grid);
+    // gl_FragColor.rgb = vec3(heightAtten);
+
+    
+
+    // gl_FragColor.rgb = vec3(-(noise));
+    gl_FragColor.a = 1.;}
+  `
+  }
+
   function fragmentShaderGround(){
     return fragHelperCode() + `
     uniform float iT;
@@ -249,18 +443,52 @@
     uniform float iV2;
 
     varying vec2 vUv;
-    varying vec3 vPos;    
+    varying vec3 vPos;
+    varying vec3 vPosCamera;
+    varying vec3 vPosWorld;
+    
+    uniform sampler2D ctex;
+    uniform sampler2D ttex;
+    
 
   void main(){
-    float dd = pulse( vUv.r - iT*0.05, 0.05);
-    float roots = 1.-(vUv.r*vUv.r);
-    vec3 pulseCol = colorize( dd, 0.01, 12345., int(iV2) );
-    // vec3 pulseCol = colorize( dd, 0.001, 12345., 13 );
+    float offset[3] = float[](0.0, 1.3846153846, 3.2307692308);
+    float weight[3] = float[](0.2270270270, 0.3162162162, 0.0702702703);
+
+    float depth = getCameraDepth( vPosCamera, 1000.0 );
+    float grid = clamp(triangleGrid(vUv,0.01,0.000001,0.0001+smoothstep(1.0,0.0, depth)*0.001),0.0, 1.0 );
+    vec2 centerUv = vUv * 2.0 -1.0;
+    float uvDist = length( centerUv );
+
+    if( uvDist > 0.9 )
+      discard;
+    float nn = fbm(vPosWorld*0.025);
+    float dd = pulse( nn+(uvDist - iT*0.05), 1.0);
+    vec3 pulseCol = colorize(dd, 0.01, 12345., int(iV2) )*(1.0-nn);
+    // vec3 pulseCol = colorize(nn, 0.01, 12345., int(iV2) );
     vec3 col = vec3(vUv.g * dd);
+    uint seed = 0x578437adU;
 
 
-    float distAtten = distAttenuation( vPos );
-    gl_FragColor.rgb = (0.5 + vUv.g * 0.5 ) * pulseCol * roots * distAtten;
+    vec3 contactDataCrystals = texture2D( ctex, vUv ).xyz;
+    vec3 contactDataTrees = texture2D( ttex, vUv ).xyz;
+    float contactDistCrystals = length(vPosWorld.xz - contactDataCrystals.xz);
+    float contactCrystals = smoothstep(0.0, contactDataCrystals.y, contactDistCrystals);
+
+    float contactDistTrees = length(vPosWorld.xz - contactDataTrees.xz);
+    float contactTrees = smoothstep(0.0, contactDataTrees.y, contactDistTrees);
+    
+    float contact = min(contactTrees,contactCrystals);
+    
+
+    float distAtten = distAttenuation( vPos, 250.0 );
+    vec3 shade = pulseCol * contact * distAtten * depth;
+    gl_FragColor.rgb = mix( shade, shade*0.5, grid);
+    // gl_FragColor.rgb = vec3(nn);
+
+    
+
+    // gl_FragColor.rgb = vec3(-(noise));
     gl_FragColor.a = 1.;}
   `
   }
@@ -274,6 +502,7 @@
 
     varying vec2 vUv;
     varying vec3 vPos;    
+    varying vec3 vPosCamera;
 
   void main(){
     // float dd = sin( vUv.r * 3.1415 + iT  );
@@ -286,13 +515,10 @@
     // vec3 pulseCol = colorize( dd, 0.001, 12345., 13 );
     vec3 col = vec3(vUv.g * dd);
 
+    float depth = getCameraDepth( vPosCamera, 1000.0 );
 
-    gl_FragColor.rgb = (0.5 + vUv.g * 0.5 ) * pulseCol * roots;
-    // gl_FragColor.rgb = vec3(length(vPos)/350.0);
-    // gl_FragColor.rgb = vec3();
-    // gl_FragColor.b = 0.;
-    // gl_FragColor.rgb = vec3( vUv.r, vUv.g, 0.0 );
 
+    gl_FragColor.rgb = pulseCol * roots * depth;
     gl_FragColor.a = 1.;}
   `
   }
@@ -305,30 +531,27 @@
 
     varying vec2 vUv;
     varying vec3 vPos;
+    varying vec3 vPosCamera;
     varying vec3 vNN; 
     varying vec3 vEye;
 
   void main(){
-    // float dd = sin( vUv.r * 3.1415 + iT  );
+    if (vPos.y < 0.0)
+      discard;
 
     // float normDist = length(vPos.xz)/350.0;
-    // float dd = pulse( normDist - iT*0.25, 0.5);
-    float dd = pulse( vUv.r - iT*0.25, 0.5);
-    float roots = (vUv.r);
+    // float dd = pulse( normDist - iT*0.1, 0.5);
+    float dd = pulse( vUv.r - iT*0.25, 1.0);
+    float ll = pulse( vUv.r - iT*0.3, 30.0);
+    float roots = map(vUv.r, 0.0, 1.0, 0.0, 1.0);
     vec3 pulseCol = colorize( dd, 0.01, 12345., int(iV2) );
     // vec3 pulseCol = colorize( dd, 0.001, 12345., 13 );
-    vec3 col = vec3(vUv.g * dd);
+    
     float edge = 1.0-max(dot(vEye, vNN), 0.0 );
+    float depth = getCameraDepth( vPosCamera, 1000.0 );
 
-
-    // gl_FragColor.rgb = (0.5 + vUv.g * 0.5 ) * pulseCol * roots + ( edge*edge*edge*0.25);
-    gl_FragColor.rgb = ( pulseCol + ( edge*edge*edge*0.25) ) * roots;
-    // gl_FragColor.rgb = vec3(length(vPos)/350.0);
-    // gl_FragColor.rgb = vec3(roots);
-    gl_FragColor.rgb = (pulseCol+edge*0.2)*roots;
-    // gl_FragColor.b = 0.;
-    // gl_FragColor.rgb = vec3( vUv.r, vUv.r, 0.0 );
-    // gl_FragColor.rgb = vec3(edge*edge*edge);
+    gl_FragColor.rgb = ((( pulseCol ) + ( edge*edge*edge*0.25)) * roots * depth);//+ll*0.12;
+    // gl_FragColor.rgb = vec3(ll);
     
     gl_FragColor.a = 1.;}
   `
@@ -343,34 +566,30 @@
 
     varying vec2 vUv;
     varying vec3 vPos;
+    varying vec3 vPosCamera;
     varying vec3 vNN; 
     varying vec3 vEye;
     varying float vCustomId;
 
   void main(){
-    // float dd = sin( vUv.r * 3.1415 + iT  );
+    
+    if (vPos.y < 0.0)
+      discard;
 
-    // float normDist = length(vPos.xz)/350.0;
-    // float dd = pulse( normDist - iT*0.25, 0.01);
-    float distAtten = distAttenuation( vPos*1.0 );
-    float dd = pulse(vCustomId + vUv.r + iT*0.75, 0.15);
+    float customOffset = vCustomId / 123456.0;
+    float distAtten = distAttenuation( vPos*1.0, 350.0 );
+    float dd = pulse(customOffset + vUv.r + iT*0.75*customOffset, 0.05+customOffset*0.5);
     float roots = 1.-(vUv.r*vUv.r);
     vec3 pulseCol = colorize( dd, 0.01, 12345., int(iV2) );
-    // vec3 pulseCol = colorize( dd, 0.001, 12345., 13 );
+    
     vec3 col = vec3(vUv.g * dd);
     float edge = 1.0 - max(dot(vEye, vNN), 0.0 );
 
-    // gl_FragColor.rgb = (0.5 + vUv.g * 0.5 ) * pulseCol * roots * distAtten;
-    gl_FragColor.rgb = pulseCol * roots*roots * distAtten;
-    // gl_FragColor.rgb = vec3(length(vPos)/350.0);
-    // gl_FragColor.rgb = vec3(edge*0.1);
-    // gl_FragColor.rgb = vec3(mod(dd,1.0));
-    // gl_FragColor.rgb = vec3(vCustomId/123456.0);
-    // gl_FragColor.rgb = vec3(edge);
-    // gl_FragColor.rgb = vEye;
-    // gl_FragColor.b = 0.;
-    // gl_FragColor.rgb = vec3( vUv.r, vUv.g, 0.0 );
+    float depth = getCameraDepth( vPosCamera, 1000.0 );
 
+    gl_FragColor.rgb = pulseCol*0.75 * roots*roots * distAtten * depth;
+    // gl_FragColor.rgb = vec3(customOffset);
+    
     gl_FragColor.a = 1.;}
   `
   }
@@ -383,21 +602,23 @@
 
     varying vec2 vUv;
     varying vec3 vPos;    
+    varying vec3 vPosCamera;
+    varying float vCustomId;
 
   void main(){
-    // float dd = sin( vUv.r * 3.1415 + iT  );
-
-    // float normDist = length(vPos.xz)/350.0;
-    // float dd = pulse( normDist - iT*0.25, 0.5);
-    float distAtten = distAttenuation( vPos );
-    float dd = pulse( vUv.r - iT*0.05, 0.5);
-    float roots = 1.-(vUv.r*vUv.r);
+    float customOffset = vCustomId / 123456.0;
+    float distAtten = distAttenuation( vPos, 350.0 );
+    float dd = pulse( customOffset + vUv.r - iT*0.2, 1.0);
+    float roots = map(vUv.r, 0.0, 1.0, 0.1, 1.0 );
+    
     vec3 pulseCol = colorize( dd, 0.01, 12345., int(iV2) );
     // vec3 pulseCol = colorize( dd, 0.001, 12345., 13 );
     vec3 col = vec3(vUv.g * dd);
 
+    float depth = getCameraDepth( vPosCamera, 1000.0 );
 
-    gl_FragColor.rgb = (0.5 + vUv.g * 0.5 ) * pulseCol * roots * distAtten;
+
+    gl_FragColor.rgb = pulseCol * roots * distAtten * depth;
     // gl_FragColor.rgb = vec3(length(vPos)/350.0);
     // gl_FragColor.rgb = vec3(distAtten);
     // gl_FragColor.b = 0.;
@@ -414,26 +635,26 @@
     uniform float iV2;
 
     varying vec2 vUv;
-    varying vec3 vPos;    
+    varying vec3 vPos;
+    varying vec3 vPosCamera;
+    varying float vCustomId; 
 
   void main(){
-    // float dd = sin( vUv.r * 3.1415 + iT  );
-
-    // float normDist = length(vPos.xz)/350.0;
-    // float dd = pulse( normDist - iT*0.25, 0.5);
-    float distAtten = distAttenuation( vPos );
-    float dd = pulse( vUv.r - iT*0.25, 0.5);
-    float roots = 1.-(vUv.r*vUv.r);
+    
+    float customOffset = vCustomId / 123456.0;
+    float distAtten = distAttenuation( vPos, 350. );
+    float dd = pulse( customOffset + vUv.r - iT*0.25, 0.5);
+    float roots = (1.-(vUv.r*vUv.r)) * smoothstep(-20.0, 100.0, vPos.y);
     vec3 pulseCol = colorize( dd, 0.01, 12345., int(iV2) );
     // vec3 pulseCol = colorize( dd, 0.001, 12345., 13 );
     vec3 col = vec3(vUv.g * dd);
 
+    float depth = getCameraDepth( vPosCamera, 1000.0 );
 
-    gl_FragColor.rgb = (0.5 + vUv.g * 0.5 ) * pulseCol * roots * distAtten;
-    // gl_FragColor.rgb = vec3(length(vPos)/350.0);
-    // gl_FragColor.rgb = vec3(distAtten);
-    // gl_FragColor.b = 0.;
-    // gl_FragColor.rgb = vec3( vUv.r, vUv.g, 0.0 );
+
+    gl_FragColor.rgb = pulseCol * roots * distAtten * depth * customOffset;
+    // gl_FragColor.rgb = vec3(roots);
+    
 
     gl_FragColor.a = 1.;}
   `
@@ -447,10 +668,12 @@
 
     varying vec2 vUv;
     varying vec3 vPos;    
+    // varying vec3 vPosCamera;
 
   void main(){
     float shadow = vUv.r;
-    gl_FragColor.rgb = vec3(0.0);
+    // float depth = getCameraDepth( vPosCamera, 1000.0 );
+    gl_FragColor.rgb = vec3(0.0);// * depth;
     gl_FragColor.a = shadow*shadow;
     }
   `
@@ -462,7 +685,7 @@
 
 function MainTreeMaterial(uniforms, geo ) {
   let mat = new THREE.ShaderMaterial( {
-    vertexShader: vertexShader(),
+    vertexShader: vertexShaderMainTree(),
     fragmentShader: fragmentShaderMainTree(),
     uniforms: uniforms,
   });
@@ -476,7 +699,7 @@ function MainTreeMaterial(uniforms, geo ) {
 
 function BGTreeMaterial(uniforms, geo ) {
   let mat = new THREE.ShaderMaterial( {
-    vertexShader: vertexShader(),
+    vertexShader: vertexShaderWithId(),
     fragmentShader: fragmentShaderBGTree(),
     uniforms: uniforms,
   });
@@ -495,21 +718,27 @@ function GroundCrystalMaterial(uniforms, geo ) {
 
 function WallCrystalMaterial(uniforms, geo ) {
   let mat = new THREE.ShaderMaterial( {
-    vertexShader: vertexShader(),
+    vertexShader: vertexShaderWithId(),
     fragmentShader: fragmentShaderCrystal(),
     uniforms: uniforms,
   });
   return new THREE.Mesh(geo, mat);
 }
 
-function FloorMaterial(uniforms, geo ) {
-  let mat = new THREE.ShaderMaterial( {
-    vertexShader: vertexShader(),
-    fragmentShader: fragmentShaderGround(),
-    uniforms: uniforms,
-  });
-  return new THREE.Mesh(geo, mat);
-}
+// function FloorMaterial(uniforms, ctex, geo ) {
+//   let floorUniforms = { 
+//     iT: { value: uniforms.iT.value },
+//     ctex: { type: "t", value: ctex }
+//   }
+//   let mat = new THREE.ShaderMaterial( {
+//     vertexShader: vertexShader(),
+//     fragmentShader: fragmentShaderGround(),
+//     uniforms: floorUniforms,
+//   });
+
+//   // var mat = new THREE.MeshBasicMaterial({ color: 0x4422ff, alphaMap: ctex, transparent: true });
+//   return new THREE.Mesh(geo, mat);
+// }
 
 function FakeShadowDiskMaterial(uniforms, geo ) {
   let mat = new THREE.ShaderMaterial( {

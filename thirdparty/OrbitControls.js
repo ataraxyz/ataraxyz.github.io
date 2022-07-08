@@ -16,6 +16,9 @@
 		type: 'end'
 	};
 
+	var minPan = new THREE.Vector3( - 2, - 2, - 2 );
+	var maxPan = new THREE.Vector3( 2, 2, 2 );
+
 	class OrbitControls extends THREE.EventDispatcher {
 
 		constructor( object, domElement ) {
@@ -41,10 +44,11 @@
 
 			this.minPolarAngle = 0; // radians
 
-			this.maxPolarAngle = Math.PI; // radians
+			this.maxPolarAngle = Math.PI;//*0.55; // radians
 			// How far you can orbit horizontally, upper and lower limits.
 			// If set, the interval [ min, max ] must be a sub-interval of [ - 2 PI, 2 PI ], with ( max - min < 2 PI )
 
+			// this.minAzimuthAngle = - Infinity; // radians
 			this.minAzimuthAngle = - Infinity; // radians
 
 			this.maxAzimuthAngle = Infinity; // radians
@@ -218,6 +222,8 @@
 						scope.target.add( panOffset );
 
 					}
+
+					// scope.target.clamp( minPan, maxPan );
 
 					offset.setFromSpherical( spherical ); // rotate offset back to "camera-up-vector-is-up" space
 
@@ -517,21 +523,21 @@
 			function handleMouseUp() { // no-op
 			}
 
-			// function handleMouseWheel( event ) {
+			function handleMouseWheel( event ) {
 
-			// 	if ( event.deltaY < 0 ) {
+				if ( event.deltaY < 0 ) {
 
-			// 		dollyIn( getZoomScale() );
+					dollyIn( getZoomScale() );
 
-			// 	} else if ( event.deltaY > 0 ) {
+				} else if ( event.deltaY > 0 ) {
 
-			// 		dollyOut( getZoomScale() );
+					dollyOut( getZoomScale() );
 
-			// 	}
+				}
 
-			// 	scope.update();
+				scope.update();
 
-			// }
+			}
 
 			function handleKeyDown( event ) {
 
@@ -890,15 +896,15 @@
 
 			}
 
-			// function onMouseWheel( event ) {
+			function onMouseWheel( event ) {
 
-			// 	if ( scope.enabled === false || scope.enableZoom === false || state !== STATE.NONE && state !== STATE.ROTATE ) return;
-			// 	event.preventDefault();
-			// 	scope.dispatchEvent( _startEvent );
-			// 	handleMouseWheel( event );
-			// 	scope.dispatchEvent( _endEvent );
+				if ( scope.enabled === false || scope.enableZoom === false || state !== STATE.NONE && state !== STATE.ROTATE ) return;
+				event.preventDefault();
+				scope.dispatchEvent( _startEvent );
+				handleMouseWheel( event );
+				scope.dispatchEvent( _endEvent );
 
-			// }
+			}
 
 			function onKeyDown( event ) {
 

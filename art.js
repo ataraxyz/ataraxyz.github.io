@@ -7,6 +7,7 @@
 // functions
 //-----------------------------------------------------------------------------
 
+
 const u64  = n => BigInt.asUintN(64, n);
 const rotl = (x, k) => u64((x << k) | (x >> (64n - k)));
 const { Perlin, FBM } = THREE_Noise;
@@ -20,7 +21,7 @@ const fbm = new FBM({
   redistribution: 1,
   height: 0,
 });
-
+let glitchPass;
 /**
  * xoshiro is a variation of the shift-register generator, using rotations in
  *   addition to shifts.
@@ -175,7 +176,9 @@ const shapeDist = {
 //-----------------------------------------------------------------------------
 // main
 //-----------------------------------------------------------------------------
-let noiseTex
+let noiseTex;
+let crystalContactShadowTx;
+let treeContactShadowTx;
 const hashToTraits = hash => {
 
   // setup random fns
@@ -250,6 +253,12 @@ const hashToTraits = hash => {
   }
 }
 
+const handleGlitchDown = () => {
+  glitchPass.isActive = true;
+}
+const handleGlitchUp = () => {
+  glitchPass.isActive = false;
+}
 
  const setupCanvasThreeJs = () => {
 
@@ -265,6 +274,12 @@ const hashToTraits = hash => {
   body.appendChild(renderer.domElement);
 
   var canvas = document.createElement("canvas");
+
+  document.body.onmousedown = handleGlitchDown;
+  document.body.ontouchstart = handleGlitchDown;
+  document.body.onmouseup = handleGlitchUp;
+  document.body.ontouchend = handleGlitchUp;
+  
 
   // canvas.width = 400;
   // canvas.height = 400;
@@ -550,27 +565,136 @@ const doArt = (renderer, hash, state) => {
   state.colorMode = colorMode;
   const canvas = document.querySelector('canvas');
 
+  
+
   const uniforms = {
     iT: { value: 0 },
     iV1: { value: 0 },
-    iV2: { value: 0 }
+    iV2: { value: 0 },
+    ctex: { type: "t", value: null },
+    ttex: { type: "t", value: null }
   }
 
   const clock = new THREE.Clock();
 
   cleanScene = () => {
-    state.three.meshes = [];
-    for (let i = tokenState.three.scene.children.length - 1; i >= 0; i--) {
-      if(tokenState.three.scene.children[i].type === "Mesh")
+    // state.three.meshes = [];
+    for (let i = 0; i<tokenState.three.scene.children.length; i++) 
+    {
+      if ( tokenState.three.scene.children[i].type == "Group" )
+      {
+        for (let j = 0; j<tokenState.three.scene.children[i].children.length; j++) 
+        {
+          
+          if ( tokenState.three.scene.children[i].children[j].type == "Mesh" )
+          {
+            tokenState.three.scene.remove(tokenState.three.scene.children[i].children[j]);
+          }
+        }
         tokenState.three.scene.remove(tokenState.three.scene.children[i]);
+      }
     }
+  } 
+
+  CreateContactShadows = ( contactPoints, maxDist ) => {
+    const cMapWidth = 512;
+    const cMapHeight = 512;
+
+    const cMapSize = cMapWidth * cMapHeight;
+    const cMapData = new Float32Array( 4 * cMapSize );
+    // const cMapColor = new THREE.Color( 0xffffff );
+
+    for ( let y = 0; y < cMapHeight; y++ )
+    {
+      for ( let x = 0; x < cMapWidth; x++ )
+      {
+        let index = y*cMapWidth+x;
+        let stride = index * 4;
+
+        let shadowAmount = new THREE.Vector4(0.0,0.0,0.0,0.0);
+
+        // current position in WS
+        let xpos = (((x / cMapWidth)) * 2.0 - 1.0 ) * maxDist
+        let ypos = ((1.0-(y / cMapHeight)) * 2.0 - 1.0 ) * maxDist
+        for ( let i = 0; i < contactPoints.length; i++ )
+        {
+          
+
+          let xx = xpos - contactPoints[i].x
+          let yy = ypos - contactPoints[i].z
+
+          let radc = contactPoints[i].y*maxDist;
+          let dist = Math.sqrt( xx*xx + yy*yy)
+          let distNorm = 1.0 - Math.max(0.0, Math.min( 1.0, dist / radc ) );
+
+          // shadowAmount = Math.min( 1.0, shadowAmount + distNorm);//Math.max( shadowAmount,distNorm )
+          // shadowAmount = Math.max(shadowAmount, distNorm) 
+          if ( distNorm > shadowAmount.w )
+          {
+            // console.log(distNorm)
+            shadowAmount.w = distNorm;
+            shadowAmount.x = contactPoints[i].x; 
+            // shadowAmount.x = contactPoints[i].x / maxDist;
+            shadowAmount.y = contactPoints[i].y;
+            shadowAmount.z = contactPoints[i].z;
+            // shadowAmount.z = 1.0-(contactPoints[i].z / maxDist);
+
+            // console.log(shadowAmount)
+          }
+          // if ( distNorm > 0.1 )
+          // {
+            // console.log( x+'/'+ y + ' ==> ' + distNorm + ' == ' + shadowAmount)  
+          // }
+
+          // console.log( x+'/'+ y + ' ==> ' + distNorm)
+        }
+        // let vv = Math.floor((1.0-shadowAmount)*255)
+        // cMapData[stride] = vv;
+        // cMapData[stride+1] = vv;
+        // cMapData[stride+2] = vv;
+        // cMapData[stride+3] = 255;
+        // cMapData[stride+0] = Math.floor(shadowAmount.x*255);
+        // cMapData[stride+1] = Math.floor(shadowAmount.y*255);
+        // cMapData[stride+2] = Math.floor(shadowAmount.z*255);
+        // cMapData[stride+3] = Math.floor(shadowAmount.w*255);
+        cMapData[stride+0] = shadowAmount.x;
+        cMapData[stride+1] = shadowAmount.y;
+        cMapData[stride+2] = shadowAmount.z;
+        cMapData[stride+3] = shadowAmount.w;
+      }
+    }
+
+    // const r = Math.floor( color.r * 255 );
+    // const g = Math.floor( color.g * 255 );
+    // const b = Math.floor( color.b * 255 );
+
+    // for ( let i = 0; i < size; i ++ ) {
+
+    //   const stride = i * 4;
+
+    //   data[ stride ] = r;
+    //   data[ stride + 1 ] = g;
+    //   data[ stride + 2 ] = b;
+    //   data[ stride + 3 ] = 255;
+
+    // }
+
+    // used the buffer to create a DataTexture
+    // console.log(cMapData)
+    const cMapTexture = new THREE.DataTexture( cMapData, cMapWidth, cMapHeight, THREE.RGBAFormat, THREE.FloatType );
+    cMapTexture.needsUpdate = true;
+    return cMapTexture;
   }
 
   AddMeshesToState = (meshes) => {
+    const group = new THREE.Group();
     for( let i = 0; i < meshes.length; i++ ){
-      state.three.meshes.push( meshes[i] );
-      tokenState.three.scene.add(meshes[i]);
+      // state.three.meshes.push( meshes[i] );
+      
+      group.add( meshes[i] );
     }
+    // tokenState.three.scene.add(meshes[i]);
+    tokenState.three.scene.add(group)
   }
 
   createTree = ( treePos, startlength, maxlength ) =>
@@ -585,7 +709,6 @@ const doArt = (renderer, hash, state) => {
       colorMode,
       wireframe
     } = hashToTraits(tokenData.hash);
-    console.log(colorMode)
     
     state.colorMode = colorMode;
     const geometry = new THREE.BufferGeometry();
@@ -641,6 +764,7 @@ const doArt = (renderer, hash, state) => {
     
     // let maxUv = Math.max( ...uvs )
     let maxUv = 0;
+    let ids = new Array(uvs.length/2).fill(THREE.MathUtils.randInt(0, 123456 ))
     for ( let i = 0; i < uvs.length; i+=2)
     {
       maxUv = Math.max( uvs[i], maxUv )
@@ -659,6 +783,9 @@ const doArt = (renderer, hash, state) => {
     geometry.setAttribute(
         'uv',
         new THREE.BufferAttribute(new Float32Array(uvs), 2));
+    geometry.setAttribute(
+          'customId',
+          new THREE.BufferAttribute(new Float32Array(ids), 1));
     geometry.setIndex( new THREE.BufferAttribute( new Uint32Array( faces ), 1 ) );
     // console.log(geometry)
     return geometry
@@ -903,12 +1030,16 @@ const doArt = (renderer, hash, state) => {
   sceneAssembly = () =>
   {
     cleanScene()
+    let crystalContactPositions = []
+    let treeContactPositions = []
+    treeContactPositions.push( new THREE.Vector3(0.0, 50.0, 0.0 ) )
+    // treeContactPositions.push( new THREE.Vector3(0.0, 10.0, 0.0 ) )
     let allMeshes = []
     let mainStartLength = THREE.MathUtils.randFloat( 12.0, 15.0);
     // MAIN TREE
     allMeshes.push( MainTreeMaterial(uniforms, createTree(new THREE.Vector3( 0.0, 0.0, 0.0 ), mainStartLength, mainStartLength/10.0 )) )
     //  MAIN TREE SHADOW
-    allMeshes.push( FakeShadowDiskMaterial(uniforms, createDisk( new THREE.Vector3(0.0, 0.01, 0.0), 10.0, 20 ) ) )
+    // allMeshes.push( FakeShadowDiskMaterial(uniforms, createDisk( new THREE.Vector3(0.0, 0.01, 0.0), 10.0, 20 ) ) )
     
     
     // BGFORREST
@@ -920,7 +1051,8 @@ const doArt = (renderer, hash, state) => {
       let posVec = new THREE.Vector3( Math.sin(i*angle), 0.0, Math.cos(i*angle) )
       posVec.setLength( THREE.MathUtils.randFloat( 150.0, 250.0 ) )
       allMeshes.push( BGTreeMaterial(uniforms, createTree(posVec, 15.0, 5.0 ) ) )
-      allMeshes.push( FakeShadowDiskMaterial(uniforms, createDisk( new THREE.Vector3(posVec.x, posVec.y+0.1, posVec.z), 20.0, 20 ) ) )
+      // allMeshes.push( FakeShadowDiskMaterial(uniforms, createDisk( new THREE.Vector3(posVec.x, posVec.y+0.1, posVec.z), 20.0, 20 ) ) )
+      treeContactPositions.push( new THREE.Vector3( posVec.x, 10.0, posVec.z ) )
     }
 
     let groundCrystalAmnount = 500
@@ -952,7 +1084,8 @@ const doArt = (renderer, hash, state) => {
                                                                               false )
       ) )
 
-      allMeshes.push( FakeShadowDiskMaterial(uniforms, createDisk( new THREE.Vector3(posVec.x, posVec.y+THREE.MathUtils.randFloat(0.05, 0.2), posVec.z), 5.0, 20 ) ) )
+      // allMeshes.push( FakeShadowDiskMaterial(uniforms, createDisk( new THREE.Vector3(posVec.x, posVec.y+THREE.MathUtils.randFloat(0.05, 0.2), posVec.z), 10.0, 20 ) ) )
+      crystalContactPositions.push( new THREE.Vector3( posVec.x, 6.0, posVec.z ) )
       
     }
     let ring_cheight = new THREE.Vector2( 40.0, 120.0);
@@ -974,22 +1107,66 @@ const doArt = (renderer, hash, state) => {
       ) )
     
         
-    allMeshes.push( FloorMaterial(uniforms, createDisk( new THREE.Vector3(), 320.0, 10 ) ) )
+    
     
 
 
     // const material = new THREE.MeshLambertMaterial({ color: color });
+    crystalContactShadowTx = CreateContactShadows(crystalContactPositions, 320.0);
+    treeContactShadowTx = CreateContactShadows(treeContactPositions, 320.0);
     
+    uniforms.ctex.value = crystalContactShadowTx;
+    uniforms.ttex.value = treeContactShadowTx;
+    var groundGeo = new THREE.PlaneBufferGeometry(320*2, 320*2);
+    // var planeMat = new THREE.MeshBasicMaterial({ map: contactShadowTx });
+    
+    let groundMat = new THREE.ShaderMaterial( {
+      vertexShader: vertexShader(),
+      fragmentShader: fragmentShaderGround(),
+      uniforms: uniforms,
+    });
+    groundMat.side = THREE.DoubleSide;
+
+    var ground = new THREE.Mesh(groundGeo, groundMat);
+    ground.rotation.x = -90.0 * 3.14159 / 180.0;
+    allMeshes.push(ground)
+
+
+    let sphereMat = new THREE.ShaderMaterial( {
+      vertexShader: vertexShader(),
+      fragmentShader: fragmentShaderSphere(),
+      uniforms: uniforms,
+    });
+    sphereMat.side = THREE.DoubleSide;
+    const bgSphereGeo = new THREE.SphereGeometry( 400.0, 
+                                                  64, 
+                                                  32,
+                                                  0,
+                                                  Math.PI * 2,
+                                                  0,
+                                                  Math.PI * 0.5
+                                                  );
+    var bgSphere = new THREE.Mesh(bgSphereGeo, sphereMat);
+    allMeshes.push(bgSphere)
     AddMeshesToState(allMeshes)
   }
 
   canvas.initialize = () => {
+    const width    = window.innerWidth;
+    const height   = window.innerHeight;
     const ratio    = window.innerWidth / window.innerHeight;
     const scene    = new THREE.Scene();
-    const camera   = new THREE.PerspectiveCamera(75, ratio, 0.1, 1000);
+    const camera   = new THREE.PerspectiveCamera(75, ratio, 0.5, 1000);
+    // const camera   =  new THREE.CinematicCamera( 60, ratio, 1, 1000 );
+    // camera.setLens(15, 35.0, 0.1, camera.coc )
+    // camera.postprocessing.bokeh_uniforms[ 'focalDepth' ].value = 300.0;
     const light    = new THREE.AmbientLight(0xa0a0a0);
     const directLight = new THREE.DirectionalLight( 0xa0a0a0, 0.5 );
-
+    let stats = new Stats()
+    // stats.showPanel( 0 );
+    stats.domElement.style.cssText = 'position:absolute;top:20px;right:0px;';
+    // document.body.appendChild(stats.dom)
+    
     // const loader = new THREE.CubeTextureLoader();
     // const texture = loader
     //     .load([
@@ -1020,6 +1197,9 @@ const doArt = (renderer, hash, state) => {
     const controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.target = new THREE.Vector3( 0, 50, 0)
     controls.update()
+
+    
+
     // create mesh
     // const geometry = shape == 'square'
     //   ? new THREE.BoxGeometry(1, 1, 1)
@@ -1028,21 +1208,55 @@ const doArt = (renderer, hash, state) => {
     scene.add(light);
     scene.add(directLight);
     
+    
 
+    const renderScene = new THREE.RenderPass( scene, camera );
+    const aaPass = new THREE.SMAAPass( window.innerWidth * renderer.getPixelRatio(), window.innerHeight * renderer.getPixelRatio() );
+    const bloomPass = new THREE.UnrealBloomPass( new THREE.Vector2( window.innerWidth, window.innerHeight ), 1.0, 1.0, 0.85 );
+    const filmPass =  new THREE.FilmPass(0.3, 0.1, height/2.0, false);
+    glitchPass =  new THREE.GlitchPass(64);
+    // glitchPass.goWild = true;
+    glitchPass.isActive = false;
+    const ssaoPass = new THREE.SSAOPass( scene, camera, 1024*4, 1024 );
+    const adTonePass = new THREE.AdaptiveToneMappingPass( true, 1024 );
+    const bokehPass = new THREE.BokehPass( scene, camera, {
+      focus: 150.0,
+      aperture: 0.00004,
+      maxblur: 0.04,
+
+      width: width,
+      height: height
+    } );
+
+    const composer = new THREE.EffectComposer( renderer );
+    composer.addPass( renderScene );
+    composer.addPass( aaPass );
+    
+    // composer.addPass( ssaoPass );
+    composer.addPass( bloomPass );
+    composer.addPass( adTonePass );
+    composer.addPass( glitchPass );
+    composer.addPass( filmPass );
+    
+    composer.addPass( bokehPass );
     state.three = {
       scene: scene,
       camera: camera,
       mesh: null,
       controls: controls,
       uniforms: uniforms,
+      stats: stats,
+      composer: composer
     };
+
     sceneAssembly()
   };
 
   // render scene
   canvas.render = () => {
     const { scene, camera } = state.three;
-    renderer.render(scene, camera);
+    state.three.composer.render()
+    // renderer.render(scene, camera);
   };
 
   // update
@@ -1051,13 +1265,20 @@ const doArt = (renderer, hash, state) => {
     // const mesh = state.three.mesh;
     const meshes = state.three.meshes;
 
-    for ( let i = 0; i < meshes.length; i++ )
+    for ( let i = 0; i < tokenState.three.scene.children.length; i++ )
     {
+      if ( tokenState.three.scene.children[i].type == "Group" )
+      {
+        // tokenState.three.scene.children[i].rotation.y += dt*0.1;
+      }
+    }
+    // for ( let i = 0; i < meshes.length; i++ )
+    // {
       // mesh.rotation.x += 0.02;
-      meshes[i].rotation.y += dt*0.1;
+      // meshes[i].rotation.y += dt*0.1;
       // mesh.scale.x     = state.width;
       // mesh.scale.y     = 1;
-    }
+    // }
     state.three.controls.update();
     uniforms.iT.value += dt;
     uniforms.iV2.value = state.colorMode;
@@ -1068,7 +1289,10 @@ const doArt = (renderer, hash, state) => {
     const { scene, camera } = state.three;
     requestAnimationFrame(canvas.loop);
     canvas.update();
-    renderer.render(scene, camera);
+    // renderer.render(scene, camera);
+    state.three.composer.render()
+    // camera.renderCinematic( scene, renderer )
+    state.three.stats.update()
   };
 
   canvas.initialize();
@@ -1084,6 +1308,7 @@ const doArt = (renderer, hash, state) => {
  */
 const run = (tokenData, tokenState) => {
   const renderer = setupCanvasThreeJs()
+  
   doArt(renderer, tokenData.hash, tokenState);
   
 };
@@ -1095,4 +1320,6 @@ const run = (tokenData, tokenState) => {
 window.onload = () => {
   run(tokenData, tokenState);
 };
+
+
 
