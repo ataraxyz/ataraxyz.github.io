@@ -587,8 +587,11 @@
 
     float depth = getCameraDepth( vPosCamera, 1000.0 );
 
-    gl_FragColor.rgb = pulseCol*0.75 * roots*roots * distAtten * depth;
-    // gl_FragColor.rgb = vec3(customOffset);
+    gl_FragColor.rgb = pulseCol*0.2 * roots*roots * distAtten * depth;
+    // gl_FragColor.rgb = mix( pulseCol*0.0, pulseCol, edge);
+    gl_FragColor.rgb = mix(pulseCol*0.75,pulseCol*1.5,edge)* roots*roots* distAtten * depth;//*edge;
+
+    // gl_FragColor.rgb = vec3(edge);
     
     gl_FragColor.a = 1.;}
   `

@@ -224,6 +224,8 @@
 
             function keybordInput(e)
             {
+                if ( e.ctrlKey || e.keyCode == 13 )
+                    tokenState.usePostProcessing = !tokenState.usePostProcessing;
                 // if ( e.ctrlKey || e.keyCode == 13 )
                 //     refresh();
                 // if ( e.keyCode == 16 )

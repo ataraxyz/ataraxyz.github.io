@@ -959,6 +959,8 @@ const doArt = (renderer, hash, state) => {
           'customId',
           new THREE.BufferAttribute(new Float32Array(ids), 1));
     geometry.setIndex( new THREE.BufferAttribute( new Uint32Array( faces ), 1 ) );
+
+    geometry.computeVertexNormals();
     
     return geometry
   }
@@ -1248,8 +1250,10 @@ const doArt = (renderer, hash, state) => {
       stats: stats,
       composer: composer
     };
-
+    tokenState.usePostProcessing = true;
     sceneAssembly()
+
+    
   };
 
   // render scene
@@ -1287,10 +1291,13 @@ const doArt = (renderer, hash, state) => {
   // render/update loop
   canvas.loop = () => {
     const { scene, camera } = state.three;
+    // scene.overrideMaterial = new THREE.MeshLambertMaterial({ color: "green" });
     requestAnimationFrame(canvas.loop);
     canvas.update();
-    // renderer.render(scene, camera);
-    state.three.composer.render()
+    if ( tokenState.usePostProcessing )
+      state.three.composer.render()
+    else
+      renderer.render(scene, camera);
     // camera.renderCinematic( scene, renderer )
     state.three.stats.update()
   };
