@@ -268,17 +268,27 @@ const handleGlitchUp = () => {
   const body = document.querySelector('body > section:nth-child(1) > div > p');
 
   // setup render to match window size
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(scale);
-  renderer.setSize(width, height);
-  body.appendChild(renderer.domElement);
+  // const renderer = new THREE.WebGLRenderer({ antialias: true });  
+  // renderer.setPixelRatio(scale);
+  // renderer.setSize(width, height);
+  // body.appendChild(renderer.domElement);
 
-  var canvas = document.createElement("canvas");
+  const renderer = new THREE.WebGLRenderer( { antialias: true } );
+  renderer.autoClear = false;
+  renderer.setPixelRatio( window.devicePixelRatio );
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.xr.enabled = true;
+  document.body.appendChild( renderer.domElement );
+  document.body.appendChild( VRButton.createButton( renderer ) );
 
-  document.body.onmousedown = handleGlitchDown;
-  document.body.ontouchstart = handleGlitchDown;
-  document.body.onmouseup = handleGlitchUp;
-  document.body.ontouchend = handleGlitchUp;
+  
+
+  // var canvas = document.createElement("canvas");
+
+  // document.body.onmousedown = handleGlitchDown;
+  // document.body.ontouchstart = handleGlitchDown;
+  // document.body.onmouseup = handleGlitchUp;
+  // document.body.ontouchend = handleGlitchUp;
   
 
   // canvas.width = 400;
@@ -696,6 +706,7 @@ const doArt = (renderer, hash, state) => {
     // tokenState.three.scene.add(meshes[i]);
     
     tokenState.three.scene.add(group)
+    tokenState.three.scene.scale.set( sceneScale, sceneScale, sceneScale)
   }
 
   createTree = ( treePos, startlength, maxlength ) =>
@@ -1035,14 +1046,12 @@ const doArt = (renderer, hash, state) => {
     cleanScene()
     let crystalContactPositions = []
     let treeContactPositions = []
-    treeContactPositions.push( new THREE.Vector3(0.0, 50.0, 0.0 ) )
+    treeContactPositions.push( new THREE.Vector3(0.0, 50.0, 0.0 )*sceneScale )
     // treeContactPositions.push( new THREE.Vector3(0.0, 10.0, 0.0 ) )
     let allMeshes = []
     let mainStartLength = THREE.MathUtils.randFloat( 12.0, 15.0);
     // MAIN TREE
     allMeshes.push( MainTreeMaterial(uniforms, createTree(new THREE.Vector3( 0.0, 0.0, 0.0 ), mainStartLength, mainStartLength/10.0 )) )
-    //  MAIN TREE SHADOW
-    // allMeshes.push( FakeShadowDiskMaterial(uniforms, createDisk( new THREE.Vector3(0.0, 0.01, 0.0), 10.0, 20 ) ) )
     
     
     // BGFORREST
@@ -1050,12 +1059,10 @@ const doArt = (renderer, hash, state) => {
     let angle = Math.PI*4.0 / forrestTreeAmount
     for ( let i = 0; i < forrestTreeAmount; i++ )
     {
-      // let posVec = randomVecInXZ();
       let posVec = new THREE.Vector3( Math.sin(i*angle), 0.0, Math.cos(i*angle) )
       posVec.setLength( THREE.MathUtils.randFloat( 150.0, 250.0 ) )
       allMeshes.push( BGTreeMaterial(uniforms, createTree(posVec, 15.0, 5.0 ) ) )
-      // allMeshes.push( FakeShadowDiskMaterial(uniforms, createDisk( new THREE.Vector3(posVec.x, posVec.y+0.1, posVec.z), 20.0, 20 ) ) )
-      treeContactPositions.push( new THREE.Vector3( posVec.x, 10.0, posVec.z ) )
+      treeContactPositions.push( new THREE.Vector3( posVec.x, 10.0, posVec.z )*sceneScale )
     }
 
     let groundCrystalAmnount = 500
@@ -1087,9 +1094,7 @@ const doArt = (renderer, hash, state) => {
                                                                               false )
       ) )
 
-      // allMeshes.push( FakeShadowDiskMaterial(uniforms, createDisk( new THREE.Vector3(posVec.x, posVec.y+THREE.MathUtils.randFloat(0.05, 0.2), posVec.z), 10.0, 20 ) ) )
-      crystalContactPositions.push( new THREE.Vector3( posVec.x, 6.0, posVec.z ) )
-      
+      crystalContactPositions.push( new THREE.Vector3( posVec.x, 6.0, posVec.z )*sceneScale )
     }
     let ring_cheight = new THREE.Vector2( 40.0, 120.0);
     let ring_cwidth = new THREE.Vector2( 10.0, 30.0);
@@ -1114,7 +1119,7 @@ const doArt = (renderer, hash, state) => {
     
 
 
-    // const material = new THREE.MeshLambertMaterial({ color: color });
+    const material = new THREE.MeshLambertMaterial({ color: color });
     crystalContactShadowTx = CreateContactShadows(crystalContactPositions, 320.0);
     treeContactShadowTx = CreateContactShadows(treeContactPositions, 320.0);
     
@@ -1122,7 +1127,7 @@ const doArt = (renderer, hash, state) => {
     uniforms.ttex.value = treeContactShadowTx;
     var groundGeo = new THREE.PlaneBufferGeometry(320*2, 320*2);
     // var planeMat = new THREE.MeshBasicMaterial({ map: contactShadowTx });
-    
+1    
     let groundMat = new THREE.ShaderMaterial( {
       vertexShader: vertexShader(),
       fragmentShader: fragmentShaderGround(),
@@ -1140,6 +1145,8 @@ const doArt = (renderer, hash, state) => {
       fragmentShader: fragmentShaderSphere(),
       uniforms: uniforms,
     });
+
+    //  let sphereMat = new THREE.MeshLambertMaterial({ color: "green" });
     sphereMat.side = THREE.DoubleSide;
     const bgSphereGeo = new THREE.SphereGeometry( 400.0, 
                                                   64, 
@@ -1154,12 +1161,19 @@ const doArt = (renderer, hash, state) => {
     AddMeshesToState(allMeshes)
   }
 
-  canvas.initialize = () => {
+  let scene, camera;
+  let sceneScale
+
+  initialize = () => {
     const width    = window.innerWidth;
     const height   = window.innerHeight;
     const ratio    = window.innerWidth / window.innerHeight;
-    const scene    = new THREE.Scene();
-    const camera   = new THREE.PerspectiveCamera(75, ratio, 0.5, 1000);
+
+    sceneScale = 0.05
+    scene    = new THREE.Scene();
+    // const camera   = new THREE.PerspectiveCamera(75, ratio, 0.5, 1000);
+    camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 1000 );
+    camera.position.set( 0, 1.6, 1.5 );
     // const camera   =  new THREE.CinematicCamera( 60, ratio, 1, 1000 );
     // camera.setLens(15, 35.0, 0.1, camera.coc )
     // camera.postprocessing.bokeh_uniforms[ 'focalDepth' ].value = 300.0;
@@ -1167,23 +1181,24 @@ const doArt = (renderer, hash, state) => {
     const directLight = new THREE.DirectionalLight( 0xa0a0a0, 0.5 );
     let stats = new Stats()
     // stats.showPanel( 0 );
-    stats.domElement.style.cssText = 'position:absolute;top:20px;right:0px;';
-    document.body.appendChild(stats.dom)
+    // stats.domElement.style.cssText = 'position:absolute;top:20px;right:0px;';
+    // document.body.appendChild(stats.dom)
     
-    renderer.xr.enabled = true;
-    document.body.appendChild( ARButton.createButton( renderer, { requiredFeatures: [ 'hit-test' ] } ) );
-    
+    // renderer.xr.enabled = true;
+    // document.body.appendChild( ARButton.createButton( renderer, { requiredFeatures: [ 'hit-test' ] } ) );
+    // document.body.appendChild( VRButton.createButton( renderer ) );
 
-    // const loader = new THREE.CubeTextureLoader();
-    // const texture = loader
-    //     .load([
-    //         '/asset/env/posx.jpg',
-    //         '/asset/env/negx.jpg',
-    //         '/asset/env/posy.jpg',
-    //         '/asset/env/negy.jpg',
-    //         '/asset/env/posz.jpg',
-    //         '/asset/env/negz.jpg'
-    //     ]);
+
+    const loader = new THREE.CubeTextureLoader();
+    const texture = loader
+        .load([
+            '../asset/env/posx.jpg',
+            '../asset/env/negx.jpg',
+            '../asset/env/posy.jpg',
+            '../asset/env/negy.jpg',
+            '../asset/env/posz.jpg',
+            '../asset/env/negz.jpg'
+        ]);
         // .load([
         //     '/asset/env/px.jpg',
         //     '/asset/env/nx.jpg',
@@ -1199,11 +1214,11 @@ const doArt = (renderer, hash, state) => {
     // material.side = THREE.DoubleSide;
     // material.wireframe = true;
     camera.aspect = window.innerWidth / window.innerHeight;
-    camera.position.z = 100;
-    camera.position.y = 50;
+    // camera.position.z = 100;
+    // camera.position.y = 50;
     const controls = new THREE.OrbitControls( camera, renderer.domElement );
-    controls.target = new THREE.Vector3( 0, 50, 0)
-    controls.update()
+    // controls.target = new THREE.Vector3( 0, 50, 0)
+    // controls.update()
 
     
 
@@ -1264,53 +1279,111 @@ const doArt = (renderer, hash, state) => {
   // render scene
   canvas.render = () => {
     const { scene, camera } = state.three;
-    state.three.composer.render()
-    // renderer.render(scene, camera);
+    // state.three.composer.render()
+
+    renderer.render(scene, camera);
   };
 
   // update
-  canvas.update = () => {
-    let dt = clock.getDelta();
-    // const mesh = state.three.mesh;
-    const meshes = state.three.meshes;
+  // canvas.update = () => {
+  //   let dt = clock.getDelta();
+  //   // const mesh = state.three.mesh;
+  //   const meshes = state.three.meshes;
 
-    for ( let i = 0; i < tokenState.three.scene.children.length; i++ )
-    {
-      if ( tokenState.three.scene.children[i].type == "Group" )
-      {
-        tokenState.three.scene.children[i].scale = new THREE.Vector3(0.01,0.01,0.01);
-        // tokenState.three.scene.children[i].rotation.y += dt*0.1;
-      }
-    }
-    // for ( let i = 0; i < meshes.length; i++ )
-    // {
-      // mesh.rotation.x += 0.02;
-      // meshes[i].rotation.y += dt*0.1;
-      // mesh.scale.x     = state.width;
-      // mesh.scale.y     = 1;
-    // }
-    state.three.controls.update();
+  //   for ( let i = 0; i < tokenState.three.scene.children.length; i++ )
+  //   {
+  //     if ( tokenState.three.scene.children[i].type == "Group" )
+  //     {
+  //       // tokenState.three.scene.children[i].scale = new THREE.Vector3(0.01,0.01,0.01);
+  //       // tokenState.three.scene.children[i].rotation.y += dt*0.1;
+  //     }
+  //   }
+  //   // for ( let i = 0; i < meshes.length; i++ )
+  //   // {
+  //     // mesh.rotation.x += 0.02;
+  //     // meshes[i].rotation.y += dt*0.1;
+  //     // mesh.scale.x     = state.width;
+  //     // mesh.scale.y     = 1;
+  //   // }
+  //   // state.three.controls.update();
+  //   uniforms.iT.value += dt;
+  //   uniforms.iV2.value = state.colorMode;
+  // };
+
+  // // render/update loop
+  // canvas.loop = () => {
+  //   const { scene, camera } = state.three;
+  //   // scene.overrideMaterial = new THREE.MeshLambertMaterial({ color: "green" });
+  //   requestAnimationFrame(canvas.loop);
+  //   canvas.update();
+  //   // if ( tokenState.usePostProcessing )
+  //   //   state.three.composer.render()
+  //   // else
+  //   //   renderer.render(scene, camera);
+  //   // camera.renderCinematic( scene, renderer )
+  //     renderer.render(scene, camera);
+
+  //     // console.log( camera.position )
+      
+  //   state.three.stats.update()
+  // };
+
+  function animate() {
+
+    renderer.setAnimationLoop( render );
+    
+
+  }
+
+  // function update() {
+  //     let dt = clock.getDelta();
+  //     // const mesh = state.three.mesh;
+  //     const meshes = state.three.meshes;
+  
+  //     for ( let i = 0; i < tokenState.three.scene.children.length; i++ )
+  //     {
+  //       if ( tokenState.three.scene.children[i].type == "Group" )
+  //       {
+  //         // tokenState.three.scene.children[i].scale = new THREE.Vector3(0.01,0.01,0.01);
+  //         // tokenState.three.scene.children[i].rotation.y += dt*0.1;
+  //       }
+  //     }
+  //     // for ( let i = 0; i < meshes.length; i++ )
+  //     // {
+  //       // mesh.rotation.x += 0.02;
+  //       // meshes[i].rotation.y += dt*0.1;
+  //       // mesh.scale.x     = state.width;
+  //       // mesh.scale.y     = 1;
+  //     // }
+  //     // state.three.controls.update();
+  //     uniforms.iT.value += dt;
+  //     uniforms.iV2.value = state.colorMode;
+  //   };
+  
+
+
+  function render() {
+
+    // const time = performance.now() * 0.0002;
+    // const torus = scene.getObjectByName( 'torus' );
+    // torus.rotation.x = time * 2;
+    // torus.rotation.y = time * 5;
+    let dt = clock.getDelta();
     uniforms.iT.value += dt;
     uniforms.iV2.value = state.colorMode;
-  };
+    renderer.render( scene, camera );
+    // stats.update();
 
-  // render/update loop
-  canvas.loop = () => {
-    const { scene, camera } = state.three;
-    // scene.overrideMaterial = new THREE.MeshLambertMaterial({ color: "green" });
-    requestAnimationFrame(canvas.loop);
-    canvas.update();
-    if ( tokenState.usePostProcessing )
-      state.three.composer.render()
-    else
-      renderer.render(scene, camera);
-    // camera.renderCinematic( scene, renderer )
-    state.three.stats.update()
-  };
+    // Canvas elements doesn't trigger DOM updates, so we have to update the texture
+    // statsMesh.material.map.update();
 
-  canvas.initialize();
-  canvas.render();
-  canvas.loop();
+
+  }
+  initialize();
+  animate();
+  // canvas.initialize();
+  // canvas.render();
+  // canvas.loop();
 
 };
 
