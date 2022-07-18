@@ -173,6 +173,32 @@ const shapeDist = {
   circle: .4
 };
 
+function onSelectStart(event) {
+  // var controller = event.target;
+
+  // var intersections = getIntersections(controller);
+
+  // if (intersections.length > 0) {
+  //     var intersection = intersections[0];
+  //     var object = intersection.object;
+  //     object.material.emissive.b = 1;
+  //     controller.attach(object);
+  //     controller.userData.selected = object;
+  // }
+}
+
+function onSelectEnd(event) {
+  // var controller = event.target;
+  // if (controller.userData.selected !== undefined) {
+  //     var object = controller.userData.selected;
+  //     object.material.emissive.b = 0;
+  //     group.attach(object);
+  //     controller.userData.selected = undefined;
+  // }
+  sceneAssembly()
+}
+
+
 //-----------------------------------------------------------------------------
 // main
 //-----------------------------------------------------------------------------
@@ -1069,7 +1095,7 @@ const doArt = (renderer, hash, state) => {
       treeContactPositions.push( new THREE.Vector3( posVec.x, 10.0, posVec.z ) )
     }
 
-    let groundCrystalAmnount = 500
+    let groundCrystalAmnount = 1000
     let groundCrystalRadMin = 10.0
     let groundCrystalRadMax = 200.0
     for( let i = 0; i < groundCrystalAmnount; i++ )
@@ -1077,12 +1103,12 @@ const doArt = (renderer, hash, state) => {
       let posVec = randomVecInXZ();
       posVec.setLength( THREE.MathUtils.randFloat( groundCrystalRadMin, groundCrystalRadMax ) )
 
-      let cheightRange = new THREE.Vector2( 2.0, 8.0);
-      let cwidthRange = new THREE.Vector2( 0.4, 1.0);
+      let cheightRange = new THREE.Vector2( 1.0, 4.0);
+      let cwidthRange = new THREE.Vector2( 0.2, 0.5);
       let csidesRange = new THREE.Vector2( 4,8);
       let ctowerRange = 0.25;
-      let ctowerheightRange = new THREE.Vector2( 0.2, 1.0);
-      let irragularityRange = new THREE.Vector2( 0.0, 0.4);
+      let ctowerheightRange = new THREE.Vector2( 0.1, 0.5);
+      let irragularityRange = new THREE.Vector2( 0.0, 0.2);
       let cnumCrystalsRange = new THREE.Vector2(5,10);
 
       
@@ -1170,10 +1196,37 @@ const doArt = (renderer, hash, state) => {
     scene.add( hand1 );
 
     // hand 2
-
     hand2 = renderer.xr.getHand( 1 );
     hand2.add( new OculusHandModel( hand2 ) );
     scene.add( hand2 );
+
+      // controllers
+    controller1 = renderer.xr.getController(0);
+    controller1.name="left";    ////MODIFIED, added .name="left"
+    controller1.addEventListener("selectstart", onSelectStart);
+    controller1.addEventListener("selectend", onSelectEnd);
+    scene.add(controller1);
+
+    controller2 = renderer.xr.getController(1);
+    controller2.name="right";  ////MODIFIED added .name="right"
+    controller2.addEventListener("selectstart", onSelectStart);
+    controller2.addEventListener("selectend", onSelectEnd);
+    scene.add(controller2);
+
+    var controllerModelFactory = new XRControllerModelFactory();
+
+    controllerGrip1 = renderer.xr.getControllerGrip(0);
+    controllerGrip1.add(
+        controllerModelFactory.createControllerModel(controllerGrip1)
+    );
+    scene.add(controllerGrip1);
+
+    controllerGrip2 = renderer.xr.getControllerGrip(1);
+    controllerGrip2.add(
+        controllerModelFactory.createControllerModel(controllerGrip2)
+    );
+    scene.add(controllerGrip2);
+
   }
 
   let scene, camera;
