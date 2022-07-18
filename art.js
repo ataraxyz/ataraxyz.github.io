@@ -1199,6 +1199,8 @@ const doArt = (renderer, hash, state) => {
     camera.position.y = 50;
     const controls = new THREE.OrbitControls( camera, renderer.domElement );
     controls.target = new THREE.Vector3( 0, 50, 0)
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5;
     controls.update()
 
     

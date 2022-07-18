@@ -1284,6 +1284,7 @@ const doArt = (renderer, hash, state) => {
     // camera.position.z = 100;
     // camera.position.y = 50;
     const controls = new THREE.OrbitControls( camera, renderer.domElement );
+    
     // controls.target = new THREE.Vector3( 0, 50, 0)
     // controls.update()
 
