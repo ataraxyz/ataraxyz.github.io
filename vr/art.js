@@ -253,6 +253,9 @@ const hashToTraits = hash => {
   }
 }
 
+let sceneScale;
+sceneScale = 0.075
+
 const handleGlitchDown = () => {
   glitchPass.isActive = true;
 }
@@ -582,7 +585,8 @@ const doArt = (renderer, hash, state) => {
     iV1: { value: 0 },
     iV2: { value: 0 },
     ctex: { type: "t", value: null },
-    ttex: { type: "t", value: null }
+    ttex: { type: "t", value: null },
+    iScale: { value: 1.0/sceneScale }
   }
 
   const clock = new THREE.Clock();
@@ -1046,7 +1050,7 @@ const doArt = (renderer, hash, state) => {
     cleanScene()
     let crystalContactPositions = []
     let treeContactPositions = []
-    treeContactPositions.push( new THREE.Vector3(0.0, 50.0, 0.0 )*sceneScale )
+    treeContactPositions.push( new THREE.Vector3(0.0, 50.0, 0.0 ) )
     // treeContactPositions.push( new THREE.Vector3(0.0, 10.0, 0.0 ) )
     let allMeshes = []
     let mainStartLength = THREE.MathUtils.randFloat( 12.0, 15.0);
@@ -1062,7 +1066,7 @@ const doArt = (renderer, hash, state) => {
       let posVec = new THREE.Vector3( Math.sin(i*angle), 0.0, Math.cos(i*angle) )
       posVec.setLength( THREE.MathUtils.randFloat( 150.0, 250.0 ) )
       allMeshes.push( BGTreeMaterial(uniforms, createTree(posVec, 15.0, 5.0 ) ) )
-      treeContactPositions.push( new THREE.Vector3( posVec.x, 10.0, posVec.z )*sceneScale )
+      treeContactPositions.push( new THREE.Vector3( posVec.x, 10.0, posVec.z ) )
     }
 
     let groundCrystalAmnount = 500
@@ -1094,7 +1098,7 @@ const doArt = (renderer, hash, state) => {
                                                                               false )
       ) )
 
-      crystalContactPositions.push( new THREE.Vector3( posVec.x, 6.0, posVec.z )*sceneScale )
+      crystalContactPositions.push( new THREE.Vector3( posVec.x, 6.0, posVec.z ) )
     }
     let ring_cheight = new THREE.Vector2( 40.0, 120.0);
     let ring_cwidth = new THREE.Vector2( 10.0, 30.0);
@@ -1127,7 +1131,7 @@ const doArt = (renderer, hash, state) => {
     uniforms.ttex.value = treeContactShadowTx;
     var groundGeo = new THREE.PlaneBufferGeometry(320*2, 320*2);
     // var planeMat = new THREE.MeshBasicMaterial({ map: contactShadowTx });
-1    
+    
     let groundMat = new THREE.ShaderMaterial( {
       vertexShader: vertexShader(),
       fragmentShader: fragmentShaderGround(),
@@ -1159,17 +1163,27 @@ const doArt = (renderer, hash, state) => {
     var bgSphere = new THREE.Mesh(bgSphereGeo, sphereMat);
     allMeshes.push(bgSphere)
     AddMeshesToState(allMeshes)
+
+
+    hand1 = renderer.xr.getHand( 0 );
+    hand1.add( new OculusHandModel( hand1 ) );
+    scene.add( hand1 );
+
+    // hand 2
+
+    hand2 = renderer.xr.getHand( 1 );
+    hand2.add( new OculusHandModel( hand2 ) );
+    scene.add( hand2 );
   }
 
   let scene, camera;
-  let sceneScale
-
+  
   initialize = () => {
     const width    = window.innerWidth;
     const height   = window.innerHeight;
     const ratio    = window.innerWidth / window.innerHeight;
 
-    sceneScale = 0.05
+    
     scene    = new THREE.Scene();
     // const camera   = new THREE.PerspectiveCamera(75, ratio, 0.5, 1000);
     camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 1000 );

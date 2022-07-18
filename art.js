@@ -572,7 +572,8 @@ const doArt = (renderer, hash, state) => {
     iV1: { value: 0 },
     iV2: { value: 0 },
     ctex: { type: "t", value: null },
-    ttex: { type: "t", value: null }
+    ttex: { type: "t", value: null },
+    iScale: { value: 1.0 }
   }
 
   const clock = new THREE.Clock();

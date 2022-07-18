@@ -281,7 +281,8 @@
   function vertexShaderMainTree() {
     return vertHelperCode()+`
       uniform float iT;
-  
+      uniform float iScale;
+
       varying vec2 vUv;
       varying vec3 vPos;
       varying vec3 vPosCamera;
@@ -306,7 +307,7 @@
 
         P_local = mix( P_local, position.xyz, 1.0-vUv.r );
         gl_Position = projectionMatrix * modelViewMatrix * vec4( P_local, 1. );
-        vPos = (modelMatrix * vec4( P_local, 1. )).xyz;
+        vPos = (modelMatrix * vec4( P_local*iScale, 1. )).xyz;
         
         vPosCamera = (projectionMatrix * modelViewMatrix * vec4(position,1.0 )).xyz;
 
@@ -322,6 +323,7 @@
   function vertexShader() {
   return vertHelperCode()+`
     uniform float iT;
+    uniform float iScale;
 
     varying vec2 vUv;
     varying vec3 vPos;
@@ -344,9 +346,9 @@
       // P_local.x += offsetX;
       // P_local.y += offsetY;
       gl_Position = projectionMatrix * modelViewMatrix * vec4( P_local, 1. );
-      vPos = (modelMatrix * vec4( P_local, 1. )).xyz;
+      vPos = (modelMatrix * vec4( P_local*iScale, 1. )).xyz;
       vPosCamera = (projectionMatrix * modelViewMatrix * vec4(position,1.0 )).xyz;
-      vPosWorld = (modelMatrix * vec4(position, 1.0)).xyz;
+      vPosWorld = (modelMatrix * vec4(position*iScale, 1.0)).xyz;
       vNN = (projectionMatrix * modelViewMatrix* vec4(normal, 0.0)).xyz;
       vEye = (viewMatrix * vec4(cameraPosition, 1.0)).xyz - (projectionMatrix * modelViewMatrix * vec4(position, 1.0)).xyz;
       vEye = normalize(vEye);
@@ -360,7 +362,8 @@
   function vertexShaderWithId() {
     return `
       uniform float iT;
-  
+      uniform float iScale;
+
       varying vec2 vUv;
       varying vec3 vPos;
       varying vec3 vPosCamera;
@@ -377,7 +380,7 @@
   
         gl_Position = projectionMatrix * modelViewMatrix * vec4( P_local, 1. );
         
-        vPos = (modelMatrix * vec4( P_local, 1. )).xyz;
+        vPos = (modelMatrix * vec4( P_local*iScale, 1. )).xyz;
         vPosCamera = (projectionMatrix * modelViewMatrix * vec4(position,1.0 )).xyz;
 
         vNN = (projectionMatrix * modelViewMatrix* vec4(normal, 0.0)).xyz;
@@ -441,6 +444,7 @@
     uniform float iT;
     uniform vec3 iV1;
     uniform float iV2;
+    
 
     varying vec2 vUv;
     varying vec3 vPos;
@@ -484,7 +488,7 @@
     float distAtten = distAttenuation( vPos, 250.0 );
     vec3 shade = pulseCol * contact * distAtten * depth;
     gl_FragColor.rgb = mix( shade, shade*0.5, grid);
-    // gl_FragColor.rgb = vec3(nn);
+    // gl_FragColor.rgb = vec3(contactDataCrystals);
 
     
 
